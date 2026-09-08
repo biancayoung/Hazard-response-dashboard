@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Farm screen · prototypes</title>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#141d28; --bg-2:#1a2634; --tile:#1f2c3b; --tile-2:#25334a; --line:#2f4157;
+  --ink:#f2f6fa; --muted:#8fa3b8; --dim:#5f7389;
+  --teal:#3ec8d2; --blue:#3d8ef0; --mint:#7be0a8; --amber:#f0b45a;
+}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;background:radial-gradient(120% 90% at 50% 0%,var(--bg-2) 0%,var(--bg) 60%);color:var(--ink);
+  font:16px/1.45 Barlow,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  display:flex;justify-content:center;padding:48px 20px}
+.num{font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif;font-variant-numeric:tabular-nums}
+main{width:100%;max-width:620px}
+h1{margin:0;font-size:30px;font-weight:600;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:8px 0 30px}
+.row{color:inherit;display:flex;align-items:baseline;gap:16px;text-decoration:none;padding:18px 4px;border-top:1px solid var(--line)}
+.row:last-of-type{border-bottom:1px solid var(--line)}
+.row .k{font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif;font-size:26px;font-weight:600;color:var(--teal);width:26px;flex:none}
+.row .nm{font-size:19px;font-weight:600;white-space:nowrap}
+.row .ds{color:var(--muted);font-size:14.5px}
+.row .go{margin-left:auto;color:var(--dim);font-size:20px;flex:none}
+.row:focus-visible{outline:2px solid var(--teal);outline-offset:2px}
+@media (hover:hover){.row:hover .nm{color:var(--mint)}.row:hover .go{color:var(--mint)}}
+</style></head><body>
+<main>
+<h1>Farm screen · prototypes</h1>
+<p class="sub">Same sketch, same palette, three treatments. Open each in landscape.</p>
+<a class="row" href="a.html"><span class="k">A</span><span class="nm">Vitrine</span><span class="ds">Tiles with icons and a gradient area chart, closest to the Seeed case photo.</span><span class="go">›</span></a>
+<a class="row" href="b.html"><span class="k">B</span><span class="nm">Field panel</span><span class="ds">Boxless, big numerals, bar chart, map dominant.</span><span class="go">›</span></a>
+<a class="row" href="c.html"><span class="k">C</span><span class="nm">Console</span><span class="ds">Dense: sparklines in every readout, seven-day rain, three soil nodes, node strip over the chat.</span><span class="go">›</span></a>
+</main>
+</body></html>
