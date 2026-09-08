@@ -1,0 +1,321 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portugal · farm screen · C</title>
+<!--
+  PROTOTYPE C · "Console": dense, more data on the same sketch.
+  Same sections, tokens, data-src keys and mock data as a.html, but the readouts
+  carry sparklines + secondary lines, rain history stacks daily and hourly bars,
+  soil shows three nodes as rows, and the chat gets a mesh node strip.
+  Layout only. Every live value carries data-src="<source.field>".
+-->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#141d28; --bg-2:#1a2634; --tile:#1f2c3b; --tile-2:#25334a; --line:#2f4157;
+  --ink:#f2f6fa; --muted:#8fa3b8; --dim:#5f7389;
+  --teal:#3ec8d2; --blue:#3d8ef0; --mint:#7be0a8; --amber:#f0b45a;
+  --r:14px; --gap:18px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(120% 90% at 50% 0%,var(--bg-2) 0%,var(--bg) 60%);color:var(--ink);
+  font:15px/1.4 Barlow,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.num{font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+a{color:inherit}
+
+.screen{height:100%;display:grid;grid-template-rows:auto 1fr 1fr;gap:var(--gap);padding:22px 26px 24px}
+@media (max-width:900px){.screen{height:auto;grid-template-rows:none}}
+
+/* header */
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:0 4px}
+.place{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.place h1{margin:0;font-size:34px;font-weight:600;letter-spacing:-.01em}
+.place .where{color:var(--muted);font-size:16px}
+.badge{display:inline-flex;align-items:center;gap:7px;background:var(--mint);color:#0d2417;font-weight:600;font-size:13px;padding:4px 10px 4px 8px;border-radius:6px;transform:translateY(-4px)}
+.badge i{width:7px;height:7px;border-radius:50%;background:#0d2417;display:inline-block}
+.clock{text-align:right;line-height:1}
+.clock time{display:block;font-size:44px;font-weight:600}
+.clock small{display:block;color:var(--muted);font-size:14px;margin-top:6px}
+
+/* sections */
+section{display:grid;gap:var(--gap);min-height:0}
+section>h2{grid-column:1/-1;margin:0;font-size:14px;font-weight:500;color:var(--muted);letter-spacing:.02em;padding:0 4px}
+.weather{grid-template-columns:repeat(3,1fr) 1.45fr;grid-template-rows:auto 1fr}
+.nodes{grid-template-columns:1.15fr 1.55fr 1.3fr;grid-template-rows:auto 1fr}
+@media (max-width:900px){.weather,.nodes{grid-template-columns:1fr 1fr}.rain,.chat,.mapbox{grid-column:1/-1}.tile,.soil{min-height:150px}.mapbox{min-height:280px}.chat{min-height:360px}}
+
+.tile,.rain,.soil,.mapbox,.chat{background:var(--tile);border:1px solid var(--line);border-radius:var(--r);min-height:0;position:relative}
+
+/* weather tiles */
+.tile{padding:14px 16px 12px;display:flex;flex-direction:column;justify-content:flex-start}
+.tile>div:last-child{display:flex;flex-direction:column;flex:1;min-height:0}
+.tile .ic{width:26px;height:26px;color:var(--teal)}
+.tile .ic svg{width:100%;height:100%}
+.tile .v{font-size:clamp(30px,3.4vw,46px);font-weight:600;line-height:1;margin-top:8px}
+.tile .v u{text-decoration:none;font-size:.42em;color:var(--muted);font-weight:500;margin-left:5px}
+.tile .l{color:var(--muted);font-size:13px;margin-top:4px;display:flex;justify-content:space-between;gap:8px}
+.tile .l b{color:var(--ink);font-weight:500}
+.tile .spark{width:100%;height:auto;min-height:34px;flex:1;display:block;margin-top:10px;overflow:visible}
+.tile .sub{color:var(--dim);font-size:11.5px;margin-top:3px}
+
+/* rain */
+.rain{padding:14px 16px 10px;display:flex;flex-direction:column}
+.rain header{display:flex;justify-content:space-between;align-items:baseline}
+.rain h3{margin:0;font-size:15px;font-weight:500}
+.rain .tot{color:var(--muted);font-size:12.5px}.rain .tot b{color:var(--ink);font-weight:600;font-size:15px;margin-right:2px}
+.rain .stack{flex:1;min-height:0;display:grid;grid-template-rows:1fr .9fr;gap:8px;margin-top:8px}
+.rain figure{margin:0;min-height:0;position:relative;display:flex;flex-direction:column}
+.rain figure figcaption{font-size:11px;color:var(--dim);margin-bottom:2px}
+.rain svg{width:100%;height:100%;display:block;overflow:visible;flex:1;min-height:0}
+.tip{position:absolute;pointer-events:none;background:#0f1722;border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:12px;white-space:nowrap;display:none;transform:translate(-50%,-115%);z-index:5}
+.tip b{color:var(--blue)}
+
+/* soil nodes */
+.soil{padding:14px 16px 12px;display:flex;flex-direction:column;overflow:hidden}
+.soil h3{margin:0 0 6px;font-size:15px;font-weight:500}
+.soil .rows{flex:1;min-height:0;display:grid;grid-template-rows:repeat(3,1fr);gap:6px}
+.srow{display:grid;grid-template-columns:60px 1fr;gap:6px;align-items:center;border-top:1px solid var(--line);padding-top:6px;min-height:0}
+.srow:first-child{border-top:0;padding-top:2px}
+.srow .gt{width:60px;height:54px}
+.srow .gt svg{width:100%;height:100%}
+.srow .right{display:flex;flex-direction:column;min-width:0}
+.srow .nm{font-size:12.5px;font-weight:500;color:var(--ink)}
+.srow .seen{font-size:10.5px;color:var(--dim);margin-top:1px}
+.srow .hum{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;margin-top:3px}
+.srow .hum .bar{flex:1;height:5px;background:var(--bg);border-radius:3px;overflow:hidden}
+.srow .hum .bar i{display:block;height:100%;background:var(--teal);border-radius:3px}
+.srow .hum b{color:var(--ink);font-weight:600;font-size:13px}
+
+/* map */
+.mapbox{overflow:hidden;color:#c9d6e3}
+.mapbox h3{position:absolute;z-index:2;left:16px;top:12px;margin:0;font-size:15px;font-weight:500;color:var(--ink)}
+.mapbox .leg{position:absolute;z-index:2;left:16px;top:34px;display:flex;gap:14px;font-size:12px;color:var(--muted)}
+.mapbox .leg i{display:inline-block;width:9px;height:9px;margin-right:6px;vertical-align:-1px}
+.mapbox .leg .ls i{background:var(--teal);border-radius:50%}.mapbox .leg .lm i{background:var(--mint)}
+.map{position:absolute;inset:0;width:100%;height:100%}
+
+/* chat */
+.chat{display:flex;flex-direction:column;padding:0}
+.chat header{display:flex;justify-content:space-between;align-items:baseline;padding:12px 16px 8px;border-bottom:1px solid var(--line)}
+.chat h3{margin:0;font-size:15px;font-weight:500}
+.chat .on{color:var(--muted);font-size:13px}.chat .on b{color:var(--mint);font-weight:600}
+.strip{display:flex;gap:8px;overflow-x:auto;padding:8px 16px;border-bottom:1px solid var(--line);flex-shrink:0}
+.chip{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:4px 10px;font-size:12px;white-space:nowrap;flex-shrink:0}
+.chip i{width:7px;height:7px;border-radius:50%;background:var(--mint);display:inline-block}
+.chip b{color:var(--ink);font-weight:500}
+.chip span{color:var(--dim)}
+.msgs{flex:1;overflow:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px;min-height:0}
+.m{max-width:88%;display:flex;flex-direction:column;gap:3px}
+.m .who{font-size:12px;color:var(--mint);font-weight:600;display:flex;gap:8px;align-items:baseline}
+.m .who span{color:var(--dim);font-weight:400}
+.m .t{background:var(--tile-2);border-radius:10px;padding:8px 11px;font-size:14.5px;line-height:1.35}
+.m.me{align-self:flex-end;align-items:flex-end}.m.me .who{color:var(--teal)}.m.me .t{background:#173d4a}
+.m.sys .t{background:none;color:var(--dim);font-size:12.5px;padding:2px 0}
+.send{display:flex;gap:8px;padding:10px 12px;border-top:1px solid var(--line)}
+.send input{flex:1;background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px 12px;font:inherit;min-width:0}
+.send button{background:var(--mint);color:#0d2417;border:0;border-radius:8px;padding:0 16px;font:inherit;font-weight:600}
+.send input:focus,.send button:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+</style></head><body>
+<div class="screen">
+<header class="top">
+  <div class="place"><span class="badge"><i></i>Live</span><h1>Portugal</h1><span class="where">Sítio das Aguilhadas · Lagos</span></div>
+  <div class="clock"><time class="num" id="clock">--:--</time><small id="date">Lisbon time</small></div>
+</header>
+
+<section class="weather" aria-labelledby="hw">
+  <h2 id="hw">Weather station</h2>
+
+  <div class="tile">
+    <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="7.5" cy="12" r="3.2"/><circle cx="16.5" cy="8.5" r="2.6"/><circle cx="16.5" cy="15.5" r="2.6"/><path d="M10.5 11l3.5-1.5M10.5 13l3.5 1.5"/></svg></div>
+    <div><div class="v num" data-src="weather.co2">412<u>ppm</u></div>
+    <svg class="spark" id="sparkCo2" viewBox="0 0 240 34" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="l"><span>CO₂</span><b>good</b></div>
+    <div class="sub" data-src="weather.co2.avg">24 h avg 405 · trend flat</div></div>
+  </div>
+
+  <div class="tile">
+    <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h15a3 3 0 1 1-3 3"/><path d="M3 16h8a2.5 2.5 0 1 1-2.5 2.5"/></svg></div>
+    <div><div class="v num" data-src="weather.wind">3.4<u>m/s</u></div>
+    <svg class="spark" id="sparkWind" viewBox="0 0 240 34" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="l"><span>Wind</span><b data-src="weather.wind_dir">NW</b></div>
+    <div class="sub">NW · gusts 6.1 m/s</div></div>
+  </div>
+
+  <div class="tile">
+    <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M10 4a2 2 0 1 1 4 0v9.3a4 4 0 1 1-4 0z"/><path d="M12 9v6"/><path d="M17 6h3M17 9h2"/></svg></div>
+    <div><div class="v num" data-src="weather.temp">26.4<u>°C</u></div>
+    <svg class="spark" id="sparkTemp" viewBox="0 0 240 34" preserveAspectRatio="none" aria-hidden="true"></svg>
+    <div class="l"><span>Temperature</span><b data-src="weather.hum">58% RH</b></div>
+    <div class="sub">58% RH · 1014 hPa</div></div>
+  </div>
+
+  <div class="rain">
+    <header><h3>Rain history</h3><div class="tot"><b class="num" data-src="weather.rain_24h">4.2</b> mm last 24 h · <b class="num">11.8</b> mm this week</div></header>
+    <div class="stack">
+      <figure><figcaption>This week · daily</figcaption>
+        <svg id="rainD" viewBox="0 0 320 90" preserveAspectRatio="none" aria-label="Rain per day, last seven days"></svg>
+        <div class="tip" id="tipD"></div>
+      </figure>
+      <figure><figcaption>Last 24 hours · hourly</figcaption>
+        <svg id="rainH" viewBox="0 0 320 80" preserveAspectRatio="none" aria-label="Rain per hour, last 24 hours"></svg>
+        <div class="tip" id="tipH"></div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="nodes" aria-labelledby="hn">
+  <h2 id="hn">Sensor nodes</h2>
+
+  <div class="soil">
+    <h3>Soil nodes</h3>
+    <div class="rows">
+      <div class="srow">
+        <div class="gt"><svg id="g0" viewBox="0 0 60 54"></svg></div>
+        <div class="right">
+          <div class="nm">Garden</div>
+          <div class="seen">Node S1 · last seen 2 min</div>
+          <div class="hum"><span>Moisture</span><div class="bar"><i data-src="soil.hum"></i></div><b class="num" data-src="soil.temp">47%</b></div>
+        </div>
+      </div>
+      <div class="srow">
+        <div class="gt"><svg id="g1" viewBox="0 0 60 54"></svg></div>
+        <div class="right">
+          <div class="nm">Orchard</div>
+          <div class="seen">Node S2 · last seen 5 min</div>
+          <div class="hum"><span>Moisture</span><div class="bar"><i></i></div><b class="num">33%</b></div>
+        </div>
+      </div>
+      <div class="srow">
+        <div class="gt"><svg id="g2" viewBox="0 0 60 54"></svg></div>
+        <div class="right">
+          <div class="nm">Greenhouse</div>
+          <div class="seen">Node S3 · last seen 8 min</div>
+          <div class="hum"><span>Moisture</span><div class="bar"><i></i></div><b class="num">61%</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mapbox"><h3>Map</h3>
+<svg class="map" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Map of Sítio das Aguilhadas with sensor node positions">
+  <defs>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse"><path d="M24 0H0V24" fill="none" stroke="currentColor" stroke-opacity=".06"/></pattern>
+  </defs>
+  <rect width="480" height="300" fill="url(#grid)"/>
+  <g fill="none" stroke="currentColor" stroke-opacity=".22" stroke-width="1">
+    <path d="M-10 250 C 60 200, 90 260, 160 215 S 260 150, 330 190 S 430 250, 500 200"/>
+    <path d="M-10 215 C 50 175, 100 220, 170 185 S 260 120, 330 160 S 420 210, 500 170"/>
+    <path d="M-10 180 C 60 150, 110 180, 180 150 S 270 95, 340 130 S 430 170, 500 140"/>
+    <path d="M20 140 C 80 115, 130 150, 200 118 S 290 70, 350 100 S 440 130, 500 110"/>
+    <path d="M60 100 C 120 80, 160 110, 220 90 S 300 45, 360 70 S 450 95, 500 80"/>
+    <path d="M110 60 C 170 45, 200 70, 250 55 S 320 20, 380 40"/>
+  </g>
+  <path d="M40 300 C 70 240, 120 235, 150 190 S 200 120, 260 95 S 340 60, 380 0" fill="none" stroke="currentColor" stroke-opacity=".35" stroke-width="3" stroke-dasharray="6 5"/>
+  <path d="M0 40 C 60 70, 110 60, 170 90 S 250 150, 300 175 S 420 230, 480 220" fill="none" stroke="#3d8ef0" stroke-opacity=".55" stroke-width="2"/>
+  <path d="M210 130 L 300 118 L 345 165 L 330 225 L 250 240 L 195 205 Z" fill="#7be0a8" fill-opacity=".08" stroke="#7be0a8" stroke-opacity=".5" stroke-width="1.5"/>
+  <g class="pins" font-size="11" font-weight="500">
+    <g transform="translate(262 150)"><circle r="16" fill="#3ec8d2" fill-opacity=".18"/><circle r="6" fill="#3ec8d2"/><text x="12" y="4" fill="currentColor">Weather station</text></g>
+    <g transform="translate(300 205)"><circle r="6" fill="#3ec8d2"/><text x="12" y="4" fill="currentColor">Soil · orchard</text></g>
+    <g transform="translate(228 200)"><circle r="6" fill="#3ec8d2"/><text x="-12" y="4" text-anchor="end" fill="currentColor">Soil · garden</text></g>
+    <g transform="translate(320 128)"><rect x="-5" y="-5" width="10" height="10" fill="#7be0a8"/><text x="12" y="4" fill="currentColor">Mesh · house</text></g>
+    <g transform="translate(110 92)"><rect x="-5" y="-5" width="10" height="10" fill="#7be0a8"/><text x="12" y="4" fill="currentColor">Mesh · treehouse</text></g>
+    <g transform="translate(398 250)"><rect x="-5" y="-5" width="10" height="10" fill="#7be0a8"/><text x="-12" y="4" text-anchor="end" fill="currentColor">Mesh · gate</text></g>
+  </g>
+  <g transform="translate(436 32)" fill="currentColor" fill-opacity=".7" font-size="10"><path d="M0 -14 L4 0 L0 -4 L-4 0 Z"/><text y="16" text-anchor="middle">N</text></g>
+  <g transform="translate(20 278)" stroke="currentColor" stroke-opacity=".6" fill="currentColor" fill-opacity=".7" font-size="10"><path d="M0 0h60M0 -4v8M60 -4v8" fill="none"/><text x="30" y="-7" text-anchor="middle" stroke="none">200 m</text></g>
+</svg>
+<div class="leg"><span class="ls"><i></i>Sensor</span><span class="lm"><i></i>Mesh node</span></div></div>
+
+  <div class="chat">
+    <header><h3>Chat · Mesh</h3><div class="on"><b data-src="mesh.nodes">5</b> nodes heard</div></header>
+    <div class="strip" data-src="mesh.nodes.strip">
+      <span class="chip"><i></i>house<b>0</b><span>hops</span></span>
+      <span class="chip"><i></i>gate<b>1</b><span>hop</span></span>
+      <span class="chip"><i></i>treehouse<b>2</b><span>hops</span></span>
+      <span class="chip"><i></i>orchard<b>1</b><span>hop</span></span>
+      <span class="chip"><i></i>garden<b>1</b><span>hop</span></span>
+    </div>
+    <div class="msgs" data-src="mesh.msgs">
+      <div class="m sys"><div class="t">Channel LongFast · Tue 8 Sep</div></div>
+      <div class="m"><div class="who">Bianca <span>house · 09:12</span></div><div class="t">Pump is on, tank was at 40%</div></div>
+      <div class="m me"><div class="who">Lucio <span>gate · 09:14</span></div><div class="t">ok, I'm at the gate with the truck</div></div>
+      <div class="m"><div class="who">Treehouse <span>2 hops · 10:02</span></div><div class="t">Guests checked out, door closed</div></div>
+      <div class="m"><div class="who">Bianca <span>house · 12:40</span></div><div class="t">wind picking up, closing the greenhouse</div></div>
+      <div class="m sys"><div class="t">Node S2 (orchard) back online · 13:55</div></div>
+    </div>
+    <form class="send" onsubmit="return false"><input placeholder="Message the mesh…" aria-label="Message"><button>Send</button></form>
+  </div>
+</section>
+</div>
+<script>
+(function(){
+  const c=document.getElementById('clock'),d=document.getElementById('date');
+  const ft=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit'});
+  const fd=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Lisbon',weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  function tick(){const n=new Date();c.textContent=ft.format(n);d.textContent=fd.format(n)+' · Lisbon time'}tick();setInterval(tick,15000);
+
+  // --- sparklines: 24-point series, stroke muted @ 70%, 2px, no axes ---
+  const co2=[406,404,403,402,401,401,402,405,408,410,411,410,409,408,407,406,405,404,404,405,406,406,405,405];
+  const wind=[2.1,2.6,3.0,3.4,3.9,4.2,4.6,4.1,3.6,3.1,2.8,3.5,4.0,3.8,3.3,2.9,2.5,3.0,3.6,4.0,3.7,3.2,2.8,3.4];
+  const temp=[23.1,22.9,22.4,22.0,21.8,22.1,22.6,23.5,24.4,25.3,26.0,26.4,26.7,26.8,26.6,26.2,25.7,25.3,24.8,24.2,23.8,23.4,23.0,26.4];
+  const sparkH=34,Wspark=240;
+  function spark(id,arr){
+    const max=Math.max(...arr),min=Math.min(...arr),span=(max-min)||1;
+    const pts=arr.map((v,i)=>[(i/(arr.length-1))*Wspark,sparkH-3-((v-min)/span)*(sparkH-10)]);
+    const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
+    document.getElementById(id).innerHTML=`<polyline points="${pts.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ')}" fill="none" stroke="#8fa3b8" stroke-opacity=".7" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>`;
+  }
+  spark('sparkCo2',co2);spark('sparkWind',wind);spark('sparkTemp',temp);
+
+  // --- rain charts ---
+  const daily=[0.4,0.8,3.2,1.5,2.1,2.6,1.2];       // Mon..Sun, 11.8 mm week
+  const hourly=[0,0,0,.2,.6,1.1,.4,0,0,0,0,0,.3,.9,.5,0,0,0,0,.1,.1,0,0,0]; // 4.2 mm 24h
+  const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+
+  function bars(svgId,arr,label,tipId,opts){
+    const svg=document.getElementById(svgId),W=320,H=(opts&&opts.H)||80;
+    const max=Math.max(1,...arr),gap=2;
+    const w=(W-gap*(arr.length-1))/arr.length;
+    let out='';
+    arr.forEach((v,i)=>{
+      const bh=Math.max(1,(v/max)*(H-10));
+      out+=`<rect x="${(i*(w+gap)).toFixed(1)}" y="${(H-4-bh).toFixed(1)}" width="${w.toFixed(1)}" height="${bh.toFixed(1)}" rx="${(opts&&opts.rx)||2}" fill="#3d8ef0"/>`;
+    });
+    svg.innerHTML=out;
+    svg.addEventListener('mousemove',e=>{
+      const r=svg.getBoundingClientRect();
+      const i=Math.floor((e.clientX-r.left)/r.width*arr.length);
+      if(i<0||i>=arr.length)return;
+      const x=(i*(w+gap)+w/2),y=H-4-(arr[i]/max)*(H-10);
+      const tip=document.getElementById(tipId);
+      tip.style.display='block';
+      tip.style.left=(x/W*r.width)+'px';
+      tip.style.top=(y/H*r.height)+'px';
+      tip.innerHTML=`<b>${arr[i].toFixed(1)} mm</b> · ${label(i)}`;
+    });
+    svg.addEventListener('mouseleave',()=>{document.getElementById(tipId).style.display='none'});
+  }
+  bars('rainD',daily,i=>days[i],'tipD',{H:90,rx:3});
+  bars('rainH',hourly,i=>`${24-i} h ago`,'tipH',{H:80,rx:2});
+
+  // --- soil mini gauges ---
+  const soils=[{t:19.6,h:47},{t:21.2,h:33},{t:24.8,h:61}];
+  const lo=0,hi=40,a0=-200,a1=20;
+  const cx=30,cy=40;
+  const P=(a,r)=>{const k=a*Math.PI/180;return [cx+r*Math.cos(k),cy+r*Math.sin(k)]};
+  const arc=(s,e,r)=>{const A=P(s,r),B=P(e,r);return `M${A[0]} ${A[1]}A${r} ${r} 0 ${e-s>180?1:0} 1 ${B[0]} ${B[1]}`};
+  soils.forEach((s,i)=>{
+    const el=document.getElementById('g'+i);
+    const av=a0+(a1-a0)*(s.t-lo)/(hi-lo);
+    el.innerHTML=`<path d="${arc(a0,a1,24)}" fill="none" stroke="#141d28" stroke-width="6" stroke-linecap="round"/>
+      <path d="${arc(a0,av,24)}" fill="none" stroke="#3ec8d2" stroke-width="6" stroke-linecap="round"/>
+      <text x="${cx}" y="${cy+4}" text-anchor="middle" font-size="12" font-weight="600" fill="#f2f6fa" font-family="Barlow Semi Condensed,Barlow,sans-serif">${s.t.toFixed(1)}°</text>`;
+  });
+  // moisture bars
+  const humans=document.querySelectorAll('.srow .hum .bar i');
+  humans.forEach((el,i)=>el.style.width=soils[i].h+'%');
+})();
+</script>
+</body></html>
