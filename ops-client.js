@@ -110,7 +110,7 @@
   }
   function drawRose(points) {
     var rose = $('#windrose'); if (!rose) return;
-    var CX = 60, CY = 60, RMAX = 50, SECT = 22.5;
+    var CX = 60, CY = 60, RMAX = 52, SECT = 22.5;
     var bins = SECTORS.map(function () { return {}; }), total = 0;
     points.forEach(function (p) { var spd = p[1], dir = p[2]; if (spd == null || dir == null) return; total++;
       var si = Math.round(((dir % 360) + 360) % 360 / SECT) % 16, bi = 0;
@@ -277,10 +277,9 @@
     }).catch(function () {});
   }
 
-  // ---------- cinematic chrome: corner brackets + scan sweeps ----------
-  document.querySelectorAll('.panel').forEach(function (p, i) {
+  // ---------- cinematic chrome: corner brackets ----------
+  document.querySelectorAll('.panel').forEach(function (p) {
     var cb = document.createElement('span'); cb.className = 'cb'; p.appendChild(cb);
-    var scan = document.createElement('span'); scan.className = 'scanline'; scan.style.animationDelay = (i * 0.7) + 's'; p.appendChild(scan);
   });
 
   // ---------- boot ----------
