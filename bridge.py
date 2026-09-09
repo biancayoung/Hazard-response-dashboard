@@ -65,6 +65,12 @@ FIELD_HISTORY = 48  # points kept per field
 # Meshtastic state.
 MESH_NODES = {}  # node_id -> {name, last_heard, battery, lat, lon, hops}
 MESH_MSGS = collections.deque(maxlen=50)  # recent chat messages
+# Dedup ring buffer for mesh packets: two farm gateways hear the same
+# Meshtastic packet and the farm relays both, so the same message arrives
+# twice. The reliable key is the Meshtastic packet `id`; fall back to
+# (sender, text) when a packet has no id.
+MESH_SEEN = collections.deque(maxlen=500)
+MESH_SEEN_SET = set()
 
 
 # ---------------------------------------------------------------------------
@@ -307,10 +313,47 @@ def _node_name(node_id, payload):
     return str(node_id).lstrip("!")
 
 
+def _mesh_dedup_key(msg, payload, mtype):
+    """Return a dedup key for one mesh packet, or None if not dedupable.
+
+    Two farm gateways hear the same Meshtastic packet and the farm relays
+    both, so the same message can arrive twice. The reliable key is the
+    Meshtastic packet `id`; fall back to (sender, text) for text messages
+    that carry no id.
+    """
+    pid = msg.get("id") or payload.get("id")
+    if pid is not None:
+        return ("id", pid)
+    if mtype == "text":
+        sender = msg.get("from") or msg.get("sender") or payload.get("from")
+        text = payload.get("text") or payload.get("message") or ""
+        return ("ft", str(sender), text)
+    return None
+
+
+def mesh_is_duplicate(msg, payload, mtype):
+    """True if this mesh packet was already seen (within the ring buffer)."""
+    key = _mesh_dedup_key(msg, payload, mtype)
+    if key is None:
+        return False
+    if key in MESH_SEEN_SET:
+        return True
+    MESH_SEEN.append(key)
+    MESH_SEEN_SET.add(key)
+    if len(MESH_SEEN_SET) > 500:
+        MESH_SEEN_SET.clear()
+        MESH_SEEN_SET.update(MESH_SEEN)
+    return False
+
+
 def handle_mesh(topic, msg):
     """Process one Meshtastic MQTT message; update nodes, chat, and STATE."""
     mtype = (msg.get("type") or "").lower()
     payload = msg.get("payload") or msg
+    # Dedupe repeated mesh packets (two gateways hear the same packet).
+    if mesh_is_duplicate(msg, payload, mtype):
+        log.info("duplicate mesh packet ignored (id=%s)", msg.get("id") or payload.get("id"))
+        return
     # node id from the topic (!<nodeid>) or the payload
     node_id = msg.get("from") or msg.get("sender") or payload.get("from")
     if not node_id and "!" in topic:

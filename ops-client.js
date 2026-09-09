@@ -104,20 +104,31 @@
       (unit ? '<text x="' + cx + '" y="' + (cy + 18) + '" text-anchor="middle" font-size="9" fill="#8fa3b8">' + unit + '</text>' : '');
   }
 
-  // ---------- sparkline (smooth, gradient) ----------
+  // ---------- sparkline (smooth curve + gradient, like dashboard 1) ----------
+  function _smooth(pts) {
+    if (pts.length < 3) return pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
+    var d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
+    for (var i = 0; i < pts.length - 1; i++) {
+      var p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+      var c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6,
+          c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
+      d += 'C' + c1x.toFixed(1) + ' ' + c1y.toFixed(1) + ' ' + c2x.toFixed(1) + ' ' + c2y.toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
+    }
+    return d;
+  }
   function drawSpark(el, series, color) {
-    if (!series || series.length < 2) { el.innerHTML = '<svg viewBox="0 0 100 40"><text x="50" y="24" font-size="9" fill="#3a4a5c" text-anchor="middle">collecting</text></svg>'; return; }
+    if (!series || series.length < 2) { el.innerHTML = '<svg viewBox="0 0 100 44"><text x="50" y="26" font-size="9" fill="#3a4a5c" text-anchor="middle">collecting</text></svg>'; return; }
     color = color || '#33e0ff';
-    var W = 100, H = 40, vs = series.map(function (p) { return p[1]; }), n = series.length;
+    var W = 100, H = 44, vs = series.map(function (p) { return p[1]; }), n = series.length;
     var min = Math.min.apply(null, vs), max = Math.max.apply(null, vs), rng = (max - min) || 1;
-    var pts = series.map(function (p, i) { return [i * (W / (n - 1)), H - 4 - ((p[1] - min) / rng) * (H - 10)]; });
-    var line = pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
-    var last = pts[pts.length - 1];
+    min -= rng * 0.1; max += rng * 0.1; rng = (max - min) || 1;
+    var pts = series.map(function (p, i) { return [i * (W / (n - 1)), H - 5 - ((p[1] - min) / rng) * (H - 12)]; });
+    var line = _smooth(pts), last = pts[pts.length - 1];
     el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
-      '<defs><linearGradient id="sg' + color.slice(1) + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + color + '" stop-opacity=".4"/><stop offset="1" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>' +
+      '<defs><linearGradient id="sg' + color.slice(1) + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + color + '" stop-opacity=".45"/><stop offset="1" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>' +
       '<path d="' + line + ' L' + W + ' ' + H + ' L0 ' + H + 'Z" fill="url(#sg' + color.slice(1) + ')"/>' +
-      '<path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="1.6" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>' +
-      '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="2.2" fill="' + color + '"/></svg>';
+      '<path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>' +
+      '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="2.4" fill="' + color + '"/></svg>';
   }
 
   // ---------- wind rose (professional, 16 dir, legend) ----------
@@ -160,6 +171,30 @@
       h += '<div class="note">% of time</div>'; lg.innerHTML = h; }
   }
 
+  // ---------- helpers ----------
+  function esc(s) {
+    return String(s).replace(/[&<>"]/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
+    });
+  }
+
+  // ---------- meshtastic chat ----------
+  // Render the real mesh.msgs into the chat container, replacing the mock
+  // content. Markup matches the existing chat bubbles (.m / .m.me / .m.sys).
+  function renderMsgs(list) {
+    var box = document.querySelector('[data-src="mesh.msgs"]');
+    if (!box || !Array.isArray(list)) return;
+    if (!list.length) return; // keep the mock/placeholder when no real messages yet
+    box.innerHTML = list.map(function (m) {
+      if (m.sys) return '<div class="m sys"><div class="t">' + esc(m.text || '') + '</div></div>';
+      var cls = m.me ? 'm me' : 'm';
+      return '<div class="' + cls + '"><div class="who">' +
+        esc(m.who || '?') + (m.meta ? ' <span>' + esc(m.meta) + '</span>' : '') + '</div>' +
+        '<div class="t">' + esc(m.text || '') + '</div></div>';
+    }).join('');
+    box.scrollTop = box.scrollHeight;
+  }
+
   // ---------- event log ----------
   var LOG = [];
   function addLog(cls, m) {
@@ -197,6 +232,8 @@
     if (rs && rv != null) rs.textContent = rv > 0.05 ? (I18N[lang].raining + ' · ' + rv.toFixed(1) + ' mm/h') : I18N[lang].dry;
     // sub-labels (text context instead of graphs)
     subLabels();
+    // meshtastic chat (real messages replace the mock content)
+    if (Array.isArray(STATE['mesh.msgs'])) renderMsgs(STATE['mesh.msgs']);
     // sensors count
     var sc = $('#stSensors'); if (sc) sc.textContent = Object.keys(window.DEVICES || {}).length || '--';
   }

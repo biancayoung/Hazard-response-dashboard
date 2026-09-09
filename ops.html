@@ -65,7 +65,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 
 /* small metric tiles in left rail */
 .mini{flex:1;display:flex;flex-direction:column;justify-content:center}
-.mini .spark{height:30px;margin-top:4px}
+.mini .spark{height:44px;margin-top:6px;flex:1;min-height:0}
 .mini .spark svg{width:100%;height:100%;display:block;overflow:visible}
 
 /* gauges */
@@ -73,11 +73,11 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 .gauge svg{width:100%;max-width:150px;height:auto;overflow:visible}
 
 /* map */
-.mapbox{flex:2.2;min-height:0;padding:0}
+.mapbox{flex:1.4;min-height:0;padding:0}
 /* wind + air side by side */
-.windair{flex:1.1;min-height:0;display:flex;gap:10px}
-.windbox{flex:1.5;min-height:0}
-.airbox{flex:1;min-height:0}
+.windair{flex:1.8;min-height:0;display:flex;gap:10px}
+.windbox{flex:1.4;min-height:0}
+.airbox{flex:1.1;min-height:0}
 .soilbox{flex:0.9;min-height:0}
 .chat.grow{flex:2.4}
 .mapbox h3{position:absolute;z-index:2;left:12px;top:9px;margin:0}
@@ -182,19 +182,19 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <div class="panel mini"><h3 data-i18n="humidity">Humidity</h3>
         <div class="val num" data-src="weather.hum">--<u>%</u></div>
-        <div class="lbl" id="humDelta">--</div>
+        <div class="spark" data-spark="weather.hum"></div>
       </div>
       <div class="panel mini"><h3>CO₂</h3>
         <div class="val num" data-src="weather.co2">--<u>ppm</u></div>
-        <div class="lbl" id="co2Level">--</div>
+        <div class="spark" data-spark="weather.co2"></div>
       </div>
       <div class="panel mini"><h3 data-i18n="rain">Rain</h3>
         <div class="val num" data-src="weather.rain_24h">--<u>mm</u></div>
-        <div class="lbl" id="rainStatus">--</div>
+        <div class="spark" data-spark="weather.rain_24h"></div>
       </div>
       <div class="panel mini"><h3 data-i18n="pressure">Pressure</h3>
         <div class="val num" data-src="weather.pressure">--<u>hPa</u></div>
-        <div class="lbl" id="presTrend">--</div>
+        <div class="spark" data-spark="weather.pressure"></div>
       </div>
     </div>
 
