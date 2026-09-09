@@ -62,6 +62,10 @@ DEVICES = {}  # dev_eui -> {name, last_seen, rssi, snr, fcnt, frames}
 FIELDS = {}
 FIELD_HISTORY = 48  # points kept per field
 
+# Meshtastic state.
+MESH_NODES = {}  # node_id -> {name, last_heard, battery, lat, lon, hops}
+MESH_MSGS = collections.deque(maxlen=50)  # recent chat messages
+
 
 # ---------------------------------------------------------------------------
 # Payload digestion for the real SenseCAP / ChirpStack v4 feed.
@@ -290,6 +294,69 @@ def digest_uplink(msg: dict):
     return updates, fields, dev_eui
 
 
+# ---------------------------------------------------------------------------
+# Meshtastic (msh/<region>/2/json/<channel>/!<nodeid>).
+# JSON payloads carry a "type": text | position | telemetry | nodeinfo.
+# ---------------------------------------------------------------------------
+def _node_name(node_id, payload):
+    """Best-effort human name for a mesh node."""
+    for k in ("longname", "longName", "shortname", "shortName", "name"):
+        v = payload.get(k)
+        if v:
+            return v
+    return str(node_id).lstrip("!")
+
+
+def handle_mesh(topic, msg):
+    """Process one Meshtastic MQTT message; update nodes, chat, and STATE."""
+    mtype = (msg.get("type") or "").lower()
+    payload = msg.get("payload") or msg
+    # node id from the topic (!<nodeid>) or the payload
+    node_id = msg.get("from") or msg.get("sender") or payload.get("from")
+    if not node_id and "!" in topic:
+        node_id = topic.rsplit("!", 1)[-1]
+    node_id = str(node_id or "unknown")
+
+    node = MESH_NODES.setdefault(node_id, {"name": _node_name(node_id, payload)})
+    node["last_heard"] = time.strftime("%H:%M:%S")
+    if "longname" in payload or "longName" in payload or "shortname" in payload or "shortName" in payload:
+        node["name"] = _node_name(node_id, payload)
+
+    if mtype == "text":
+        text = payload.get("text") or payload.get("message") or ""
+        if text:
+            MESH_MSGS.append({
+                "who": node["name"],
+                "meta": node.get("hops", "") and ("%s hops" % node["hops"]) or time.strftime("%H:%M"),
+                "text": text,
+                "me": False,
+            })
+            STATE["mesh.msgs"] = list(MESH_MSGS)
+            broadcast({"type": "update", "data": {"mesh.msgs": list(MESH_MSGS)}})
+
+    elif mtype == "position":
+        lat = payload.get("latitude") or payload.get("lat")
+        lon = payload.get("longitude") or payload.get("lon")
+        if lat is not None and lon is not None:
+            node["lat"], node["lon"] = lat, lon
+
+    elif mtype == "telemetry":
+        batt = payload.get("battery") or payload.get("batteryLevel") or payload.get("battery_level")
+        if batt is not None:
+            node["battery"] = batt
+
+    elif mtype == "nodeinfo":
+        if "hops" in payload:
+            node["hops"] = payload["hops"]
+        if "battery" in payload:
+            node["battery"] = payload["battery"]
+
+    # update node count + broadcast
+    STATE["mesh.nodes"] = len(MESH_NODES)
+    broadcast({"type": "update", "data": {"mesh.nodes": len(MESH_NODES)}})
+    log.info("mesh %s from %s (%s); %d nodes", mtype or "?", node_id, node["name"], len(MESH_NODES))
+
+
 def is_duplicate(msg: dict) -> bool:
     """Two farm gateways hear the same sensor, so the same uplink can arrive
     twice. ChirpStack gives each gateway copy a DIFFERENT deduplicationId, so
@@ -421,8 +488,9 @@ def start_mqtt(host, port, topic, username, password):
         client.username_pw_set(username, password)
 
     def on_connect(c, userdata, flags, rc, properties=None):
-        log.info("mqtt connected rc=%s, subscribing %s", rc, topic)
+        log.info("mqtt connected rc=%s, subscribing %s + msh/#", rc, topic)
         c.subscribe(topic)
+        c.subscribe("msh/#")  # Meshtastic (flows whenever the farm enables it)
 
     def on_message(c, userdata, m):
         raw = m.payload.decode("utf-8", "replace")
@@ -431,6 +499,10 @@ def start_mqtt(host, port, topic, username, password):
         except Exception:
             log.warning("non-json payload on %s", m.topic)
             msg = {"_raw": raw}
+        # Meshtastic messages go to the mesh handler, not the LoRa digestion.
+        if m.topic.startswith("msh/"):
+            handle_mesh(m.topic, msg)
+            return
         if is_duplicate(msg):
             log.info("duplicate uplink ignored (devEui,fCnt)")
             return
