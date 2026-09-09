@@ -1,0 +1,178 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portugal · farm screen · admin</title>
+<!--
+  ADMIN page: raw uplinks, device signal, live digested state.
+  Same design tokens as the dashboard. Connects to ws://host:8765/ws/admin.
+-->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#141d28; --bg-2:#1a2634; --tile:#1f2c3b; --tile-2:#25334a; --line:#2f4157;
+  --ink:#f2f6fa; --muted:#8fa3b8; --dim:#5f7389;
+  --teal:#3ec8d2; --blue:#3d8ef0; --mint:#7be0a8; --amber:#f0b45a;
+  --r:14px; --gap:18px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(120% 90% at 50% 0%,var(--bg-2) 0%,var(--bg) 60%);color:var(--ink);
+  font:15px/1.4 Barlow,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.num{font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+a{color:inherit}
+
+.screen{min-height:100%;display:grid;grid-template-rows:auto auto 1fr;gap:var(--gap);padding:22px 28px 24px}
+
+/* header */
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:0 4px}
+.place{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+.place h1{margin:0;font-size:34px;font-weight:600;letter-spacing:-.01em}
+.place .where{color:var(--muted);font-size:16px}
+.badge{display:inline-flex;align-items:center;gap:7px;background:var(--mint);color:#0d2417;font-weight:600;font-size:13px;padding:4px 10px 4px 8px;border-radius:6px;transform:translateY(-4px)}
+.badge i{width:7px;height:7px;border-radius:50%;background:#0d2417;display:inline-block}
+.badge.off{background:var(--amber)}
+.links{display:flex;gap:16px;font-size:14px}
+.links a{color:var(--muted);text-decoration:none}
+.links a:hover{color:var(--mint)}
+.conn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
+.conn i{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+.conn.up i{background:var(--mint)}
+
+section{display:grid;gap:0;min-height:0}
+section>h2{grid-column:1/-1;margin:0 0 12px;font-size:14px;font-weight:500;color:var(--muted);letter-spacing:.02em;padding:0 4px}
+
+/* state readouts: boxless like B */
+.state{grid-template-columns:repeat(4,1fr);column-gap:26px;padding-bottom:var(--gap)}
+@media (max-width:900px){.state{grid-template-columns:1fr 1fr}}
+.ro{min-height:0;display:flex;flex-direction:column;justify-content:center;padding:6px 4px}
+.ro+.ro{border-left:1px solid var(--line);padding-left:26px}
+@media (max-width:900px){.ro+.ro{border-left:0;padding-left:4px}}
+.ro .v{font-size:clamp(28px,3vw,44px);font-weight:600;line-height:.95}
+.ro .v u{text-decoration:none;font-size:.4em;color:var(--muted);font-weight:500;margin-left:6px}
+.ro .l{color:var(--muted);font-size:13px;margin-top:8px}
+
+/* lower grid: devices + raw feed */
+.lower{grid-template-columns:1fr 1.6fr;column-gap:26px;border-top:1px solid var(--line);padding-top:var(--gap);min-height:0}
+@media (max-width:900px){.lower{grid-template-columns:1fr}}
+.panel{display:flex;flex-direction:column;min-height:0}
+.panel+.panel{border-left:1px solid var(--line);padding-left:26px}
+@media (max-width:900px){.panel+.panel{border-left:0;padding-left:0}}
+.panel h3{margin:0 0 10px;font-size:15px;font-weight:500}
+
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+th{color:var(--muted);font-weight:500;text-align:left;padding:6px 8px;border-bottom:1px solid var(--line)}
+td{padding:7px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right}
+.sig{color:var(--teal)}
+.empty{color:var(--dim);font-size:13px;padding:8px}
+
+.raw{flex:1;overflow:auto;min-height:0;display:flex;flex-direction:column;gap:8px;padding-right:4px}
+.uplink{background:var(--tile);border:1px solid var(--line);border-radius:10px;padding:9px 12px}
+.uplink .meta{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:5px}
+.uplink .meta b{color:var(--mint);font-weight:600}
+.uplink .meta .t{color:var(--dim);margin-left:auto}
+.uplink pre{margin:0;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ink);
+  white-space:pre-wrap;word-break:break-word;max-height:150px;overflow:auto}
+.uplink .keys{margin-top:5px;font-size:12px;color:var(--teal)}
+</style></head><body>
+<div class="screen">
+<header class="top">
+  <div class="place"><span class="badge" id="badge"><i></i>Admin</span><h1>Portugal</h1><span class="where">Algarve fabfarm · raw data</span></div>
+  <div class="links"><span class="conn" id="conn"><i></i>connecting</span><a href="/">dashboard</a></div>
+</header>
+
+<section class="state" aria-labelledby="hs">
+  <h2 id="hs">Live state</h2>
+  <div class="ro"><div class="v num" id="s-temp">--<u>°C</u></div><div class="l">Temperature</div></div>
+  <div class="ro"><div class="v num" id="s-hum">--<u>%</u></div><div class="l">Humidity</div></div>
+  <div class="ro"><div class="v num" id="s-soil">--<u>%</u></div><div class="l">Soil moisture</div></div>
+  <div class="ro"><div class="v num" id="s-nodes">--</div><div class="l">Mesh nodes</div></div>
+</section>
+
+<section class="lower" aria-labelledby="hl">
+  <h2 id="hl" style="display:none">detail</h2>
+  <div class="panel">
+    <h3>Devices</h3>
+    <table><thead><tr><th>Device</th><th class="num">RSSI</th><th class="num">SNR</th><th class="num">Frames</th><th class="num">Last seen</th></tr></thead>
+    <tbody id="devices"><tr><td colspan="5" class="empty">No uplinks yet</td></tr></tbody></table>
+  </div>
+  <div class="panel">
+    <h3>Raw uplinks</h3>
+    <div class="raw" id="raw"><div class="empty">Waiting for data…</div></div>
+  </div>
+</section>
+</div>
+<script>
+(function(){
+  var url=(location.protocol==='https:')?'wss://'+location.host+'/ws/admin':'ws://'+location.hostname+':8765/ws/admin';
+  var conn=document.getElementById('conn'),badge=document.getElementById('badge');
+  var rawBox=document.getElementById('raw'),devBody=document.getElementById('devices');
+  var started=false;
+
+  function setConn(up){conn.className='conn'+(up?' up':'');conn.innerHTML='<i></i>'+(up?'live':'reconnecting');
+    badge.className='badge'+(up?'':' off');}
+
+  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+  function setState(s){
+    if(!s)return;
+    if(s['weather.temp']!=null)document.getElementById('s-temp').innerHTML=(+s['weather.temp']).toFixed(1)+'<u>°C</u>';
+    if(s['weather.hum']!=null)document.getElementById('s-hum').innerHTML=Math.round(s['weather.hum'])+'<u>%</u>';
+    if(s['soil.hum']!=null)document.getElementById('s-soil').innerHTML=Math.round(s['soil.hum'])+'<u>%</u>';
+    if(s['mesh.nodes']!=null)document.getElementById('s-nodes').textContent=Math.round(s['mesh.nodes']);
+  }
+
+  function renderDevices(list){
+    if(!list||!list.length){devBody.innerHTML='<tr><td colspan="5" class="empty">No uplinks yet</td></tr>';return}
+    devBody.innerHTML=list.map(function(d){
+      return '<tr><td>'+esc(d.name||d.dev_eui||'?')+'</td>'+
+        '<td class="num sig">'+(d.rssi!=null?d.rssi+' dBm':'-')+'</td>'+
+        '<td class="num">'+(d.snr!=null?d.snr+' dB':'-')+'</td>'+
+        '<td class="num">'+(d.frames||0)+'</td>'+
+        '<td class="num">'+esc(d.last_seen||'-')+'</td></tr>';
+    }).join('');
+  }
+
+  function uplinkHtml(e){
+    var keys=e.object?Object.keys(e.object).join(', '):'(no decoded object)';
+    return '<div class="uplink"><div class="meta"><b>'+esc(e.device||'?')+'</b>'+
+      '<span>'+esc(e.topic||'')+'</span>'+
+      (e.rssi!=null?'<span class="sig">'+e.rssi+' dBm</span>':'')+
+      (e.snr!=null?'<span>'+e.snr+' dB</span>':'')+
+      '<span class="t">'+esc(e.ts||'')+'</span></div>'+
+      '<pre>'+esc(JSON.stringify(e.raw,e.object?null:undefined,2))+'</pre>'+
+      '<div class="keys">decoded: '+esc(keys)+'</div></div>';
+  }
+
+  function renderRaw(list){
+    if(!list||!list.length){rawBox.innerHTML='<div class="empty">Waiting for data…</div>';return}
+    rawBox.innerHTML=list.map(uplinkHtml).join('');
+  }
+
+  function prependRaw(e){
+    if(!started){started=true;rawBox.innerHTML='';}
+    var d=document.createElement('div');d.innerHTML=uplinkHtml(e);
+    rawBox.insertBefore(d.firstChild,rawBox.firstChild);
+    while(rawBox.children.length>200)rawBox.removeChild(rawBox.lastChild);
+  }
+
+  function connect(){
+    var ws;
+    try{ws=new WebSocket(url)}catch(e){return setTimeout(connect,3000)}
+    ws.onopen=function(){setConn(true)};
+    ws.onmessage=function(ev){
+      try{
+        var msg=JSON.parse(ev.data);
+        if(msg.type==='admin_snapshot'){setState(msg.data.state);renderDevices(msg.data.devices);renderRaw(msg.data.raw)}
+        else if(msg.type==='raw'){prependRaw(msg.data)}
+        else if(msg.type==='update'){setState(msg.data)}
+      }catch(e){}
+    };
+    ws.onclose=function(){setConn(false);setTimeout(connect,3000)};
+    ws.onerror=function(){try{ws.close()}catch(e){}};
+  }
+  connect();
+})();
+</script>
+</body></html>

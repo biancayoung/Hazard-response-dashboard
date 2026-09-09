@@ -1,0 +1,14 @@
+# runtime data
+farm.db
+farm.db-journal
+farm.db-wal
+farm.db-shm
+
+# temp / helper scripts (one-off)
+tmp_*.js
+
+# OS / editor
+.DS_Store
+Thumbs.db
+__pycache__/
+*.pyc

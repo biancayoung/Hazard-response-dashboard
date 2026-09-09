@@ -1,0 +1,250 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>fabfarm · ops console</title>
+<!--
+  OPTION 2 · "OPS CONSOLE": hazard-response base-station vibe.
+  Same data as the dashboard, rendered as a command centre: status strip,
+  gauges, sparklines, wind rose, alert colours on dark. Live via ws + /api.
+-->
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0f16; --bg2:#0d141d; --panel:#111a26; --panel2:#16222f; --line:#22344a; --line2:#2e455f;
+  --ink:#eef4fa; --muted:#8fa3b8; --dim:#5b7186;
+  --grn:#39ff9c; --cyn:#33e0ff; --amb:#ffc24b; --red:#ff5d6c; --blu:#4d9fff; --pur:#b78bff;
+  --r:10px;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;color:var(--ink);font:14px/1.4 Barlow,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(120% 80% at 50% -10%, #12202e 0%, var(--bg) 55%),
+    var(--bg);
+  overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:repeating-linear-gradient(0deg, rgba(51,224,255,.025) 0 1px, transparent 1px 3px);}
+.num{font-family:"Barlow Semi Condensed",Barlow,monospace;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
+.mono{font-family:"Barlow Condensed",Barlow,sans-serif;letter-spacing:.06em}
+
+.screen{position:relative;z-index:1;min-height:100%;display:grid;grid-template-rows:auto auto 1fr auto;gap:14px;padding:16px 20px 14px}
+
+/* ===== top status strip ===== */
+.strip{display:flex;align-items:center;gap:18px;background:linear-gradient(180deg,var(--panel2),var(--panel));
+  border:1px solid var(--line2);border-radius:var(--r);padding:10px 16px;box-shadow:0 0 0 1px rgba(51,224,255,.05),0 8px 24px rgba(0,0,0,.35)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo .dot{width:11px;height:11px;border-radius:50%;background:var(--grn);box-shadow:0 0 10px var(--grn);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.logo h1{margin:0;font:600 22px "Barlow Condensed";letter-spacing:.14em;text-transform:uppercase}
+.logo .sub{color:var(--cyn);font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+.strip .sp{flex:1}
+.stat{display:flex;flex-direction:column;align-items:flex-end;line-height:1.1}
+.stat .k{color:var(--dim);font-size:10px;letter-spacing:18%;text-transform:uppercase;letter-spacing:.18em}
+.stat .v{font:600 20px "Barlow Semi Condensed"}
+.stat .v.on{color:var(--grn)}
+.clockbox{text-align:right;line-height:1}
+.clockbox time{font:700 40px "Barlow Semi Condensed";display:block}
+.clockbox small{color:var(--muted);font-size:11px;letter-spacing:.12em;text-transform:uppercase}
+.lang{background:var(--panel2);border:1px solid var(--line2);color:var(--muted);border-radius:6px;padding:5px 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
+.lang:hover{color:var(--cyn);border-color:var(--cyn)}
+
+/* ===== alert / condition banner ===== */
+.banner{display:flex;align-items:center;gap:12px;border-radius:var(--r);padding:8px 16px;font:600 13px "Barlow Condensed";letter-spacing:.1em;text-transform:uppercase;
+  background:linear-gradient(90deg, rgba(57,255,156,.12), rgba(57,255,156,.03));border:1px solid rgba(57,255,156,.35);color:var(--grn)}
+.banner.warn{background:linear-gradient(90deg, rgba(255,194,75,.14), rgba(255,194,75,.03));border-color:rgba(255,194,75,.4);color:var(--amb)}
+.banner.alert{background:linear-gradient(90deg, rgba(255,93,108,.16), rgba(255,93,108,.03));border-color:rgba(255,93,108,.45);color:var(--red);animation:alertstrobe 1.2s infinite}
+@keyframes alertstrobe{0%,100%{box-shadow:0 0 0 rgba(255,93,108,0)}50%{box-shadow:0 0 24px rgba(255,93,108,.35)}}
+.banner .blip{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;animation:pulse 1.4s infinite}
+
+/* ===== main grid ===== */
+.grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;min-height:0}
+.panel{background:linear-gradient(180deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:6px;
+  padding:12px 14px;display:flex;flex-direction:column;min-height:0;position:relative;overflow:hidden}
+/* corner brackets: targeting-reticle frame */
+.panel::before,.panel::after,.panel .cb::before,.panel .cb::after{content:"";position:absolute;width:14px;height:14px;pointer-events:none}
+.panel::before{top:0;left:0;border-top:2px solid var(--grn);border-left:2px solid var(--grn);opacity:.55}
+.panel::after{top:0;right:0;border-top:2px solid var(--grn);border-right:2px solid var(--grn);opacity:.55}
+.panel .cb::before{bottom:0;left:0;border-bottom:2px solid var(--grn);border-left:2px solid var(--grn);opacity:.55}
+.panel .cb::after{bottom:0;right:0;border-bottom:2px solid var(--grn);border-right:2px solid var(--grn);opacity:.55}
+.panel>h3{margin:0 0 8px;font:600 11px "Barlow Condensed";letter-spacing:.22em;text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:8px}
+.panel>h3::before{content:"";width:6px;height:6px;background:var(--grn);box-shadow:0 0 6px var(--grn)}
+.panel .val{font:700 44px "Barlow Semi Condensed";line-height:.95;text-shadow:0 0 18px rgba(57,255,156,.3)}
+.panel .val u{text-decoration:none;font-size:.4em;color:var(--muted);font-weight:500;margin-left:4px}
+.panel .lbl{color:var(--dim);font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-top:2px}
+/* scanning sweep across panels */
+.scanline{position:absolute;left:0;right:0;height:60px;top:-60px;pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(57,255,156,.07),transparent);animation:scan 5s linear infinite}
+@keyframes scan{to{top:110%}}
+
+/* spans */
+.s3{grid-column:span 3}.s4{grid-column:span 4}.s5{grid-column:span 5}.s6{grid-column:span 6}.s8{grid-column:span 8}.s12{grid-column:span 12}
+@media (max-width:1100px){.grid{grid-template-columns:repeat(6,1fr)}.s3,.s4,.s5,.s6,.s8{grid-column:span 3}.s12{grid-column:span 6}}
+@media (max-width:700px){.grid{grid-template-columns:1fr 1fr}.s3,.s4,.s5,.s6,.s8,.s12{grid-column:span 2}}
+
+/* gauge */
+.gauge{display:grid;place-items:center;flex:1;min-height:0}
+.gauge svg{width:100%;max-width:170px;height:auto;overflow:visible}
+.gval{font:700 30px "Barlow Semi Condensed"}
+.gunit{font-size:11px;color:var(--muted)}
+
+/* sparkline */
+.spark{flex:1;min-height:44px;margin-top:6px}
+.spark svg{width:100%;height:100%;display:block;overflow:visible}
+
+/* wind rose */
+.rosewrap{display:flex;gap:12px;align-items:center;flex:1;min-height:0}
+.rosewrap svg{flex:none}
+.wlegend{display:flex;flex-direction:column;gap:2px;font-size:10px}
+.wlegend .cap{color:var(--muted);font-size:10px;margin-bottom:2px;letter-spacing:.08em;text-transform:uppercase}
+.wlegend .li{display:flex;align-items:center;gap:6px;color:var(--muted);line-height:1.2}
+.wlegend .li i{width:9px;height:9px;border-radius:2px;flex:none}
+.wlegend .note{color:var(--dim);font-size:9px;margin-top:2px}
+
+/* metric bars */
+.bars{display:flex;flex-direction:column;gap:9px;flex:1;justify-content:center}
+.brow{display:grid;grid-template-columns:86px 1fr 44px;align-items:center;gap:10px;font-size:12px}
+.brow .bk{color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-size:10.5px}
+.brow .bt{height:8px;background:var(--bg);border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.brow .bt i{display:block;height:100%;border-radius:4px}
+.brow .bv{text-align:right;font:600 14px "Barlow Semi Condensed"}
+
+/* log feed */
+.log{flex:1;overflow:auto;min-height:0;display:flex;flex-direction:column;gap:5px;font-size:12px}
+.log .li{display:flex;gap:10px;padding:5px 8px;background:var(--panel2);border-left:2px solid var(--cyn);border-radius:4px}
+.log .li .t{color:var(--dim);font-size:10.5px;flex:none;font-family:"Barlow Semi Condensed"}
+.log .li .m{color:var(--ink)}
+.log .li.sys{border-left-color:var(--dim);color:var(--dim)}
+.log .li.warn{border-left-color:var(--amb)}
+.log .li.alert{border-left-color:var(--red)}
+
+/* trends */
+.trends{padding-bottom:14px}
+.trendgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;flex:1;min-height:0}
+@media (max-width:1100px){.trendgrid{grid-template-columns:1fr 1fr}}
+@media (max-width:700px){.trendgrid{grid-template-columns:1fr}}
+.tchart{background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;min-height:0}
+.tchart .thead{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.tchart .tk{font:600 11px "Barlow Condensed";letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.tchart .tstats{font:600 11px "Barlow Semi Condensed";color:var(--dim)}
+.tchart .tstats b{color:var(--ink)}
+.tchart .tbody{flex:1;min-height:90px}
+.tchart .tbody svg{width:100%;height:100%;display:block;overflow:visible}
+
+/* footer */
+.foot{display:flex;justify-content:space-between;align-items:center;color:var(--dim);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase}
+.foot a{color:var(--muted);text-decoration:none}
+.foot a:hover{color:var(--cyn)}
+.ok{color:var(--grn)} .warnC{color:var(--amb)} .alertC{color:var(--red)}
+</style></head><body>
+<div class="screen">
+
+  <!-- status strip -->
+  <div class="strip">
+    <div class="logo"><span class="dot"></span><div><h1>fabfarm ops</h1><div class="sub">environmental monitoring · station 01</div></div></div>
+    <div class="sp"></div>
+    <div class="stat"><span class="k">grid</span><span class="v num" style="font-size:15px;color:var(--cyn)">37.08°N 8.67°W</span></div>
+    <div class="stat"><span class="k">sensors</span><span class="v on num" id="stSensors">--</span></div>
+    <div class="stat"><span class="k">link</span><span class="v on" id="stLink">live</span></div>
+    <button class="lang" id="langToggle">中文</button>
+    <div class="clockbox"><time class="num" id="clock">--:--:--</time><small id="date">lisbon</small></div>
+  </div>
+
+  <!-- condition banner -->
+  <div class="banner" id="banner"><span class="blip"></span><span id="bannerText">All systems nominal</span></div>
+
+  <!-- main grid -->
+  <div class="grid">
+    <!-- temperature -->
+    <div class="panel s3"><h3 data-i18n="temp">Temperature</h3>
+      <div class="val num" data-src="weather.temp">--<u>°C</u></div>
+      <div class="spark" data-spark="weather.temp"></div>
+    </div>
+    <!-- humidity -->
+    <div class="panel s3"><h3 data-i18n="humidity">Humidity</h3>
+      <div class="gauge"><svg id="gHum" viewBox="-10 0 220 130"></svg></div>
+    </div>
+    <!-- wind -->
+    <div class="panel s6"><h3 data-i18n="wind">Wind</h3>
+      <div class="rosewrap">
+        <svg id="windrose" viewBox="-24 -24 168 168" width="240" height="240"></svg>
+        <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px">
+          <div class="val num" data-src="weather.wind" style="font-size:46px">--<u>m/s</u></div>
+          <div class="lbl num" data-src="weather.wind_dir" style="font-size:20px;color:var(--grn)">--</div>
+          <div class="wlegend" id="wlegend"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- co2 -->
+    <div class="panel s3"><h3>CO₂</h3>
+      <div class="val num" data-src="weather.co2">--<u>ppm</u></div>
+      <div class="spark" data-spark="weather.co2"></div>
+    </div>
+    <!-- rain -->
+    <div class="panel s3"><h3 data-i18n="rain">Rain</h3>
+      <div class="val num" data-src="weather.rain_24h">--<u>mm</u></div>
+      <div class="lbl" id="rainStatus">--</div>
+      <div class="spark" data-spark="weather.rain_24h"></div>
+    </div>
+    <!-- pressure -->
+    <div class="panel s3"><h3 data-i18n="pressure">Pressure</h3>
+      <div class="val num" data-src="weather.pressure">--<u>hPa</u></div>
+      <div class="spark" data-spark="weather.pressure"></div>
+    </div>
+    <!-- light -->
+    <div class="panel s3"><h3 data-i18n="light">Light</h3>
+      <div class="val num" data-src="weather.light">--<u>k lux</u></div>
+      <div class="spark" data-spark="weather.light"></div>
+    </div>
+
+    <!-- air quality bars -->
+    <div class="panel s4"><h3>Air quality</h3>
+      <div class="bars">
+        <div class="brow"><span class="bk">PM2.5</span><div class="bt"><i id="bPm25" style="background:var(--grn)"></i></div><span class="bv num" data-src="weather.pm25">--</span></div>
+        <div class="brow"><span class="bk">PM10</span><div class="bt"><i id="bPm10" style="background:var(--cyn)"></i></div><span class="bv num" data-src="weather.pm10">--</span></div>
+        <div class="brow"><span class="bk">CO₂</span><div class="bt"><i id="bCo2" style="background:var(--blu)"></i></div><span class="bv num" data-src="weather.co2">--</span></div>
+      </div>
+    </div>
+    <!-- soil -->
+    <div class="panel s4"><h3 data-i18n="soil">Soil</h3>
+      <div class="gauge"><svg id="gSoil" viewBox="-10 0 220 130"></svg></div>
+      <div class="lbl" style="text-align:center"><span data-i18n="moisture">Moisture</span> <b class="num" data-src="soil.hum" style="color:var(--cyn)">--</b> · EC <b class="num" data-src="soil.ec" style="color:var(--cyn)">--</b></div>
+    </div>
+    <!-- event log -->
+    <div class="panel s4"><h3 data-i18n="log">Event log</h3>
+      <div class="log" id="log"><div class="li sys"><span class="t">--</span><span class="m">waiting for telemetry…</span></div></div>
+    </div>
+
+    <!-- ===== TRENDS: historical time-series ===== -->
+    <div class="panel s12 trends"><h3 data-i18n="trends">Environmental trends · 24 h</h3>
+      <div class="trendgrid">
+        <div class="tchart" data-trend="weather.temp" data-color="#ffc24b" data-unit="°C">
+          <div class="thead"><span class="tk" data-i18n="temp">Temperature</span><span class="tstats" data-stats></span></div>
+          <div class="tbody"><svg viewBox="0 0 300 110" preserveAspectRatio="none"></svg></div>
+        </div>
+        <div class="tchart" data-trend="weather.hum" data-color="#33e0ff" data-unit="%">
+          <div class="thead"><span class="tk" data-i18n="humidity">Humidity</span><span class="tstats" data-stats></span></div>
+          <div class="tbody"><svg viewBox="0 0 300 110" preserveAspectRatio="none"></svg></div>
+        </div>
+        <div class="tchart" data-trend="weather.co2" data-color="#4d9fff" data-unit=" ppm">
+          <div class="thead"><span class="tk">CO₂</span><span class="tstats" data-stats></span></div>
+          <div class="tbody"><svg viewBox="0 0 300 110" preserveAspectRatio="none"></svg></div>
+        </div>
+        <div class="tchart" data-trend="weather.pressure" data-color="#b78bff" data-unit=" hPa" data-scale="0.01">
+          <div class="thead"><span class="tk" data-i18n="pressure">Pressure</span><span class="tstats" data-stats></span></div>
+          <div class="tbody"><svg viewBox="0 0 300 110" preserveAspectRatio="none"></svg></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- footer -->
+  <div class="foot">
+    <span>fabfarm · algarve · environmental ops</span>
+    <span><a href="/">dashboard</a> · <a href="/data">data</a> · <a href="/admin">admin</a></span>
+    <span id="footStatus" class="ok">telemetry link nominal</span>
+  </div>
+</div>
+
+<script src="/ops-client.js"></script>
+</body></html>
