@@ -475,22 +475,48 @@ def admin_snapshot():
             "devices": list(DEVICES.values()),
             "raw": list(RAW_LOG),
             "fields": fields_payload(),
+            "mesh": mesh_payload(),
         },
+    }
+
+
+def mesh_payload():
+    """Serialize mesh nodes for the map/status pages."""
+    return {
+        "count": len(MESH_NODES),
+        "nodes": [
+            {
+                "id": nid,
+                "name": n.get("name", nid),
+                "last_heard": n.get("last_heard"),
+                "battery": n.get("battery"),
+                "lat": n.get("lat"),
+                "lon": n.get("lon"),
+                "hops": n.get("hops"),
+            }
+            for nid, n in MESH_NODES.items()
+        ],
     }
 
 
 # ---------------------------------------------------------------------------
 # MQTT
 # ---------------------------------------------------------------------------
-def start_mqtt(host, port, topic, username, password):
+def start_mqtt(host, port, topic, username, password, tls=False, prefix=""):
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     if username:
         client.username_pw_set(username, password)
+    if tls:
+        import ssl
+        client.tls_set(cert_reqs=ssl.CERT_REQUIRED)  # validate with system CA store
 
     def on_connect(c, userdata, flags, rc, properties=None):
-        log.info("mqtt connected rc=%s, subscribing %s + msh/#", rc, topic)
-        c.subscribe(topic)
-        c.subscribe("msh/#")  # Meshtastic (flows whenever the farm enables it)
+        # subscribe to the (possibly prefixed) LoRa + Meshtastic topics
+        lora_topic = prefix + topic if prefix else topic
+        mesh_topic = prefix + "msh/#"
+        log.info("mqtt connected rc=%s, subscribing %s + %s", rc, lora_topic, mesh_topic)
+        c.subscribe(lora_topic)
+        c.subscribe(mesh_topic)
 
     def on_message(c, userdata, m):
         raw = m.payload.decode("utf-8", "replace")
@@ -499,9 +525,11 @@ def start_mqtt(host, port, topic, username, password):
         except Exception:
             log.warning("non-json payload on %s", m.topic)
             msg = {"_raw": raw}
+        # strip the neutral-broker prefix for routing
+        t = m.topic[len(prefix):] if prefix and m.topic.startswith(prefix) else m.topic
         # Meshtastic messages go to the mesh handler, not the LoRa digestion.
-        if m.topic.startswith("msh/"):
-            handle_mesh(m.topic, msg)
+        if t.startswith("msh/"):
+            handle_mesh(t, msg)
             return
         if is_duplicate(msg):
             log.info("duplicate uplink ignored (devEui,fCnt)")
@@ -590,6 +618,8 @@ class Handler(SimpleHTTPRequestHandler):
             })
         elif self.path.startswith("/api/fields"):
             return self._json(fields_payload())
+        elif self.path.startswith("/api/mesh"):
+            return self._json(mesh_payload())
         elif self.path.startswith("/api/wind"):
             return self._json({"wind": db_wind_history()})
         elif self.path.startswith("/api/sparklines"):
@@ -626,11 +656,14 @@ def main():
     ap.add_argument("--mqtt-topic", default="application/+/device/+/event/up")
     ap.add_argument("--mqtt-user", default=None)
     ap.add_argument("--mqtt-pass", default=None)
+    ap.add_argument("--mqtt-tls", action="store_true")
+    ap.add_argument("--mqtt-prefix", default="")
     args = ap.parse_args()
 
     load_state_from_db()  # show the latest real values immediately
     start_mqtt(args.mqtt_host, args.mqtt_port, args.mqtt_topic,
-               args.mqtt_user, args.mqtt_pass)
+               args.mqtt_user, args.mqtt_pass,
+               tls=args.mqtt_tls, prefix=args.mqtt_prefix)
 
     threading.Thread(target=start_ws, args=("0.0.0.0", args.ws_port),
                      daemon=True).start()

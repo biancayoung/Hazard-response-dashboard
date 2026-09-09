@@ -258,6 +258,28 @@
     }).catch(function () {});
   }
 
+  // ---------- mesh nodes on the map ----------
+  function loadMesh() {
+    fetch('/api/mesh').then(function (r) { return r.json(); }).then(function (d) {
+      var g = document.getElementById('meshpins'); if (!g) return;
+      var nodes = (d.nodes || []).filter(function (n) { return n.name; });
+      // node count in the chat header
+      var nc = document.querySelector('[data-src="mesh.nodes"]'); if (nc) nc.textContent = d.count || 0;
+      if (!nodes.length) { g.innerHTML = ''; return; }
+      // lay the real nodes out along the bottom-left of the map with name + battery
+      var html = '', x0 = 40, y0 = 40, dx = 90;
+      nodes.forEach(function (n, i) {
+        var x = x0 + (i % 5) * dx, y = y0 + Math.floor(i / 5) * 40;
+        var batt = n.battery != null ? Math.round(n.battery) + '%' : '';
+        var col = n.battery != null && n.battery < 20 ? '#ff5d6c' : '#7be0a8';
+        html += '<g transform="translate(' + x + ' ' + y + ')">' +
+          '<rect x="-5" y="-5" width="10" height="10" fill="' + col + '"/>' +
+          '<text x="10" y="4" fill="currentColor">' + esc(n.name) + (batt ? ' · ' + batt : '') + '</text></g>';
+      });
+      g.innerHTML = html;
+    }).catch(function () {});
+  }
+
   // ---------- websocket ----------
   var retry = 3000;
   function connect() {
@@ -287,6 +309,6 @@
   });
 
   // ---------- boot ----------
-  render(); loadSparks(); loadWind(); loadDevices(); connect();
-  setInterval(loadSparks, 60000); setInterval(loadWind, 60000); setInterval(loadDevices, 60000);
+  render(); loadSparks(); loadWind(); loadDevices(); loadMesh(); connect();
+  setInterval(loadSparks, 60000); setInterval(loadWind, 60000); setInterval(loadDevices, 60000); setInterval(loadMesh, 30000);
 })();
