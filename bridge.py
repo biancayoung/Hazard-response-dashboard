@@ -319,6 +319,7 @@ def handle_mesh(topic, msg):
 
     node = MESH_NODES.setdefault(node_id, {"name": _node_name(node_id, payload)})
     node["last_heard"] = time.strftime("%H:%M:%S")
+    node["last_heard_ts"] = time.time()
     if "longname" in payload or "longName" in payload or "shortname" in payload or "shortName" in payload:
         node["name"] = _node_name(node_id, payload)
 
@@ -433,6 +434,7 @@ def record_uplink(topic: str, msg: dict):
     d = DEVICES.setdefault(dev_eui, {"name": name, "frames": 0})
     d["name"] = name
     d["last_seen"] = entry["ts"]
+    d["last_seen_ts"] = time.time()
     d["rssi"] = entry["rssi"]
     d["snr"] = entry["snr"]
     d["fcnt"] = entry["fcnt"]
@@ -467,6 +469,55 @@ def fields_payload():
     return out
 
 
+# Data-health thresholds (seconds). Sensors report roughly once per hour.
+HEALTH_LIVE = 90 * 60        # < 90 min  -> live
+HEALTH_STALE = 3 * 3600      # 90 min-3 h -> stale; > 3 h / never -> down
+
+
+def _health_status(age):
+    """Map an age in seconds (None = never seen) to a status string."""
+    if age is None:
+        return "down"
+    if age < HEALTH_LIVE:
+        return "live"
+    if age < HEALTH_STALE:
+        return "stale"
+    return "down"
+
+
+def health_payload():
+    """Per-source data health: is data still being received, and how long ago
+    was the last message. Covers each LoRa device, each Meshtastic node, and
+    an overall 'lora' / 'meshtastic' category."""
+    now = time.time()
+
+    def entry(name, ts):
+        age = (now - ts) if ts else None
+        return {
+            "name": name,
+            "last_seen": ts,
+            "age_s": round(age) if age is not None else None,
+            "status": _health_status(age),
+        }
+
+    lora = [entry(d.get("name", eui), d.get("last_seen_ts"))
+            for eui, d in DEVICES.items()]
+    mesh = [entry(n.get("name", nid), n.get("last_heard_ts"))
+            for nid, n in MESH_NODES.items()]
+
+    def category(cat, sources):
+        ts = max((s["last_seen"] for s in sources if s["last_seen"]), default=None)
+        e = entry(cat, ts)
+        e["sources"] = len(sources)
+        return e
+
+    return {
+        "categories": [category("lora", lora), category("meshtastic", mesh)],
+        "lora": lora,
+        "meshtastic": mesh,
+    }
+
+
 def admin_snapshot():
     return {
         "type": "admin_snapshot",
@@ -476,6 +527,7 @@ def admin_snapshot():
             "raw": list(RAW_LOG),
             "fields": fields_payload(),
             "mesh": mesh_payload(),
+            "health": health_payload(),
         },
     }
 
@@ -620,6 +672,8 @@ class Handler(SimpleHTTPRequestHandler):
             return self._json(fields_payload())
         elif self.path.startswith("/api/mesh"):
             return self._json(mesh_payload())
+        elif self.path.startswith("/api/health"):
+            return self._json(health_payload())
         elif self.path.startswith("/api/wind"):
             return self._json({"wind": db_wind_history()})
         elif self.path.startswith("/api/sparklines"):

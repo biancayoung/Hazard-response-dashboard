@@ -21,7 +21,7 @@ body{margin:0;background:radial-gradient(120% 90% at 50% 0%,var(--bg-2) 0%,var(-
 .num{font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 a{color:inherit}
 
-.screen{min-height:100%;display:grid;grid-template-rows:auto auto 1fr;gap:var(--gap);padding:22px 28px 24px}
+.screen{min-height:100%;display:grid;grid-template-rows:auto auto auto 1fr;gap:var(--gap);padding:22px 28px 24px}
 
 /* header */
 .top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:0 4px}
@@ -75,6 +75,26 @@ td.num,th.num{text-align:right}
 .uplink pre{margin:0;font:12px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:var(--ink);
   white-space:pre-wrap;word-break:break-word;max-height:150px;overflow:auto}
 .uplink .keys{margin-top:5px;font-size:12px;color:var(--teal)}
+
+/* data health */
+.health{border-top:1px solid var(--line);padding-top:var(--gap)}
+.health .grid{display:grid;grid-template-columns:1fr 1fr;column-gap:26px}
+@media (max-width:900px){.health .grid{grid-template-columns:1fr}}
+.hgroup h4{margin:0 0 8px;font-size:13px;font-weight:500;color:var(--muted);letter-spacing:.02em}
+.hrow{display:flex;align-items:center;gap:10px;padding:6px 4px;border-bottom:1px solid var(--line);font-size:13.5px}
+.hrow:last-child{border-bottom:0}
+.hrow .dot{flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:var(--dim)}
+.hrow.live .dot{background:var(--mint);box-shadow:0 0 6px var(--mint)}
+.hrow.stale .dot{background:var(--amber)}
+.hrow.down .dot{background:#e5604f}
+.hrow .nm{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hrow .st{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--muted)}
+.hrow.live .st{color:var(--mint)}
+.hrow.stale .st{color:var(--amber)}
+.hrow.down .st{color:#e5604f}
+.hrow .ago{color:var(--muted);font-size:12.5px;white-space:nowrap}
+.hrow.cat .nm{font-weight:600}
+.hempty{color:var(--dim);font-size:13px;padding:6px 4px}
 </style></head><body>
 <div class="screen">
 <header class="top">
@@ -88,6 +108,14 @@ td.num,th.num{text-align:right}
   <div class="ro"><div class="v num" id="s-hum">--<u>%</u></div><div class="l">Humidity</div></div>
   <div class="ro"><div class="v num" id="s-soil">--<u>%</u></div><div class="l">Soil moisture</div></div>
   <div class="ro"><div class="v num" id="s-nodes">--</div><div class="l">Mesh nodes</div></div>
+</section>
+
+<section class="health" aria-labelledby="hh">
+  <h2 id="hh">Data health</h2>
+  <div class="grid">
+    <div class="hgroup"><h4>LoRa sensors</h4><div id="health-lora"><div class="hempty">No data yet</div></div></div>
+    <div class="hgroup"><h4>Meshtastic</h4><div id="health-mesh"><div class="hempty">No data yet</div></div></div>
+  </div>
 </section>
 
 <section class="lower" aria-labelledby="hl">
@@ -108,7 +136,58 @@ td.num,th.num{text-align:right}
   var url=(location.protocol==='https:')?'wss://'+location.host+'/ws/admin':'ws://'+location.hostname+':8765/ws/admin';
   var conn=document.getElementById('conn'),badge=document.getElementById('badge');
   var rawBox=document.getElementById('raw'),devBody=document.getElementById('devices');
+  var hlora=document.getElementById('health-lora'),hmesh=document.getElementById('health-mesh');
   var started=false;
+  var lastHealth=null;
+
+  function ago(ageS){
+    if(ageS==null)return 'never';
+    var s=Math.max(0,Math.round(ageS));
+    if(s<60)return s+'s ago';
+    var m=Math.floor(s/60);
+    if(m<60)return m+'m ago';
+    var h=Math.floor(m/60);m=m%60;
+    if(h<24)return m?h+'h '+m+'m ago':h+'h ago';
+    var d=Math.floor(h/24);h=h%24;
+    return h?d+'d '+h+'h ago':d+'d ago';
+  }
+
+  function hrow(e,cat){
+    var st=e.status||'down';
+    return '<div class="hrow '+st+(cat?' cat':'')+'"><span class="dot"></span>'+
+      '<span class="nm">'+esc(e.name||'?')+'</span>'+
+      '<span class="st">'+st.toUpperCase()+'</span>'+
+      '<span class="ago">'+ago(e.age_s)+'</span></div>';
+  }
+
+  function renderHealth(h){
+    if(!h)return;
+    lastHealth=h;
+    var lora=h.lora||[],mesh=h.meshtastic||[],cats=h.categories||[];
+    var lcat=cats.filter(function(c){return c.name==='lora'})[0];
+    var mcat=cats.filter(function(c){return c.name==='meshtastic'})[0];
+    hlora.innerHTML=(lcat?hrow(lcat,true):'')+(lora.length?lora.map(function(e){return hrow(e)}).join(''):'<div class="hempty">No LoRa devices yet</div>');
+    hmesh.innerHTML=(mcat?hrow(mcat,true):'')+(mesh.length?mesh.map(function(e){return hrow(e)}).join(''):'<div class="hempty">No mesh nodes yet</div>');
+  }
+
+  // keep the "Xm ago" labels fresh
+  setInterval(function(){if(lastHealth)renderHealth(lastHealth)},30000);
+
+  // When a raw uplink arrives, mark that LoRa device live immediately
+  // (and refresh the lora category) without waiting for a new snapshot.
+  function bumpHealth(e){
+    if(!lastHealth||!e)return;
+    var name=e.device||e.dev_eui;
+    var lora=lastHealth.lora||[];
+    var found=false;
+    for(var i=0;i<lora.length;i++){
+      if(lora[i].name===name){lora[i].age_s=0;lora[i].status='live';found=true;}
+    }
+    if(!found&&name){lora.push({name:name,last_seen:null,age_s:0,status:'live'});lastHealth.lora=lora;}
+    var cats=lastHealth.categories||[];
+    for(var j=0;j<cats.length;j++){if(cats[j].name==='lora'){cats[j].age_s=0;cats[j].status='live';}}
+    renderHealth(lastHealth);
+  }
 
   function setConn(up){conn.className='conn'+(up?' up':'');conn.innerHTML='<i></i>'+(up?'live':'reconnecting');
     badge.className='badge'+(up?'':' off');}
@@ -164,8 +243,8 @@ td.num,th.num{text-align:right}
     ws.onmessage=function(ev){
       try{
         var msg=JSON.parse(ev.data);
-        if(msg.type==='admin_snapshot'){setState(msg.data.state);renderDevices(msg.data.devices);renderRaw(msg.data.raw)}
-        else if(msg.type==='raw'){prependRaw(msg.data)}
+        if(msg.type==='admin_snapshot'){setState(msg.data.state);renderDevices(msg.data.devices);renderRaw(msg.data.raw);renderHealth(msg.data.health)}
+        else if(msg.type==='raw'){prependRaw(msg.data);bumpHealth(msg.data)}
         else if(msg.type==='update'){setState(msg.data)}
       }catch(e){}
     };
