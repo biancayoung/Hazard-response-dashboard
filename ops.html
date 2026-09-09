@@ -74,8 +74,10 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 
 /* map */
 .mapbox{flex:2.2;min-height:0;padding:0}
-.windbox{flex:1.1;min-height:0}
-.airbox{flex:0.7;min-height:0}
+/* wind + air side by side */
+.windair{flex:1.1;min-height:0;display:flex;gap:10px}
+.windbox{flex:1.5;min-height:0}
+.airbox{flex:1;min-height:0}
 .soilbox{flex:0.9;min-height:0}
 .chat.grow{flex:2.4}
 .mapbox h3{position:absolute;z-index:2;left:12px;top:9px;margin:0}
@@ -218,27 +220,29 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 </svg>
 <div class="leg"><span class="ls"><i></i><span data-i18n="sensor">Sensor</span></span><span class="lm"><i></i><span data-i18n="meshnode">Meshtastic node</span></span></div></div>
 
-      <div class="panel windbox"><h3 data-i18n="wind">Wind</h3>
-        <div class="rosewrap">
-          <svg id="windrose" viewBox="-26 -26 172 172"></svg>
-          <div class="windside">
-            <div class="wmain"><span class="val num" data-src="weather.wind">--<u>m/s</u></span><span class="wdir num" data-src="weather.wind_dir">--</span></div>
-            <div class="wstats">
-              <div class="wrow"><span class="wk" data-i18n="direction">Direction</span><b class="num" id="wDirDeg">--°</b></div>
-              <div class="wrow"><span class="wk" data-i18n="gusts">Gust</span><b class="num" data-src="weather.wind_gust">--</b></div>
-              <div class="wrow"><span class="wk" data-i18n="avg24">Avg 24h</span><b class="num" id="wAvg">--</b></div>
-              <div class="wrow"><span class="wk" data-i18n="max24">Max 24h</span><b class="num" id="wMax">--</b></div>
+      <div class="windair">
+        <div class="panel windbox"><h3 data-i18n="wind">Wind</h3>
+          <div class="rosewrap">
+            <svg id="windrose" viewBox="-26 -26 172 172"></svg>
+            <div class="windside">
+              <div class="wmain"><span class="val num" data-src="weather.wind">--<u>m/s</u></span><span class="wdir num" data-src="weather.wind_dir">--</span></div>
+              <div class="wstats">
+                <div class="wrow"><span class="wk" data-i18n="direction">Direction</span><b class="num" id="wDirDeg">--°</b></div>
+                <div class="wrow"><span class="wk" data-i18n="gusts">Gust</span><b class="num" data-src="weather.wind_gust">--</b></div>
+                <div class="wrow"><span class="wk" data-i18n="avg24">Avg 24h</span><b class="num" id="wAvg">--</b></div>
+                <div class="wrow"><span class="wk" data-i18n="max24">Max 24h</span><b class="num" id="wMax">--</b></div>
+              </div>
+              <div class="wlegend" id="wlegend"></div>
             </div>
-            <div class="wlegend" id="wlegend"></div>
           </div>
         </div>
-      </div>
 
-      <div class="panel airbox"><h3>Air quality</h3>
-        <div class="bars">
-          <div class="brow"><span class="bk">PM2.5</span><div class="bt"><i id="bPm25" style="background:var(--grn)"></i></div><span class="bv num" data-src="weather.pm25">--</span></div>
-          <div class="brow"><span class="bk">PM10</span><div class="bt"><i id="bPm10" style="background:var(--cyn)"></i></div><span class="bv num" data-src="weather.pm10">--</span></div>
-          <div class="brow"><span class="bk">CO₂</span><div class="bt"><i id="bCo2" style="background:var(--blu)"></i></div><span class="bv num" data-src="weather.co2">--</span></div>
+        <div class="panel airbox"><h3>Air quality</h3>
+          <div class="bars">
+            <div class="brow"><span class="bk">PM2.5</span><div class="bt"><i id="bPm25" style="background:var(--grn)"></i></div><span class="bv num" data-src="weather.pm25">--</span></div>
+            <div class="brow"><span class="bk">PM10</span><div class="bt"><i id="bPm10" style="background:var(--cyn)"></i></div><span class="bv num" data-src="weather.pm10">--</span></div>
+            <div class="brow"><span class="bk">CO₂</span><div class="bt"><i id="bCo2" style="background:var(--blu)"></i></div><span class="bv num" data-src="weather.co2">--</span></div>
+          </div>
         </div>
       </div>
     </div>
