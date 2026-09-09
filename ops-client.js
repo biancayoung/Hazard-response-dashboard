@@ -4,8 +4,8 @@
 
   // ---------- i18n ----------
   var I18N = {
-    en: { temp: 'Temperature', humidity: 'Humidity', wind: 'Wind', rain: 'Rain', pressure: 'Pressure', light: 'Light', soil: 'Soil', moisture: 'Moisture', log: 'Event log', trends: 'Environmental trends · 24 h', nominal: 'All systems nominal', raining: 'Raining', dry: 'Dry', lisbon: 'lisbon' },
-    zh: { temp: '温度', humidity: '湿度', wind: '风', rain: '降雨', pressure: '气压', light: '光照', soil: '土壤', moisture: '湿度', log: '事件日志', trends: '环境趋势 · 24小时', nominal: '所有系统正常', raining: '下雨中', dry: '干燥', lisbon: '里斯本' }
+    en: { temp: 'Temperature', humidity: 'Humidity', wind: 'Wind', rain: 'Rain', pressure: 'Pressure', light: 'Light', soil: 'Soil', moisture: 'Moisture', log: 'Event log', trends: 'Environmental trends · 24 h', direction: 'Direction', gusts: 'Gust', avg24: 'Avg 24h', max24: 'Max 24h', nominal: 'All systems nominal', raining: 'Raining', dry: 'Dry', lisbon: 'lisbon' },
+    zh: { temp: '温度', humidity: '湿度', wind: '风', rain: '降雨', pressure: '气压', light: '光照', soil: '土壤', moisture: '湿度', log: '事件日志', trends: '环境趋势 · 24小时', direction: '风向', gusts: '阵风', avg24: '24小时平均', max24: '24小时最大', nominal: '所有系统正常', raining: '下雨中', dry: '干燥', lisbon: '里斯本' }
   };
   var lang = localStorage.getItem('farm-lang') || 'en';
   var toggle = document.getElementById('langToggle');
@@ -149,17 +149,6 @@
     box.innerHTML = LOG.map(function (e) { return '<div class="li ' + e.cls + '"><span class="t">' + e.ts + '</span><span class="m">' + e.m + '</span></div>'; }).join('');
   }
 
-  // ---------- condition banner: compact chip, hidden when nominal ----------
-  function updateBanner() {
-    var b = $('#banner'), txt = $('#bannerText');
-    var alerts = [];
-    if (STATE['weather.temp'] != null && STATE['weather.temp'] >= 35) alerts.push('temp ' + Math.round(STATE['weather.temp']) + '°');
-    if (STATE['weather.co2'] != null && STATE['weather.co2'] >= 1000) alerts.push('CO₂ ' + Math.round(STATE['weather.co2']));
-    if (STATE['weather.wind'] != null && STATE['weather.wind'] >= 10) alerts.push('wind ' + STATE['weather.wind'].toFixed(0));
-    if (alerts.length) { b.className = 'banner alert show'; txt.textContent = alerts.join(' · '); }
-    else { b.className = 'banner'; }
-  }
-
   // ---------- render all ----------
   function render() {
     setText('weather.temp', STATE['weather.temp']);
@@ -185,7 +174,6 @@
     if (rs && rv != null) rs.textContent = rv > 0.05 ? (I18N[lang].raining + ' · ' + rv.toFixed(1) + ' mm/h') : I18N[lang].dry;
     // sensors count
     var sc = $('#stSensors'); if (sc) sc.textContent = Object.keys(window.DEVICES || {}).length || '--';
-    updateBanner();
   }
   function setBar(sel, v, max) { var el = $(sel); if (!el || v == null) return; el.style.width = Math.min(100, (v / max) * 100) + '%'; }
 
@@ -202,7 +190,19 @@
     fetch('/api/sparklines').then(function (r) { return r.json(); }).then(function (d) { SPARKS = d; renderSparks(); }).catch(function () {});
   }
   function loadWind() {
-    fetch('/api/wind').then(function (r) { return r.json(); }).then(function (d) { var w = d.wind || []; if (w.length) CURRENT_DIR = w[w.length - 1][2]; drawRose(w); }).catch(function () {});
+    fetch('/api/wind').then(function (r) { return r.json(); }).then(function (d) {
+      var w = d.wind || [];
+      if (w.length) CURRENT_DIR = w[w.length - 1][2];
+      drawRose(w);
+      // wind stats: current direction (deg), avg + max speed over the window
+      if (w.length) {
+        var lastDir = w[w.length - 1][2], sum = 0, mx = 0, n = 0;
+        for (var i = 0; i < w.length; i++) { var s = w[i][1]; if (s == null) continue; sum += s; if (s > mx) mx = s; n++; }
+        var dd = $('#wDirDeg'); if (dd) dd.textContent = Math.round(lastDir) + '°';
+        var av = $('#wAvg'); if (av) av.textContent = n ? (sum / n).toFixed(1) + ' m/s' : '--';
+        var mm = $('#wMax'); if (mm) mm.textContent = n ? mx.toFixed(1) + ' m/s' : '--';
+      }
+    }).catch(function () {});
   }
   function loadDevices() {
     fetch('/api/raw').then(function (r) { return r.json(); }).then(function (d) {

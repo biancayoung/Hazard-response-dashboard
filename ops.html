@@ -44,12 +44,6 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 .clockbox small{color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
 .lang{background:var(--panel2);border:1px solid var(--line2);color:var(--muted);border-radius:6px;padding:4px 9px;font:inherit;font-size:11px;font-weight:600;cursor:pointer}
 .lang:hover{color:var(--cyn);border-color:var(--cyn)}
-/* alert chip */
-.banner{display:none;align-items:center;gap:8px;border-radius:6px;padding:4px 11px;font:600 11px "Barlow Condensed";letter-spacing:.12em;text-transform:uppercase}
-.banner.show{display:inline-flex}
-.banner.alert{background:rgba(255,93,108,.14);border:1px solid rgba(255,93,108,.5);color:var(--red);animation:alertstrobe 1.2s infinite}
-@keyframes alertstrobe{0%,100%{box-shadow:0 0 0 rgba(255,93,108,0)}50%{box-shadow:0 0 16px rgba(255,93,108,.3)}}
-.banner .blip{width:6px;height:6px;border-radius:50%;background:currentColor;box-shadow:0 0 7px currentColor;animation:pulse 1.4s infinite;flex:none}
 
 /* ===== main: 3 columns, fixed height ===== */
 .main{display:grid;grid-template-columns:250px 1fr 300px;gap:10px;min-height:0}
@@ -87,8 +81,16 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 .mapbox .leg .ls i{background:var(--cyn);border-radius:50%}.mapbox .leg .lm i{background:var(--grn)}
 
 /* wind rose */
-.rosewrap{display:flex;gap:10px;align-items:center;flex:1;min-height:0}
-.rosewrap svg{flex:none;height:100%;width:auto;max-width:46%}
+.rosewrap{display:flex;gap:12px;align-items:center;flex:1;min-height:0}
+.rosewrap svg{flex:none;height:100%;width:auto;max-width:44%}
+.windside{flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;min-height:0}
+.wmain{display:flex;align-items:baseline;gap:10px}
+.wmain .val{font-size:38px}
+.wmain .wdir{font:600 18px "Barlow Semi Condensed";color:var(--grn)}
+.wstats{display:flex;flex-direction:column;gap:3px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:6px 0}
+.wrow{display:flex;justify-content:space-between;align-items:baseline;font-size:11px}
+.wrow .wk{color:var(--muted);letter-spacing:.06em;text-transform:uppercase;font-size:9.5px}
+.wrow b{font:600 13px "Barlow Semi Condensed";color:var(--ink)}
 .wlegend{display:flex;flex-direction:column;gap:1px;font-size:9px}
 .wlegend .cap{color:var(--muted);font-size:9px;margin-bottom:1px;letter-spacing:.08em;text-transform:uppercase}
 .wlegend .li{display:flex;align-items:center;gap:5px;color:var(--muted);line-height:1.15}
@@ -148,8 +150,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 
   <!-- header -->
   <div class="strip">
-    <div class="logo"><span class="dot"></span><div><h1>fabfarm ops</h1><div class="sub">environmental monitoring · station 01</div></div></div>
-    <div class="banner" id="banner"><span class="blip"></span><span id="bannerText"></span></div>
+    <div class="logo"><span class="dot"></span><div><h1>ops console</h1><div class="sub">south of portugal · environmental monitoring · station 01</div></div></div>
     <div class="sp"></div>
     <div class="stat"><span class="k">grid</span><span class="v num" style="font-size:13px;color:var(--cyn)">37.08°N 8.67°W</span></div>
     <div class="stat"><span class="k">sensors</span><span class="v on num" id="stSensors">--</span></div>
@@ -215,9 +216,14 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
       <div class="panel grow"><h3 data-i18n="wind">Wind</h3>
         <div class="rosewrap">
           <svg id="windrose" viewBox="-26 -26 172 172"></svg>
-          <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:5px">
-            <div class="val num" data-src="weather.wind" style="font-size:40px">--<u>m/s</u></div>
-            <div class="lbl num" data-src="weather.wind_dir" style="font-size:18px;color:var(--grn)">--</div>
+          <div class="windside">
+            <div class="wmain"><span class="val num" data-src="weather.wind">--<u>m/s</u></span><span class="wdir num" data-src="weather.wind_dir">--</span></div>
+            <div class="wstats">
+              <div class="wrow"><span class="wk" data-i18n="direction">Direction</span><b class="num" id="wDirDeg">--°</b></div>
+              <div class="wrow"><span class="wk" data-i18n="gusts">Gust</span><b class="num" data-src="weather.wind_gust">--</b></div>
+              <div class="wrow"><span class="wk" data-i18n="avg24">Avg 24h</span><b class="num" id="wAvg">--</b></div>
+              <div class="wrow"><span class="wk" data-i18n="max24">Max 24h</span><b class="num" id="wMax">--</b></div>
+            </div>
             <div class="wlegend" id="wlegend"></div>
           </div>
         </div>
