@@ -83,6 +83,27 @@
       '<text x="100" y="98" text-anchor="middle" font-size="34" font-weight="700" fill="#eef4fa" font-family="Barlow Semi Condensed">' + (+val).toFixed(unit === '°' ? 1 : 0) + '<tspan font-size="14" fill="#8fa3b8">' + unit + '</tspan></text>';
   }
 
+  // ---------- circular gauge (full ring, value inside, severity colour) ----------
+  // thresholds: array of [limit, colour] ascending; first colour whose limit >= val wins.
+  function drawCircleGauge(svg, val, max, unit, thresholds) {
+    if (!svg) return;
+    var cx = 60, cy = 60, r = 46;
+    if (val == null || isNaN(val)) { svg.innerHTML = '<text x="60" y="64" font-size="12" fill="#5b7186" text-anchor="middle">--</text>'; return; }
+    var frac = Math.max(0, Math.min(1, val / max));
+    var col = thresholds[thresholds.length - 1][1];
+    for (var i = 0; i < thresholds.length; i++) { if (val <= thresholds[i][0]) { col = thresholds[i][1]; break; } }
+    // ring from -90deg (top), clockwise
+    var a0 = -90, a1 = a0 + 360 * frac;
+    function P(a, rr) { var k = a * Math.PI / 180; return [cx + rr * Math.cos(k), cy + rr * Math.sin(k)]; }
+    function arc(s, e, rr) { var A = P(s, rr), B = P(e, rr), large = (e - s) > 180 ? 1 : 0; return 'M' + A[0] + ' ' + A[1] + 'A' + rr + ' ' + rr + ' 0 ' + large + ' 1 ' + B[0] + ' ' + B[1]; }
+    var disp = val >= 100 ? Math.round(val) : (+val).toFixed(unit ? 0 : 1);
+    svg.innerHTML =
+      '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#16222f" stroke-width="10"/>' +
+      (frac > 0.005 ? '<path d="' + arc(a0, a1, r) + '" fill="none" stroke="' + col + '" stroke-width="10" stroke-linecap="round" style="filter:drop-shadow(0 0 5px ' + col + ')"/>' : '') +
+      '<text x="' + cx + '" y="' + (cy + 2) + '" text-anchor="middle" font-size="26" font-weight="700" fill="' + col + '" font-family="Barlow Semi Condensed">' + disp + '</text>' +
+      (unit ? '<text x="' + cx + '" y="' + (cy + 18) + '" text-anchor="middle" font-size="9" fill="#8fa3b8">' + unit + '</text>' : '');
+  }
+
   // ---------- sparkline (smooth, gradient) ----------
   function drawSpark(el, series, color) {
     if (!series || series.length < 2) { el.innerHTML = '<svg viewBox="0 0 100 40"><text x="50" y="24" font-size="9" fill="#3a4a5c" text-anchor="middle">collecting</text></svg>'; return; }
@@ -167,8 +188,10 @@
       setText('weather.wind_dir', names[Math.round(((wd % 360) + 360) % 360 / 22.5) % 16]); CURRENT_DIR = wd; }
     // gauges (soil only; humidity is a mini metric with sparkline now)
     drawGauge($('#gSoil'), STATE['soil.temp'], 0, 40, '°', function (f) { return f > 0.75 ? '#ff5d6c' : (f > 0.5 ? '#ffc24b' : '#39ff9c'); });
-    // air quality bars
-    setBar('#bPm25', STATE['weather.pm25'], 25); setBar('#bPm10', STATE['weather.pm10'], 50); setBar('#bCo2', STATE['weather.co2'], 1500);
+    // air quality circular gauges (colour by severity: green ok -> amber -> red bad)
+    drawCircleGauge($('#gPm25'), STATE['weather.pm25'], 50, 'µg/m³', [[12, '#39ff9c'], [35, '#ffc24b'], [1e9, '#ff5d6c']]);
+    drawCircleGauge($('#gPm10'), STATE['weather.pm10'], 100, 'µg/m³', [[25, '#39ff9c'], [50, '#ffc24b'], [1e9, '#ff5d6c']]);
+    drawCircleGauge($('#gCo2'), STATE['weather.co2'], 2000, 'ppm', [[600, '#39ff9c'], [1000, '#ffc24b'], [1e9, '#ff5d6c']]);
     // rain status
     var rs = $('#rainStatus'), rv = STATE['weather.rain_24h'];
     if (rs && rv != null) rs.textContent = rv > 0.05 ? (I18N[lang].raining + ' · ' + rv.toFixed(1) + ' mm/h') : I18N[lang].dry;

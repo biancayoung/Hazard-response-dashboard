@@ -124,7 +124,13 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 .log .li.sys{border-left-color:var(--dim);color:var(--dim)}
 .log .li.alert{border-left-color:var(--red)}
 
-/* air bars */
+/* air quality circular gauges */
+.aqgauges{display:flex;gap:8px;flex:1;align-items:center;justify-content:space-around;min-height:0}
+.aqg{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;min-height:0}
+.aqg svg{width:100%;max-width:110px;height:auto;overflow:visible}
+.aqk{color:var(--muted);font-size:10px;letter-spacing:.1em;text-transform:uppercase}
+
+/* air bars (legacy, unused) */
 .bars{display:flex;flex-direction:column;gap:7px;flex:1;justify-content:center}
 .brow{display:grid;grid-template-columns:52px 1fr 30px;align-items:center;gap:8px;font-size:11px}
 .brow .bk{color:var(--muted);letter-spacing:.05em;text-transform:uppercase;font-size:9.5px}
@@ -238,10 +244,10 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
         </div>
 
         <div class="panel airbox"><h3>Air quality</h3>
-          <div class="bars">
-            <div class="brow"><span class="bk">PM2.5</span><div class="bt"><i id="bPm25" style="background:var(--grn)"></i></div><span class="bv num" data-src="weather.pm25">--</span></div>
-            <div class="brow"><span class="bk">PM10</span><div class="bt"><i id="bPm10" style="background:var(--cyn)"></i></div><span class="bv num" data-src="weather.pm10">--</span></div>
-            <div class="brow"><span class="bk">CO₂</span><div class="bt"><i id="bCo2" style="background:var(--blu)"></i></div><span class="bv num" data-src="weather.co2">--</span></div>
+          <div class="aqgauges">
+            <div class="aqg"><svg id="gPm25" viewBox="0 0 120 120"></svg><div class="aqk">PM2.5</div></div>
+            <div class="aqg"><svg id="gPm10" viewBox="0 0 120 120"></svg><div class="aqk">PM10</div></div>
+            <div class="aqg"><svg id="gCo2" viewBox="0 0 120 120"></svg><div class="aqk">CO₂</div></div>
           </div>
         </div>
       </div>
