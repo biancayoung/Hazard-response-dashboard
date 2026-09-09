@@ -652,7 +652,7 @@ class Handler(SimpleHTTPRequestHandler):
     def __init__(self, *a, **kw):
         super().__init__(*a, directory=str(ROOT), **kw)
 
-    def do_GET(self):
+    def _rewrite(self):
         # Serve the live dashboard at the root; no landing page.
         if self.path in ("/", "/index.html"):
             self.path = "/live.html"
@@ -662,24 +662,33 @@ class Handler(SimpleHTTPRequestHandler):
             self.path = "/data.html"
         elif self.path == "/ops":
             self.path = "/ops.html"
-        elif self.path.startswith("/api/raw"):
+
+    def do_HEAD(self):
+        # HEAD requests (e.g. the kiosk network check) use the same rewriting.
+        self._rewrite()
+        super().do_HEAD()
+
+    def do_GET(self):
+        # API endpoints first (before path rewriting).
+        if self.path.startswith("/api/raw"):
             return self._json({
                 "state": STATE,
                 "devices": list(DEVICES.values()),
                 "raw": list(RAW_LOG),
             })
-        elif self.path.startswith("/api/fields"):
+        if self.path.startswith("/api/fields"):
             return self._json(fields_payload())
-        elif self.path.startswith("/api/mesh"):
+        if self.path.startswith("/api/mesh"):
             return self._json(mesh_payload())
-        elif self.path.startswith("/api/health"):
+        if self.path.startswith("/api/health"):
             return self._json(health_payload())
-        elif self.path.startswith("/api/wind"):
+        if self.path.startswith("/api/wind"):
             return self._json({"wind": db_wind_history()})
-        elif self.path.startswith("/api/sparklines"):
+        if self.path.startswith("/api/sparklines"):
             return self._json(db_sparklines())
-        elif self.path.startswith("/api/history"):
+        if self.path.startswith("/api/history"):
             return self._json(db_history())
+        self._rewrite()
         super().do_GET()
 
     def _json(self, obj, status=200):
