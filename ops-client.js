@@ -65,6 +65,7 @@
   // ---------- gauge (semicircular arc) ----------
   // draw a 240-degree arc gauge into the given svg, value in [lo,hi]
   function drawGauge(svg, val, lo, hi, unit, colorFn) {
+    if (!svg) return;
     var a0 = -210, a1 = 30, cx = 100, cy = 105;
     function P(a, r) { var k = a * Math.PI / 180; return [cx + r * Math.cos(k), cy + r * Math.sin(k)]; }
     function arc(s, e, r) { var A = P(s, r), B = P(e, r); return 'M' + A[0] + ' ' + A[1] + 'A' + r + ' ' + r + ' 0 ' + (e - s > 180 ? 1 : 0) + ' 1 ' + B[0] + ' ' + B[1]; }
@@ -175,8 +176,7 @@
     var wd = STATE['weather.wind_dir'];
     if (wd != null) { var names = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
       setText('weather.wind_dir', names[Math.round(((wd % 360) + 360) % 360 / 22.5) % 16]); CURRENT_DIR = wd; }
-    // gauges
-    drawGauge($('#gHum'), STATE['weather.hum'], 0, 100, '%', function (f) { return f > 0.7 ? '#39ff9c' : (f > 0.4 ? '#39ff9c' : '#a3e635'); });
+    // gauges (soil only; humidity is a mini metric with sparkline now)
     drawGauge($('#gSoil'), STATE['soil.temp'], 0, 40, '°', function (f) { return f > 0.75 ? '#ff5d6c' : (f > 0.5 ? '#ffc24b' : '#39ff9c'); });
     // air quality bars
     setBar('#bPm25', STATE['weather.pm25'], 25); setBar('#bPm10', STATE['weather.pm10'], 50); setBar('#bCo2', STATE['weather.co2'], 1500);
@@ -234,54 +234,12 @@
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
 
-  // ---------- big trend charts (time-series with axis + stats) ----------
-  function drawTrend(box, series, color, unit, scale) {
-    var svg = box.querySelector('svg'), stats = box.querySelector('[data-stats]');
-    scale = scale || 1;
-    if (!series || series.length < 2) { svg.innerHTML = '<text x="150" y="60" font-size="11" fill="#3a4a5c" text-anchor="middle">collecting data</text>'; if (stats) stats.innerHTML = ''; return; }
-    var W = 300, H = 110, padL = 8, padR = 8, padT = 10, padB = 18;
-    var vs = series.map(function (p) { return p[1] * scale; }), ts = series.map(function (p) { return p[0]; }), n = series.length;
-    var min = Math.min.apply(null, vs), max = Math.max.apply(null, vs), rng = (max - min) || 1;
-    min -= rng * 0.08; max += rng * 0.08; rng = (max - min) || 1;
-    var t0 = ts[0], t1 = ts[n - 1], trng = (t1 - t0) || 1;
-    var pts = series.map(function (p, i) { return [padL + ((p[0] - t0) / trng) * (W - padL - padR), padT + ((max - p[1] * scale) / rng) * (H - padT - padB)]; });
-    // smooth path (catmull-rom -> bezier)
-    var line = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
-    for (var i = 0; i < pts.length - 1; i++) { var p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
-      var c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6, c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
-      line += 'C' + c1x.toFixed(1) + ' ' + c1y.toFixed(1) + ' ' + c2x.toFixed(1) + ' ' + c2y.toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1); }
-    var last = pts[pts.length - 1], gid = 'tg' + color.slice(1);
-    // gridlines (2 horizontal) + time labels (start/mid/end)
-    var grid = '', gl;
-    for (var g = 1; g <= 2; g++) { var gy = padT + (H - padT - padB) * g / 3; grid += '<line x1="' + padL + '" x2="' + (W - padR) + '" y1="' + gy + '" y2="' + gy + '" stroke="#22344a" stroke-width="1" stroke-dasharray="2 4"/>'; }
-    function tl(t) { var d = new Date(t * 1000); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
-    grid += '<text x="' + padL + '" y="' + (H - 4) + '" font-size="8" fill="#5b7186">' + tl(t0) + '</text>' +
-      '<text x="' + (W / 2) + '" y="' + (H - 4) + '" font-size="8" fill="#5b7186" text-anchor="middle">' + tl((t0 + t1) / 2) + '</text>' +
-      '<text x="' + (W - padR) + '" y="' + (H - 4) + '" font-size="8" fill="#5b7186" text-anchor="end">' + tl(t1) + '</text>';
-    svg.innerHTML = '<defs><linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + color + '" stop-opacity=".35"/><stop offset="1" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>' +
-      grid +
-      '<path d="' + line + ' L' + last[0] + ' ' + (H - padB) + ' L' + pts[0][0] + ' ' + (H - padB) + 'Z" fill="url(#' + gid + ')"/>' +
-      '<path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>' +
-      '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="3" fill="' + color + '"/>';
-    // stats: current / min / max
-    var cur = vs[vs.length - 1], mn = Math.min.apply(null, vs), mx = Math.max.apply(null, vs);
-    if (stats) stats.innerHTML = '<b>' + cur.toFixed(1) + unit + '</b> · lo ' + mn.toFixed(1) + ' · hi ' + mx.toFixed(1);
-  }
-  function loadTrends() {
-    fetch('/api/history').then(function (r) { return r.json(); }).then(function (d) {
-      document.querySelectorAll('[data-trend]').forEach(function (box) {
-        var key = box.getAttribute('data-trend'), color = box.getAttribute('data-color'), unit = box.getAttribute('data-unit') || '', scale = parseFloat(box.getAttribute('data-scale') || '1');
-        drawTrend(box, d[key], color, unit, scale);
-      });
-    }).catch(function () {});
-  }
-
   // ---------- cinematic chrome: corner brackets ----------
   document.querySelectorAll('.panel').forEach(function (p) {
     var cb = document.createElement('span'); cb.className = 'cb'; p.appendChild(cb);
   });
 
   // ---------- boot ----------
-  render(); loadSparks(); loadWind(); loadDevices(); loadTrends(); connect();
-  setInterval(loadSparks, 60000); setInterval(loadWind, 60000); setInterval(loadDevices, 60000); setInterval(loadTrends, 60000);
+  render(); loadSparks(); loadWind(); loadDevices(); connect();
+  setInterval(loadSparks, 60000); setInterval(loadWind, 60000); setInterval(loadDevices, 60000);
 })();
