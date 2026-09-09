@@ -172,8 +172,32 @@
     // rain status
     var rs = $('#rainStatus'), rv = STATE['weather.rain_24h'];
     if (rs && rv != null) rs.textContent = rv > 0.05 ? (I18N[lang].raining + ' · ' + rv.toFixed(1) + ' mm/h') : I18N[lang].dry;
+    // sub-labels (text context instead of graphs)
+    subLabels();
     // sensors count
     var sc = $('#stSensors'); if (sc) sc.textContent = Object.keys(window.DEVICES || {}).length || '--';
+  }
+
+  // trend helper: compare latest value to the mean of earlier points -> rising/falling/steady
+  function trend(key) {
+    var s = SPARKS[key]; if (!s || s.length < 3) return null;
+    var vs = s.map(function (p) { return p[1]; }), last = vs[vs.length - 1];
+    var earlier = vs.slice(0, -1), mean = earlier.reduce(function (a, b) { return a + b; }, 0) / earlier.length;
+    var diff = last - mean, tol = (Math.abs(mean) || 1) * 0.01;
+    if (diff > tol) return 'rising'; if (diff < -tol) return 'falling'; return 'steady';
+  }
+  function subLabels() {
+    var T = { rising: (lang === 'zh' ? '上升' : 'rising'), falling: (lang === 'zh' ? '下降' : 'falling'), steady: (lang === 'zh' ? '平稳' : 'steady') };
+    // humidity delta
+    var hd = $('#humDelta'), ht = trend('weather.hum');
+    if (hd) hd.textContent = ht ? T[ht] : '--';
+    // pressure trend
+    var pt = $('#presTrend'), ptr = trend('weather.pressure');
+    if (pt) pt.textContent = ptr ? T[ptr] : '--';
+    // co2 level
+    var cl = $('#co2Level'), cv = STATE['weather.co2'];
+    if (cl && cv != null) { var lvl = cv < 600 ? (lang === 'zh' ? '良好' : 'good') : (cv < 1000 ? (lang === 'zh' ? '一般' : 'fair') : (lang === 'zh' ? '偏高' : 'elevated'));
+      cl.textContent = lvl; cl.style.color = cv < 600 ? 'var(--grn)' : (cv < 1000 ? 'var(--amb)' : 'var(--red)'); }
   }
   function setBar(sel, v, max) { var el = $(sel); if (!el || v == null) return; el.style.width = Math.min(100, (v / max) * 100) + '%'; }
 

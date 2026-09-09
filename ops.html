@@ -170,11 +170,11 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <div class="panel mini"><h3 data-i18n="humidity">Humidity</h3>
         <div class="val num" data-src="weather.hum">--<u>%</u></div>
-        <div class="spark" data-spark="weather.hum"></div>
+        <div class="lbl" id="humDelta">--</div>
       </div>
       <div class="panel mini"><h3>CO₂</h3>
         <div class="val num" data-src="weather.co2">--<u>ppm</u></div>
-        <div class="spark" data-spark="weather.co2"></div>
+        <div class="lbl" id="co2Level">--</div>
       </div>
       <div class="panel mini"><h3 data-i18n="rain">Rain</h3>
         <div class="val num" data-src="weather.rain_24h">--<u>mm</u></div>
@@ -182,6 +182,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
       </div>
       <div class="panel mini"><h3 data-i18n="pressure">Pressure</h3>
         <div class="val num" data-src="weather.pressure">--<u>hPa</u></div>
+        <div class="lbl" id="presTrend">--</div>
       </div>
     </div>
 
