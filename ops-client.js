@@ -148,16 +148,15 @@
     box.innerHTML = LOG.map(function (e) { return '<div class="li ' + e.cls + '"><span class="t">' + e.ts + '</span><span class="m">' + e.m + '</span></div>'; }).join('');
   }
 
-  // ---------- condition banner ----------
+  // ---------- condition banner: compact chip, hidden when nominal ----------
   function updateBanner() {
     var b = $('#banner'), txt = $('#bannerText');
     var alerts = [];
-    if (STATE['weather.temp'] != null && STATE['weather.temp'] >= 35) alerts.push('high temperature ' + STATE['weather.temp'].toFixed(1) + '°C');
-    if (STATE['weather.co2'] != null && STATE['weather.co2'] >= 1000) alerts.push('elevated CO₂');
-    if (STATE['weather.wind'] != null && STATE['weather.wind'] >= 10) alerts.push('strong wind');
-    if (STATE['weather.rain_24h'] != null && STATE['weather.rain_24h'] > 0.1) { /* informational */ }
-    if (alerts.length) { b.className = 'banner alert'; txt.textContent = 'Alert: ' + alerts.join(' · '); }
-    else { b.className = 'banner'; txt.textContent = I18N[lang].nominal; }
+    if (STATE['weather.temp'] != null && STATE['weather.temp'] >= 35) alerts.push('temp ' + Math.round(STATE['weather.temp']) + '°');
+    if (STATE['weather.co2'] != null && STATE['weather.co2'] >= 1000) alerts.push('CO₂ ' + Math.round(STATE['weather.co2']));
+    if (STATE['weather.wind'] != null && STATE['weather.wind'] >= 10) alerts.push('wind ' + STATE['weather.wind'].toFixed(0));
+    if (alerts.length) { b.className = 'banner alert show'; txt.textContent = alerts.join(' · '); }
+    else { b.className = 'banner'; }
   }
 
   // ---------- render all ----------

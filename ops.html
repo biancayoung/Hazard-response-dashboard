@@ -48,13 +48,14 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 .lang{background:var(--panel2);border:1px solid var(--line2);color:var(--muted);border-radius:6px;padding:5px 10px;font:inherit;font-size:12px;font-weight:600;cursor:pointer}
 .lang:hover{color:var(--cyn);border-color:var(--cyn)}
 
-/* ===== alert / condition banner ===== */
-.banner{display:flex;align-items:center;gap:12px;border-radius:var(--r);padding:8px 16px;font:600 13px "Barlow Condensed";letter-spacing:.1em;text-transform:uppercase;
-  background:linear-gradient(90deg, rgba(57,255,156,.12), rgba(57,255,156,.03));border:1px solid rgba(57,255,156,.35);color:var(--grn)}
-.banner.warn{background:linear-gradient(90deg, rgba(255,194,75,.14), rgba(255,194,75,.03));border-color:rgba(255,194,75,.4);color:var(--amb)}
-.banner.alert{background:linear-gradient(90deg, rgba(255,93,108,.16), rgba(255,93,108,.03));border-color:rgba(255,93,108,.45);color:var(--red);animation:alertstrobe 1.2s infinite}
-@keyframes alertstrobe{0%,100%{box-shadow:0 0 0 rgba(255,93,108,0)}50%{box-shadow:0 0 24px rgba(255,93,108,.35)}}
-.banner .blip{width:8px;height:8px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;animation:pulse 1.4s infinite}
+/* ===== alert / condition banner: compact chip, hidden when nominal ===== */
+.banner{display:none;align-items:center;gap:10px;border-radius:6px;padding:6px 14px;font:600 12px "Barlow Condensed";letter-spacing:.12em;text-transform:uppercase;width:max-content;max-width:100%
+  }
+.banner.show{display:inline-flex}
+.banner.warn{background:rgba(255,194,75,.12);border:1px solid rgba(255,194,75,.45);color:var(--amb)}
+.banner.alert{background:rgba(255,93,108,.14);border:1px solid rgba(255,93,108,.5);color:var(--red);animation:alertstrobe 1.2s infinite}
+@keyframes alertstrobe{0%,100%{box-shadow:0 0 0 rgba(255,93,108,0)}50%{box-shadow:0 0 18px rgba(255,93,108,.3)}}
+.banner .blip{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 8px currentColor;animation:pulse 1.4s infinite;flex:none}
 
 /* ===== main grid ===== */
 .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:14px;min-height:0}
