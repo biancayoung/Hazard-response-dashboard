@@ -5,7 +5,7 @@
   // over plain HTTP (port 8000) connect directly to the bridge on :8765.
   var url = (location.protocol === 'https:')
     ? 'wss://' + location.host + '/ws'
-    : 'ws://' + location.hostname + ':8765';
+    : (window.FARM_WS_URL || ('ws://' + location.hostname + ':8765'));
   var retry = 3000;
 
   // Format a raw value for a given data-src key.
