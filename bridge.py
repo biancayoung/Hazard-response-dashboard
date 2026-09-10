@@ -597,13 +597,20 @@ def mesh_payload():
 # ---------------------------------------------------------------------------
 # MQTT
 # ---------------------------------------------------------------------------
-def start_mqtt(host, port, topic, username, password, tls=False, prefix=""):
+def start_mqtt(host, port, topic, username, password, tls=False, prefix="",
+               cafile=None, insecure=False):
     client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2)
     if username:
         client.username_pw_set(username, password)
     if tls:
         import ssl
-        client.tls_set(cert_reqs=ssl.CERT_REQUIRED)  # validate with system CA store
+        # cafile: for brokers whose certificate is not signed by a public CA.
+        # EMQX ships a demo certificate signed by its own "EMQ RootCA" and with
+        # CN=Server, so connecting by IP needs both the CA file and --mqtt-insecure
+        # (which only turns off the hostname check, never the chain check).
+        client.tls_set(ca_certs=cafile, cert_reqs=ssl.CERT_REQUIRED)
+        if insecure:
+            client.tls_insecure_set(True)
 
     def on_connect(c, userdata, flags, rc, properties=None):
         # subscribe to the (possibly prefixed) LoRa + Meshtastic topics
@@ -765,12 +772,17 @@ def main():
     ap.add_argument("--mqtt-pass", default=None)
     ap.add_argument("--mqtt-tls", action="store_true")
     ap.add_argument("--mqtt-prefix", default="")
+    ap.add_argument("--mqtt-cafile", default=None,
+                    help="CA bundle for brokers with a private/self-signed CA")
+    ap.add_argument("--mqtt-insecure", action="store_true",
+                    help="skip the TLS hostname check (chain is still verified)")
     args = ap.parse_args()
 
     load_state_from_db()  # show the latest real values immediately
     start_mqtt(args.mqtt_host, args.mqtt_port, args.mqtt_topic,
                args.mqtt_user, args.mqtt_pass,
-               tls=args.mqtt_tls, prefix=args.mqtt_prefix)
+               tls=args.mqtt_tls, prefix=args.mqtt_prefix,
+               cafile=args.mqtt_cafile, insecure=args.mqtt_insecure)
 
     threading.Thread(target=start_ws, args=("0.0.0.0", args.ws_port),
                      daemon=True).start()
