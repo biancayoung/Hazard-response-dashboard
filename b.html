@@ -16,7 +16,7 @@
   --bg:#141d28; --bg-2:#1a2634; --tile:#1f2c3b; --tile-2:#25334a; --line:#2f4157;
   --ink:#f2f6fa; --muted:#8fa3b8; --dim:#5f7389;
   --teal:#3ec8d2; --blue:#3d8ef0; --mint:#7be0a8; --amber:#f0b45a;
-  --r:14px; --gap:18px;
+  --r:14px; --gap:22px;
 }
 *{box-sizing:border-box}
 html,body{height:100%}
@@ -25,18 +25,18 @@ body{margin:0;background:radial-gradient(120% 90% at 50% 0%,var(--bg-2) 0%,var(-
 .num{font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
 a{color:inherit}
 
-.screen{height:100%;display:grid;grid-template-rows:auto 1fr 1.2fr;gap:var(--gap);padding:22px 28px 24px}
+.screen{height:100%;display:grid;grid-template-rows:auto 1fr 1.2fr;gap:var(--gap);padding:26px 32px 28px}
 @media (max-width:900px){.screen{height:auto;grid-template-rows:none}}
 
 /* header */
 .top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:0 4px}
 .place{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-.place h1{margin:0;font-size:34px;font-weight:600;letter-spacing:-.01em}
+.place h1{margin:0;font-size:30px;font-weight:600;letter-spacing:-.01em}
 .place .where{color:var(--muted);font-size:16px}
 .badge{display:inline-flex;align-items:center;gap:7px;background:var(--mint);color:#0d2417;font-weight:600;font-size:13px;padding:4px 10px 4px 8px;border-radius:6px;transform:translateY(-4px)}
 .badge i{width:7px;height:7px;border-radius:50%;background:#0d2417;display:inline-block}
 .clock{display:flex;align-items:baseline;gap:16px;line-height:1}
-.clock time{font-size:64px;font-weight:600}
+.clock time{font-size:46px;font-weight:600}
 .clock small{color:var(--muted);font-size:14px;white-space:nowrap}
 .lang{background:var(--tile-2);border:1px solid var(--line);color:var(--muted);border-radius:8px;padding:6px 12px;font:inherit;font-size:13px;font-weight:600;cursor:pointer;align-self:center}
 .lang:hover{color:var(--mint);border-color:var(--mint)}
@@ -44,19 +44,19 @@ a{color:inherit}
 
 /* sections: boxless, hairline separators */
 section{display:grid;gap:0;min-height:0}
-section>h2{grid-column:1/-1;margin:0 0 12px;font-size:14px;font-weight:500;color:var(--muted);letter-spacing:.02em;padding:0 4px}
-.weather{grid-template-columns:1fr 1fr 1fr 1.55fr;grid-template-rows:auto 1fr auto;column-gap:26px;padding-bottom:var(--gap)}
+section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color:var(--muted);letter-spacing:.02em;padding:0 4px}
+.weather{grid-template-columns:1fr 1fr 1fr 1.55fr;grid-template-rows:auto 1fr auto;column-gap:30px;padding-bottom:var(--gap)}
 /* secondary metric strip: small cards with sparklines */
-.metrics{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:14px;border-top:1px solid var(--line);padding-top:14px}
+.metrics{grid-column:1/-1;display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin-top:18px;border-top:1px solid var(--line);padding-top:18px}
 .metric{padding:4px 18px 4px 4px;display:flex;flex-direction:column;min-height:0}
 .metric+.metric{border-left:1px solid var(--line);padding-left:18px}
 .metric .mk{color:var(--muted);font-size:12.5px;display:flex;justify-content:space-between;align-items:baseline}
-.metric .mv{font-size:clamp(22px,2.4vw,32px);font-weight:600;line-height:1;margin-top:4px}
+.metric .mv{font-size:clamp(18px,1.8vw,24px);font-weight:600;line-height:1;margin-top:6px}
 .metric .mv u{text-decoration:none;font-size:.45em;color:var(--muted);font-weight:500;margin-left:4px}
-.metric .spark{height:34px;margin-top:6px}
+.metric .spark{height:34px;margin-top:8px}
 .metric .spark svg{width:100%;height:100%;display:block;overflow:visible}
 @media (max-width:900px){.metrics{grid-template-columns:1fr 1fr}.metric+.metric{border-left:0;padding-left:4px}}
-.nodes{grid-template-columns:1fr 2fr 1.2fr;grid-template-rows:auto 1fr;column-gap:26px;border-top:1px solid var(--line);padding-top:var(--gap)}
+.nodes{grid-template-columns:1fr 2fr 1.2fr;grid-template-rows:auto 1fr;column-gap:30px;border-top:1px solid var(--line);padding-top:var(--gap)}
 @media (max-width:900px){
   .weather,.nodes{grid-template-columns:1fr;grid-template-rows:none;row-gap:0}
   .ro{border-left:0;padding:14px 4px;border-bottom:1px solid var(--line)}
@@ -68,23 +68,23 @@ section>h2{grid-column:1/-1;margin:0 0 12px;font-size:14px;font-weight:500;color
 }
 
 /* weather readouts: big numerals on the background */
-.ro{min-height:0;display:flex;flex-direction:column;justify-content:center;padding:6px 4px}
-.ro+.ro{border-left:1px solid var(--line);padding-left:26px}
-.ro .v{font-size:clamp(64px,7.5vw,112px);font-weight:600;line-height:.95}
-.ro .v u{text-decoration:none;font-size:.28em;color:var(--muted);font-weight:500;margin-left:6px}
-.ro .l{color:var(--muted);font-size:15px;margin-top:12px;display:flex;align-items:center;gap:9px}
+.ro{min-height:0;display:flex;flex-direction:column;justify-content:center;padding:10px 4px}
+.ro+.ro{border-left:1px solid var(--line);padding-left:30px}
+.ro .v{font-size:clamp(40px,4.2vw,60px);font-weight:600;line-height:1}
+.ro .v u{text-decoration:none;font-size:.32em;color:var(--muted);font-weight:500;margin-left:6px}
+.ro .l{color:var(--muted);font-size:15px;margin-top:14px;display:flex;align-items:center;gap:9px}
 .ro .l .ic{width:22px;height:22px;color:var(--teal);flex:none}
 .ro .l .ic svg{width:100%;height:100%}
 .ro .l b{color:var(--ink);font-weight:500;margin-left:auto}
 
 /* wind rose */
-.windwrap{display:flex;align-items:center;gap:14px;flex:1;justify-content:center;min-height:0}
-.compass{width:128px;height:128px;flex:none}
-.windside{display:flex;flex-direction:column;gap:6px;justify-content:center}
+.windwrap{display:flex;align-items:center;gap:18px;flex:1;justify-content:center;min-height:0}
+.compass{width:180px;height:180px;flex:none}
+.windside{display:flex;flex-direction:column;gap:8px;justify-content:center}
 .windval{text-align:left}
-.windval .v{font-size:clamp(30px,3.2vw,44px);font-weight:600;line-height:.95}
-.windval .v u{text-decoration:none;font-size:.3em;color:var(--muted);font-weight:500;margin-left:5px}
-.windval .wdir{color:var(--teal);font-size:16px;font-weight:600;margin-top:2px}
+.windval .v{font-size:clamp(26px,2.6vw,36px);font-weight:600;line-height:1}
+.windval .v u{text-decoration:none;font-size:.34em;color:var(--muted);font-weight:500;margin-left:5px}
+.windval .wdir{color:var(--teal);font-size:15px;font-weight:600;margin-top:3px}
 /* wind speed legend */
 .wlegend{display:flex;flex-direction:column;gap:2px;font-size:10px}
 .wlegend .cap{color:var(--muted);font-size:9.5px;margin-bottom:1px}
@@ -97,10 +97,10 @@ section>h2{grid-column:1/-1;margin:0 0 12px;font-size:14px;font-weight:500;color
 .tlarge svg{width:100%;height:78px;display:block;overflow:visible}
 
 /* rain: 24 vertical bars */
-.rain{border-left:1px solid var(--line);padding-left:26px;display:flex;flex-direction:column;min-height:0}
+.rain{border-left:1px solid var(--line);padding-left:30px;display:flex;flex-direction:column;min-height:0}
 .rain header{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
 .rain .tot{display:flex;align-items:baseline;gap:8px}
-.rain .tot b{font-size:44px;font-weight:600;line-height:1}
+.rain .tot b{font-size:34px;font-weight:600;line-height:1}
 .rain .tot span{color:var(--muted);font-size:13px}
 .rain h3{margin:0;font-size:15px;font-weight:500}
 .rain .rainstat{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted)}
@@ -133,7 +133,7 @@ section>h2{grid-column:1/-1;margin:0 0 12px;font-size:14px;font-weight:500;color
 .map{position:absolute;inset:0;width:100%;height:100%}
 
 /* chat: A-style bubbles inside B's boxless column */
-.chat{display:flex;flex-direction:column;min-height:0;border-left:1px solid var(--line);padding-left:26px}
+.chat{display:flex;flex-direction:column;min-height:0;border-left:1px solid var(--line);padding-left:30px}
 .chat header{display:flex;justify-content:space-between;align-items:baseline;padding:0 0 10px;border-bottom:1px solid var(--line)}
 .chat h3{margin:0;font-size:15px;font-weight:500}
 .chat .on{color:var(--muted);font-size:13px}.chat .on b{color:var(--mint);font-weight:600}
