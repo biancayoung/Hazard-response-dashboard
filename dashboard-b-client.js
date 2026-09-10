@@ -134,17 +134,7 @@
     min -= rng * 0.1; max += rng * 0.1; rng = (max - min) || 1;
     var pts = vs.map(function (v, i) { return [i * (W / (n - 1)), H - 5 - ((v - min) / rng) * (H - 12)]; });
     var line = _smooth(pts), last = pts[pts.length - 1];
-    // faint gridlines + axis labels
-    var gy1 = (H - 12) * 0.33 + 5, gy2 = (H - 12) * 0.66 + 5;
-    var t0 = new Date(series[0][0] * 1000), t1 = new Date(series[n - 1][0] * 1000);
-    var fmt = function (d) { return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); };
     el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
-      '<line x1="0" x2="' + W + '" y1="' + gy1.toFixed(1) + '" y2="' + gy1.toFixed(1) + '" stroke="#22344a" stroke-width=".5" stroke-opacity=".6"/>' +
-      '<line x1="0" x2="' + W + '" y1="' + gy2.toFixed(1) + '" y2="' + gy2.toFixed(1) + '" stroke="#22344a" stroke-width=".5" stroke-opacity=".6"/>' +
-      '<text x="1" y="8" font-size="6" fill="#5b7186" fill-opacity=".7">' + dMax.toFixed(dMax < 10 ? 1 : 0) + '</text>' +
-      '<text x="1" y="' + (H - 1) + '" font-size="6" fill="#5b7186" fill-opacity=".7">' + dMin.toFixed(dMin < 10 ? 1 : 0) + '</text>' +
-      '<text x="' + (W - 1) + '" y="' + (H - 1) + '" font-size="6" fill="#5b7186" fill-opacity=".7" text-anchor="end">' + fmt(t1) + '</text>' +
-      '<text x="' + (W - 1) + '" y="8" font-size="6" fill="#5b7186" fill-opacity=".5" text-anchor="end">' + fmt(t0) + '</text>' +
       '<defs><linearGradient id="sg' + color.slice(1) + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + color + '" stop-opacity=".45"/><stop offset="1" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>' +
       '<path d="' + line + ' L' + W + ' ' + H + ' L0 ' + H + 'Z" fill="url(#sg' + color.slice(1) + ')"/>' +
       '<path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>' +
