@@ -1,0 +1,99 @@
+# Falas do simulador da malha Meshtastic da quinta.
+#
+# Este ficheiro e lido a quente: grava, faz push, e o simulador passa a falar
+# assim dentro de poucos minutos. Nao e preciso reiniciar nada nem tocar em codigo.
+#
+# Linhas em branco e linhas que comecam por # sao ignoradas. Uma linha mal
+# formada e saltada com um aviso no log; o simulador nunca cala por causa disso.
+# Escreve sem acentos, e o que os radios Meshtastic mostram bem.
+
+# ---------------------------------------------------------------- os nos
+# chave | numero | nome curto | nome que aparece | alimentacao | movel | hardware
+#
+# alimentacao: rede (nunca baixa) · solar (sobe de dia) · pilha (so desce)
+# movel: sim (anda pelo terreno) · nao (fica no sitio)
+# hardware: numero do modelo Meshtastic (43 = Heltec V3, 31 = T-Beam, 71 = T1000-E)
+[nos]
+casa      | 1361000001 | SCsa  | SIM Casa      | rede  | nao | 43
+estufa    | 1361000002 | SEst  | SIM Estufa    | solar | nao | 43
+furo      | 1361000003 | SFur  | SIM Furo      | solar | nao | 31
+tractor   | 1361000004 | STrc  | SIM Tractor   | pilha | sim | 71
+galinha   | 1361000005 | SGal  | SIM Galinha   | pilha | sim | 71
+vizinho   | 1361000006 | SViz  | SIM Vizinho   | solar | nao | 43
+
+# ------------------------------------------------------- a conversa do dia
+# hora | quem fala | o que diz
+#
+# A hora e do relogio real, em decimal: 6.6 sao seis e trinta e seis.
+# So se dizem falas dentro de duas horas e meia da hora a que pertencem, por
+# isso de manha fala-se de rega e a noite de fechar as galinhas.
+[conversa]
+6.6   | casa     | bom dia. vou abrir a rega do talhao de cima
+6.8   | furo     | bomba ligada, pressao normal
+7.2   | estufa   | estufa a 14 graus, ainda fresca
+7.5   | casa     | alguem viu o cao? saiu de noite
+7.9   | vizinho  | passou aqui pelo caminho de baixo ha bocado
+8.3   | casa     | obrigado. ja apareceu, estava no palheiro
+9.1   | tractor  | vou levar estrume para a horta nova
+9.6   | furo     | deposito a 80 por cento
+10.2  | estufa   | abri as janelas, ja vai em 26
+10.9  | casa     | o carteiro deixou uma encomenda no portao
+11.4  | tractor  | acabei o estrume. vou almocar
+12.0  | galinha  | aviso automatico: saida da cerca
+12.1  | casa     | outra vez a fugir. vou buscar
+12.6  | casa     | apanhada, esta no galinheiro
+13.2  | estufa   | 30 graus la dentro, liguei a ventilacao
+14.0  | furo     | bomba parada, deposito cheio
+14.8  | vizinho  | alguem tem uma chave de 19? parti a minha
+15.0  | tractor  | tenho, passo ai ao fim da tarde
+15.7  | casa     | o sol esta forte, os paineis estao a dar bem
+16.5  | estufa   | regas da tarde feitas
+17.3  | tractor  | levei a chave ao vizinho, esta tudo bem
+18.0  | casa     | vou fechar a rega
+18.6  | furo     | bomba desligada para a noite
+19.2  | estufa   | janelas fechadas, 21 graus
+19.8  | casa     | jantar. quem quer sopa
+20.1  | tractor  | eu quero
+20.3  | vizinho  | boa noite a todos
+21.0  | casa     | galinhas fechadas, cao la dentro
+22.4  | casa     | vou dormir. ate amanha
+23.5  | galinha  | aviso automatico: bateria a 20 por cento
+2.2   | furo     | aviso automatico: queda de tensao ligeira
+4.8   | vizinho  | acordei com barulho, era um javali no milho
+5.6   | casa     | obrigado pelo aviso, vou ver de manha
+
+# ------------------------------------------------------------- falas soltas
+# quem fala | o que diz
+#
+# Sem hora. Servem para haver sempre conversa nova quando as do dia se esgotam.
+[soltas]
+casa     | ligaste a bomba do tanque?
+furo     | ligada ha dez minutos
+casa     | obrigado
+tractor  | o gasoleo esta a acabar, trago na proxima ida a vila
+estufa   | os tomates ja estao a corar
+vizinho  | alguem precisa de ovos? tenho a mais
+casa     | eu levo uma duzia
+tractor  | o pneu de tras esta a perder ar outra vez
+furo     | nivel do poco estavel
+estufa   | reguei os pimentos a mao, o gotejador entupiu
+casa     | vou passar o motocultivador no talhao do fundo
+vizinho  | vi a raposa outra vez perto do galinheiro
+casa     | vou reforcar a rede hoje
+galinha  | aviso automatico: movimento fora do horario
+tractor  | acabei de descarregar a palha
+estufa   | humidade a subir, vou abrir mais
+furo     | filtro limpo, pressao voltou ao normal
+casa     | quem ficou com a chave do portao de cima?
+tractor  | fui eu, esta no gancho da oficina
+vizinho  | obrigado pelo emprestimo da roçadora
+casa     | quando quiseres
+estufa   | semeei alfaces na bancada do meio
+furo     | vou parar a bomba meia hora para arrefecer
+galinha  | aviso automatico: bateria em queda
+casa     | amanha temos voluntarios, precisamos de camas
+tractor  | trago os colchoes do armazem
+estufa   | aviso: temperatura acima dos 32
+vizinho  | chuva prevista para depois de amanha
+casa     | boa, poupa-nos uma rega
+furo     | deposito a 95 por cento
