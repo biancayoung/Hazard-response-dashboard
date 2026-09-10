@@ -208,6 +208,7 @@
   // ---------- render all ----------
   function render() {
     setText('weather.temp', STATE['weather.temp']);
+    setText('weather.hum', STATE['weather.hum']);
     setText('weather.co2', STATE['weather.co2']);
     setText('weather.wind', STATE['weather.wind']);
     setText('weather.rain_24h', STATE['weather.rain_24h']);
