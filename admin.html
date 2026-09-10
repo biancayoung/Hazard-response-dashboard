@@ -133,7 +133,7 @@ td.num,th.num{text-align:right}
 </div>
 <script>
 (function(){
-  var url=(location.protocol==='https:')?'wss://'+location.host+'/ws/admin':'ws://'+location.hostname+':8765/ws/admin';
+  var base=window.FARM_WS_URL||((location.protocol==='https:')?'wss://'+location.host:'ws://'+location.hostname+':8765');var url=base.replace(/\/$/,'')+'/ws/admin';
   var conn=document.getElementById('conn'),badge=document.getElementById('badge');
   var rawBox=document.getElementById('raw'),devBody=document.getElementById('devices');
   var hlora=document.getElementById('health-lora'),hmesh=document.getElementById('health-mesh');

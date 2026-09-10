@@ -228,6 +228,7 @@
   // ---------- render all ----------
   function render() {
     setText('weather.temp', STATE['weather.temp']);
+    setText('weather.hum', STATE['weather.hum']);
     setText('weather.co2', STATE['weather.co2']);
     setText('weather.wind', STATE['weather.wind']);
     setText('weather.rain_24h', STATE['weather.rain_24h']);
@@ -291,10 +292,10 @@
 
   // ---------- data loading ----------
   function loadSparks() {
-    fetch('/api/sparklines').then(function (r) { return r.json(); }).then(function (d) { SPARKS = d; renderSparks(); }).catch(function () {});
+    fetch((window.FARM_API_BASE||'') + '/api/sparklines').then(function (r) { return r.json(); }).then(function (d) { SPARKS = d; renderSparks(); }).catch(function () {});
   }
   function loadWind() {
-    fetch('/api/wind').then(function (r) { return r.json(); }).then(function (d) {
+    fetch((window.FARM_API_BASE||'') + '/api/wind').then(function (r) { return r.json(); }).then(function (d) {
       var w = d.wind || [];
       if (w.length) CURRENT_DIR = w[w.length - 1][2];
       drawRose(w);
@@ -309,7 +310,7 @@
     }).catch(function () {});
   }
   function loadDevices() {
-    fetch('/api/raw').then(function (r) { return r.json(); }).then(function (d) {
+    fetch((window.FARM_API_BASE||'') + '/api/raw').then(function (r) { return r.json(); }).then(function (d) {
       window.DEVICES = {}; (d.devices || []).forEach(function (x) { window.DEVICES[x.name] = 1; });
       var sc = $('#stSensors'); if (sc) sc.textContent = (d.devices || []).length || '--';
     }).catch(function () {});
@@ -317,7 +318,7 @@
 
   // ---------- mesh nodes on the map ----------
   function loadMesh() {
-    fetch('/api/mesh').then(function (r) { return r.json(); }).then(function (d) {
+    fetch((window.FARM_API_BASE||'') + '/api/mesh').then(function (r) { return r.json(); }).then(function (d) {
       var g = document.getElementById('meshpins'); if (!g) return;
       var nodes = (d.nodes || []).filter(function (n) { return n.name; });
       // node count in the chat header
@@ -340,7 +341,7 @@
   // ---------- websocket ----------
   var retry = 3000;
   function connect() {
-    var url = (location.protocol === 'https:' ? 'wss://' + location.host + '/ws' : 'ws://' + location.hostname + ':8765');
+    var url = (location.protocol === 'https:' ? 'wss://' + location.host + '/ws' : (window.FARM_WS_URL || ('ws://' + location.hostname + ':8765')));
     var ws;
     try { ws = new WebSocket(url); } catch (e) { return setTimeout(connect, retry); }
     ws.onopen = function () { $('#stLink').textContent = 'live'; $('#stLink').style.color = 'var(--grn)'; $('#footStatus').textContent = 'telemetry link nominal'; $('#footStatus').className = 'ok'; addLog('sys', 'telemetry link established'); };

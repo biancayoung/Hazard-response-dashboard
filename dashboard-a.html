@@ -330,7 +330,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
       h+='<div class="note">Radial scale is % of time</div>';lg.innerHTML=h;}
   }
 
-  function loadRose(){fetch('/api/wind').then(r=>r.json()).then(d=>{const w=d.wind||[];if(w.length)CURRENT_DIR=w[w.length-1][2];drawRose(w)}).catch(()=>{})}
+  function loadRose(){fetch((window.FARM_API_BASE||'') + '/api/wind').then(r=>r.json()).then(d=>{const w=d.wind||[];if(w.length)CURRENT_DIR=w[w.length-1][2];drawRose(w)}).catch(()=>{})}
   loadRose();setInterval(loadRose,60000);
   window.refreshWindRose=loadRose;
   window.setWindRoseDir=function(deg){CURRENT_DIR=deg;loadRose()};
@@ -368,7 +368,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
       `<path d="${line}" fill="none" stroke="#3ec8d2" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>`+
       `<circle cx="${last[0]}" cy="${last[1]}" r="2" fill="#3ec8d2"/></svg>`;
   }
-  function loadSparks(){fetch('/api/sparklines').then(r=>r.json()).then(d=>{
+  function loadSparks(){fetch((window.FARM_API_BASE||'') + '/api/sparklines').then(r=>r.json()).then(d=>{
     document.querySelectorAll('[data-spark]').forEach(el=>{drawSpark(el,d[el.getAttribute('data-spark')])});
   }).catch(()=>{})}
   loadSparks();setInterval(loadSparks,60000);
@@ -428,7 +428,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
       `<circle cx="${last[0]}" cy="${last[1]}" r="7" fill="${col}" fill-opacity=".25"/>`+
       `<circle cx="${last[0]}" cy="${last[1]}" r="3.5" fill="${col}" stroke="#141d28" stroke-width="1.5"/>`;
   }
-  function loadTemp(){fetch('/api/sparklines').then(r=>r.json()).then(d=>drawTemp(d['weather.temp'])).catch(()=>{})}
+  function loadTemp(){fetch((window.FARM_API_BASE||'') + '/api/sparklines').then(r=>r.json()).then(d=>drawTemp(d['weather.temp'])).catch(()=>{})}
   loadTemp();setInterval(loadTemp,60000);
   window.refreshTemp=loadTemp;
 
@@ -469,7 +469,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
   });
   svg.addEventListener('mouseleave',()=>{tip.style.display='none'});
 
-  function loadRain(){fetch('/api/sparklines').then(r=>r.json()).then(d=>{
+  function loadRain(){fetch((window.FARM_API_BASE||'') + '/api/sparklines').then(r=>r.json()).then(d=>{
     const s=d['weather.rain_24h'];
     if(s&&s.length){const vals=s.map(p=>p[1]);const n=24;RAIN=vals.slice(-n);
       while(RAIN.length<n)RAIN.unshift(0);}
@@ -502,7 +502,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
   // over plain HTTP (port 8000) connect directly to the bridge on :8765.
   var url = (location.protocol === 'https:')
     ? 'wss://' + location.host + '/ws'
-    : 'ws://' + location.hostname + ':8765';
+    : (window.FARM_WS_URL || ('ws://' + location.hostname + ':8765'));
   var retry = 3000;
 
   // Format a raw value for a given data-src key.
