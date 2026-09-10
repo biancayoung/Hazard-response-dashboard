@@ -1,10 +1,11 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>fabfarm · ops console</title>
+<title>fabfarm · dashboard B · ops console</title>
 <!--
-  OPTION 2 · "OPS CONSOLE": hazard-response base-station vibe.
+  DASHBOARD B · "OPS CONSOLE": hazard-response base-station vibe.
   Single-screen (no scroll) command centre: map, wind rose, meshtastic,
-  key metrics, trends. Live via ws + /api. Same data as the dashboard.
+  key metrics, trends. Live via ws + /api. Same data as dashboard A.
+  Served by bridge.py at /b (and /ops for backward compatibility).
 -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600;700&family=Barlow+Condensed:wght@500;600&display=swap" rel="stylesheet">
@@ -275,10 +276,10 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   <!-- footer -->
   <div class="foot">
     <span>fabfarm · algarve · environmental ops</span>
-    <span><a href="/">dashboard</a> · <a href="/data">data</a> · <a href="/admin">admin</a></span>
+    <span><a href="/a">dashboard A</a> · <a href="/data">data</a> · <a href="/admin">admin</a></span>
     <span id="footStatus" class="ok">telemetry link nominal</span>
   </div>
 </div>
 
-<script src="/ops-client.js"></script>
+<script src="/dashboard-b-client.js"></script>
 </body></html>

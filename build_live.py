@@ -1,15 +1,19 @@
 #!/usr/bin/env python3
-"""Build live.html from a.html by injecting the live-data WebSocket client.
+"""Build dashboard-a.html from b.html by injecting the live-data WebSocket client.
+
+b.html is the editable source for Dashboard A (the clean live dashboard);
+dashboard-a.html is the generated output served by bridge.py at / and /a.
+Do not edit dashboard-a.html directly -- edit b.html and re-run this script.
 
 Usage: python3 build_live.py [src] [out]
-Defaults: a.html -> live.html
+Defaults: b.html -> dashboard-a.html
 """
 import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
-src = ROOT / (sys.argv[1] if len(sys.argv) > 1 else "a.html")
-out = ROOT / (sys.argv[2] if len(sys.argv) > 2 else "live.html")
+src = ROOT / (sys.argv[1] if len(sys.argv) > 1 else "b.html")
+out = ROOT / (sys.argv[2] if len(sys.argv) > 2 else "dashboard-a.html")
 client = (ROOT / "live-client.js").read_text(encoding="utf-8")
 
 html = src.read_text(encoding="utf-8")

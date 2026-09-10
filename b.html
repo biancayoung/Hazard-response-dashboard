@@ -1,9 +1,12 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Portugal · farm screen · B</title>
+<title>Portugal · farm screen · dashboard A</title>
 <!--
-  PROTOTYPE B · "Field panel": boxless, big numerals, bar chart, map dominant.
-  Layout only. Every live value carries data-src="<source.field>" so the feed (M2 → Jetson → ?) can be wired later:
+  DASHBOARD A · the clean, simple live dashboard ("Field panel": boxless, big
+  numerals, bar chart, map dominant). This file (b.html) is the EDITABLE SOURCE;
+  build_live.py injects live-client.js and writes dashboard-a.html, which
+  bridge.py serves at / and /a. Do not edit dashboard-a.html directly.
+  Every live value carries data-src="<source.field>" filled by the bridge feed:
     weather.co2 weather.wind weather.wind_dir weather.temp weather.rain[]  soil.temp soil.hum  mesh.msgs[]  mesh.nodes
 -->
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

@@ -696,15 +696,16 @@ class Handler(SimpleHTTPRequestHandler):
         super().__init__(*a, directory=str(ROOT), **kw)
 
     def _rewrite(self):
-        # Serve the live dashboard at the root; no landing page.
-        if self.path in ("/", "/index.html"):
-            self.path = "/live.html"
+        # Dashboard A (clean live dashboard) is the default at the root;
+        # no landing page. /ops is kept as an alias of /b so old links work.
+        if self.path in ("/", "/index.html", "/a"):
+            self.path = "/dashboard-a.html"
+        elif self.path in ("/b", "/ops"):
+            self.path = "/dashboard-b.html"
         elif self.path == "/admin":
             self.path = "/admin.html"
         elif self.path == "/data":
             self.path = "/data.html"
-        elif self.path == "/ops":
-            self.path = "/ops.html"
 
     def do_HEAD(self):
         # HEAD requests (e.g. the kiosk network check) use the same rewriting.
