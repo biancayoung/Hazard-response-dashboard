@@ -105,6 +105,15 @@
   }
 
   // ---------- sparkline (smooth curve + gradient, like dashboard 1) ----------
+  // centred moving-average smoothing (window w) to reduce noise/spikes while keeping the trend
+  function _ma(vals, w) {
+    var n = vals.length, h = Math.floor(w / 2);
+    return vals.map(function (v, i) {
+      var s = 0, c = 0;
+      for (var j = Math.max(0, i - h); j <= Math.min(n - 1, i + h); j++) { s += vals[j]; c++; }
+      return s / c;
+    });
+  }
   function _smooth(pts) {
     if (pts.length < 3) return pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
     var d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
@@ -119,12 +128,23 @@
   function drawSpark(el, series, color) {
     if (!series || series.length < 2) { el.innerHTML = '<svg viewBox="0 0 100 44"><text x="50" y="26" font-size="9" fill="#3a4a5c" text-anchor="middle">collecting</text></svg>'; return; }
     color = color || '#33e0ff';
-    var W = 100, H = 44, vs = series.map(function (p) { return p[1]; }), n = series.length;
-    var min = Math.min.apply(null, vs), max = Math.max.apply(null, vs), rng = (max - min) || 1;
+    var W = 100, H = 44, vs = _ma(series.map(function (p) { return p[1]; }), 3), n = series.length;
+    var dMin = Math.min.apply(null, vs), dMax = Math.max.apply(null, vs);
+    var min = dMin, max = dMax, rng = (max - min) || 1;
     min -= rng * 0.1; max += rng * 0.1; rng = (max - min) || 1;
-    var pts = series.map(function (p, i) { return [i * (W / (n - 1)), H - 5 - ((p[1] - min) / rng) * (H - 12)]; });
+    var pts = vs.map(function (v, i) { return [i * (W / (n - 1)), H - 5 - ((v - min) / rng) * (H - 12)]; });
     var line = _smooth(pts), last = pts[pts.length - 1];
+    // faint gridlines + axis labels
+    var gy1 = (H - 12) * 0.33 + 5, gy2 = (H - 12) * 0.66 + 5;
+    var t0 = new Date(series[0][0] * 1000), t1 = new Date(series[n - 1][0] * 1000);
+    var fmt = function (d) { return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); };
     el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
+      '<line x1="0" x2="' + W + '" y1="' + gy1.toFixed(1) + '" y2="' + gy1.toFixed(1) + '" stroke="#22344a" stroke-width=".5" stroke-opacity=".6"/>' +
+      '<line x1="0" x2="' + W + '" y1="' + gy2.toFixed(1) + '" y2="' + gy2.toFixed(1) + '" stroke="#22344a" stroke-width=".5" stroke-opacity=".6"/>' +
+      '<text x="1" y="8" font-size="6" fill="#5b7186" fill-opacity=".7">' + dMax.toFixed(dMax < 10 ? 1 : 0) + '</text>' +
+      '<text x="1" y="' + (H - 1) + '" font-size="6" fill="#5b7186" fill-opacity=".7">' + dMin.toFixed(dMin < 10 ? 1 : 0) + '</text>' +
+      '<text x="' + (W - 1) + '" y="' + (H - 1) + '" font-size="6" fill="#5b7186" fill-opacity=".7" text-anchor="end">' + fmt(t1) + '</text>' +
+      '<text x="' + (W - 1) + '" y="8" font-size="6" fill="#5b7186" fill-opacity=".5" text-anchor="end">' + fmt(t0) + '</text>' +
       '<defs><linearGradient id="sg' + color.slice(1) + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + color + '" stop-opacity=".45"/><stop offset="1" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>' +
       '<path d="' + line + ' L' + W + ' ' + H + ' L0 ' + H + 'Z" fill="url(#sg' + color.slice(1) + ')"/>' +
       '<path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>' +

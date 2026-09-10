@@ -35,6 +35,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
 .logo h1{margin:0;font:600 19px "Barlow Condensed";letter-spacing:.14em;text-transform:uppercase}
 .logo .sub{color:var(--cyn);font-size:10px;letter-spacing:.18em;text-transform:uppercase}
+.logo .flogo{width:36px;height:36px;flex:0 0 auto;filter:invert(1);opacity:.92}
 .strip .sp{flex:1}
 .stat{display:flex;flex-direction:column;align-items:flex-end;line-height:1.05}
 .stat .k{color:var(--dim);font-size:9px;letter-spacing:.18em;text-transform:uppercase}
@@ -163,7 +164,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
 
   <!-- header -->
   <div class="strip">
-    <div class="logo"><span class="dot"></span><div><h1>ops console</h1><div class="sub">south of portugal · environmental monitoring · station 01</div></div></div>
+    <div class="logo"><img class="flogo" src="/fabfarm-logo-128.png" alt="FabFarm logo"><span class="dot"></span><div><h1>Algarve fabfarm</h1><div class="sub">south of portugal · environmental monitoring · station 01</div></div></div>
     <div class="sp"></div>
     <div class="stat"><span class="k">grid</span><span class="v num" style="font-size:13px;color:var(--cyn)">37.08°N 8.67°W</span></div>
     <div class="stat"><span class="k">sensors</span><span class="v on num" id="stSensors">--</span></div>

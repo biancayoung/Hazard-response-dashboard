@@ -33,6 +33,7 @@ a{color:inherit}
 .place{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
 .place h1{margin:0;font-size:18px;font-weight:600;letter-spacing:-.01em;color:var(--muted)}
 .place .where{color:var(--ink);font-size:30px;font-weight:600;letter-spacing:-.01em}
+.flogo{width:32px;height:32px;flex:0 0 auto;align-self:center;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAATQklEQVR42u1debRVVRn/nXsv74FMYoDIKKEJYqalIhiaOCAoDg2atZxywHSlqVSaK0vJqbDSZYZkqFghai0bDBFKQ0vNUsnUcEgcWIaoSAxvuPee0x/7t9f7/Nz7DPeeCw94e62z3n3nnrvPPt/+xt/37X2Azt2K4vNOAOYA+B+AlwGcKr4rAQjQ1XJrBUH8EoBzAbwOIFLH/QDGdU1Efi0gEW2bAuAfguAV/g0BVMX5mwEM9UhOV6tB3ewO4G5F+NAhAfL8agAzADQLKSp0kTUd4a3a6AfgagAbSdSq4nTfURaf/wngWE//Xc2j5wHgdAArHOom7RGqifgtgL2UfehqDj3/KQCPKG4OMxJfHlJq2gD8EMDALvvwwYcfBWBeCj1f6yElaCWAc8T9i9uafZAGsReAbwFY6/Fo8jy0WvobgMlKGrd6dSO5/kQAy+vQ8/VMhLzXAkrgVjsJWs+PY9CUpOcrimh5T4S0D/8FMIRjDbZWPT8UwOyUxKyk5OI8VFYr/07fmjwkqeebGRStFhw/k5DCOhIwdBD/QQD7ANgPwCu8phE2wt7v0K3BM9J6/lgGQ/JhHxTfn6OIYI3kTUoVzFbcWgUwC8AEAHeIc9rgllMSf7FgHFcr8bk6Nb4kRXcvBj+R8MFbSZAX6f2UeCzjNe38O5d9dBOxwX/F9/8GcIC410AhHVEGCbFqrAxgz4zcX+ysen4gg502QXjXw98kfnOI4MZlJLwl/kWKqH8gRCFV3dWKmLavH1NK2j12p6zGUvSo0oDjWAjguwD6d5aJKKhg5hwGOfpBNwB4FMCtAK7lMZuEtCL/K147QfT/ZTWJv1C2ZQyAPwuCW3XyGO2GbTc7MCJrS94GMMAD1hUVE9jjDY6tsLkCOe1WTmZQEylVsgLAVwHsnKBXAwB7U2XZ/sewH0v8u5VaOg7Ae+p+EYDviWsscRY6PCv7+Ssez8dy/mCYpE/ZYVMeB3DYps4/SJEbzSAmUlwYAngVwKAMkmSjYtv/fNHvYwCaBGHPULYlojd1vBrjxwEsdcQRdoz/Yp8FB+FsH7d6pEdO5p0Admu0WpKD3B7AlVQtOqCxf5eJ3/YD8DkA13HC7iSnHkPCau9jILkuBPAOgOHi3ieJ+1jOfw3AJxxqo81jlC3xJnsIZv/fz0FsXyC3nq51X483WLfKse1UAP9JCJhCwRkz4U4fRmKiLPHsZBwqvv+iuPcneb+q8ohGimt6A7grZnwVAU/7uNWee0RJdlW4t6HnHi8DOEX1VaiX8wFgrBDnPGDiSKmREeJex7LvJWIM/cREWuIvJ3xg284AnooZnzW8rVQZQYzh/UIKVDaMAfoeAjCxXvtgcZHuAjRrT+FnV9Q1VQDPU69fyoc7HMCBACYBOE1IgbUtEYCDxaBvVjp/pTLuY6mKopjgy57/vof77YT0Yl9V8Ztb6C5PAHAJVaQLo6oqiZirxlmshftHKewlKbixn/8B4GIGZU0Z05HnU50AJidsffwKgBZCFLbtAWBVAvGtvn6TNizO8M5Uk32ZY6wTKUnVFPnpNZy07RKi7dgJKKdAJe13i2jgijGS1YuE6OW5p3QNf6RgiFPEtSPolycBePa70z2caCdkJJ2LivD5m3j9RACfF4n+OxMmXY/pOTojqSdBTkAlYQIsJ1zk6KcngIOofn4N4Gnq81X8+3eYIquDlQdh/z4n7jNfTE5PAWOkIcLfHblnzf13K+5/SFzzIs/tzPtfmuLeLvswK+0kpJ0AiVIOUKrhOnoGaQ3yDYogAyjCIaPWgWJcd6QkgB37xAS38yCHDVshPJkpjICtBMxLeX9tGyswlX2Jk5BVAiIAvwEwjQFMWUXHLSmzXt8SY+gL4C2e/7o4/xmea1FRqjykQbwzxvAWeTypJsz+vcBBm72pqsIM3mAoJmxX1wQEjgkIOQHLOcgogztlRa9ZnX8dwEuMJ1YSUijTSA0CMIzJkTW83wNERPsz4u3B3++UcgwtwksKeE7amQrvN5uTZifJEq0I4GsEGQsAxgO4h9KZhR722ird4JcFjXPLBFnrX2LnzUzELCXm/jiJtz6hnyYO1uI7K+j6AcBZ/O4b4hoX4xxKrOZaQiOW2Pq6Hej5hIqY8vNnqburdJ8HkGm6NRrtTKuCdMjeSnV0grILtVbJ9RKfX/KoBd32I9f3SHA7b4jR5RXh2dl2ocOwZlFBFVEEUEBO1WJWl75N/T+XMIFufenXf4yI5whGuSWqitcAPEEEc4Xo20rMYA7+WYGmVh1jiYgjTWe/BSUp9ncfpWGtJgRJRQ8uhs0tAdYItQK4hgTSbSiALxHzX5mSW9YJaDkQoj6B338kgz8dxBD0gYQYwp5fIn47Q0lMRQR65RTQhVcCapkAe/4cxwNOJfr5nscvLgugyx7tKrr8LTm9m4hA14koOaiD+Ec78glZJyDMUwXVgtpZsW4VxvNkGtv7iNH3VdBtIPLBRXV043WWcNOoc8v8fyVMkn+9un/S+OSEhPSobuG4u6XoJ86ruY0xwiTC9K0px5abCrJ4+M+ovzUwFaYskgoZbe5C72U+OkoWdxMZsQ/n8EyHU/ePAHCv4mh52HOLHRLgw4mOEHFIw1VQGjQ0S23OkWoMwwFcQTBLwsfSEBYc6iXIINFDyUBxauOPyguKGMdYd3uCSjD9Jqa6ryETEHpmPQvxF6pccTFhXHnUL1nbciltwUb+bRfReztMKaVtF6jxBgIKH8LxX+FJZTbUDS3VoUfLBPICIf6ywq6idPgYEmcFgP0BPENC7QNTgTGEAdYznmBNQtQBgKtgqi40Uez4WjhZMlgbIcb0VUrS2xzrLps6EKu3LPBHKRMWJQGEXcExvsicwzBOSAHAeQB+XwdjxLWvifGfmQEnaqgE1NIszrJaEDNM+dtXiSmFxKneIXa0nOdWwtSTRhmzfzsyTxE6XNiIUmXzEVUAPyHd5ghbcBdxrajegM3Ozi4pEzK1cv/ZCdwfOOoy94dJ0u9NzGdfpjUP5bkJeH/5YilhgV5BwBdr6Uq2KXvQptKbrXyGP4l+royJLWqWgDZ+V/VwBuqIH9oZIcf5zZGCG26FKU8pppCw+2CKuCopx/Mkn7dPClXooteGeji/5HiAAsX5LgZVeRcddaOP/UWYxL00mFYlDQNwIz9/n2nBorguUAYzEm7oNCZazmT0fBHVlFZ39neHwFRvRzHeVqDo86T4fV3LYEsezojIcfeTGL4ZTloMXfJABL0J8S5XnG4J/B6zXyFhiIqnn8BxrkoPZj5MdcdbDmkrifEvUchn2taD0lzGVt6GiOR8Wnu0xyYc32wySKuo5Ajz8IKCBpdiRw5YWWbk7uXnGeTo5gwJouH0UvrC1CQtE3B0T7qVzagvBoqIBH8+IYjcYtt2VCHDa5CAPUngng411ZsTmmds8zvatE/DrFGoqqVVqaGIztJ6wOSED4SpmtuYYQJCuqgHwJS99HZUZL+bI/F/4Bj/ZxUaXHMg1siNLkJHEGZV0I4ALufnmTR2PVL2WwXwIUbGfWAyZM8qF/s48ez1Pt9D7GMs7/sXmAT+/cyPhHlUSG/ONlAERGlV0Ghs+uVaL/Dew3ju26rSOpMEWCNzFJMOhZwWNFsC9WQMcKOIuOV9B9L4hjTGWZIotgjqRN7nBlGeEimiFWESNetrSKYEIpVahEnPjqJ6q9J21RQHWG/hCwItzLstIxhXSVHu0iJKVoKUgV6rKtJyqSmbtD8DHStwCgkLVaDqhwrMFSxAx0pPC2Z+WgRq1VpEaqEgQDmHo13g7/0zegRXwSxbfYeh/2py3np+3kDOW0W/PIuKDdhvrUa4hfZmOEyR2dHoKM1MNMJBjAQshEm1VXP0cW1fZ8PU//u4Q8Yg1liP48O8TvBtOSf2o4QGBtHDeVj9vuqRAhlz3C7iAglzNLP/0EMvKTUbyGD9VOQdWxmXJAF572hiifGWWLIapFCTBXL2N3juKZgylf4wC+8AU4a+gNeWMiSUmhPGcH4CHXSBmnQ/G1IVUS/cbSuqLxN6NI3L2i6Q2RZRutIiCNiewe2zhGnzSEggGDENdB4JiSjU42o2UgVB5Qb2gqmmCxwpyVCcjygxVZh60UEwqUAbM7xJj6c79XkQ49XYZ+5OtDdwoKsVel/rYCr6nlZqVIKTxXqKcze1CtKJmT+kSMoHDUrKfydhjDb/u6dDhUYp9zWqSwVVVcVa3sFLFaa4aaoq9RsOsy5gKfGVSEhDkABJBynAvzKDpRn4YLWe/bxOcal1aQsweedTObafC2mL8o7sliaUF4Y5GOSQEeQomNTiL8VqxEhIyfg6JMEa+pNhytyHo2NXl4qHYzdykkA1ab+/xtH/9BTSkQmMK4i6maUwFQjrE2qD6p2QdsfyUrkTyvMZ4JEgJs9dEUhoGEMwOwEBIe0pMIsQCwL32Vf0/ZeECa0LDe0OU/8yAWZ97w9hUnirPFxdawGra1msFf1VGYpz46T6/ITi3FAEV/08/RQYFEYE34pERF3rDcJGwtE7cFJmwCTCVzsMbSUDhJxkxNKUp/cgAho47ESBkMbzCdugWdV4Nvvbjh7WdsJhuBBmzyKL0C7IcwICsUfEuRS93cWmFHGo5TEwBbtvOFRKWGfwdogInErqaOLf0QKT8W1JcGQG7+4NAnkreBzueO7RwmiHeUyAHejDSkev5LmbYBZf7CW4QrftmZS4V2Szat0dtyxAs6S2B/ufkLA89f4Uk+Aa5xqYIq0dGYVPQ0cxWE1GOC4QW0Kui2uvwKwLWAyzk9XLHg45TQzcIp1pkz2hKEec6yGQ7WsqTEnKcpiirRblIhb5u90JZxQT3NdQQc+WeGtIo/4q4MolEAvE5kdn0eguFptZxKGCDxIZHOlRUZco9ZR3kLeRUPcSAnZxquj6jIuuk3CfKC831Nd6U+2cSX/9dY+utos3fsWEjgbG+sPUha5NeAi9KZ/e7ubfMNsMfJOqYLTYlENvf+CKrD9EULBaQ4l9mNG5KIvq6dQTkFS20ZcG7Q5BzEjp/IiifhY9CaikxS8cur7qIfoLMCWKp9IP7wHUvd3mlxu8h7VcMTQ0ayB2OwOMmzjQ8R7fGMRNLhf+seVSyVnLGTXqbWymwawDdhnfR8jh+zIeiXMcBjNncAJh6+sphbs6omhZ/Pt0gyZBMtHPs0TyVkcudnT6JrGQ89SmdbbtyOzVeqVeKkoipjm8pls4aY/DFE6NSXB5JxEzWsCcwP88hFiQ4BFNynkCZD+rYWpTS1ly6nZgi0iQFo8f30p37niHutpN7Ata9ewsNZ/eiFz6v0tMkdYBMJt6/DEmhdjuUV/HJUzCr3OYBPl8VSaQhtajHy9zbJDqM4zPMDbQBvcKx24kFfUesL4imJKtD23MHM/2N+WY3VjepWq5B2bx91EeFWCxnVH0oKo1xCl6C4PFMGsZal4EY0WlGR2VC66VkKGDoE+oN1SM8+w7t4jJnibHACfClPe96njQNoeRtztT3Uobsz9VVJARJ7qqBre0omzciY0oattHJGd8sIJWL/MYeD2lzi9Exy5Z2nacR/3vAvfKqp8yTEXahcxYNaUsdyzF4ES9GaOk2S5fSspaqsZejXh/WVHVOz6bEET5RPhRQrq6jYUpnFrtWf6qJ/YleltjY8bch5NyPNXoHZys1+DfPbGoNolNm4CfJwKshu6gWxDG8GJR3OraZVbvcHuGgyM+TsK0eRZ7hw7VdrJjwz8bIB5EYi9K2Bxko2/nKqEyHvUsuJaq6WGY4uHNtof0CKKeGmSTojtbvb8L9HrmOdRJ6PGfn0ZH/b0OEicD+Kl6+Zvso83DyX+lyvJBFOOV3ZJ9rKCzgc6yi/onxfoqqSamOOCHWaLMPAkZte/90rp9MIOsZx3uZ5tHJa6C2exjCWOC20S60beh0+0OyblaBKLB5l6QoQdwEg3Yw0zUyHaKWNaftPd0lTZhoGP/iO/BlKJoLo9U4LOIduIYSlw/j/tZiMGJtidM8gL/7t6Z36QRiO0mB4nzI8WuJHFJmVAsxpus+u/HWOJdBXFUVNLkZsYMAxqodhuyViLIuczEctcY6to+Ys1xMQHvf055N6fB1Njb+pyyUoFLGaTdB7Oq0jWmnSg9I6i+BnBMTWSW6VR3riWsBVGUFtWz0GJTqqWC2Pz7CFEtEKXY2qtCf3oKzEp0XSERiW1kDvOMYTd6XfMYna9L8OdnpVgngS393WLTVe6gkiHKlLj7K/SI4LAPFxA5bU/IK9jDblHzwNb8htWiwwtqTUjCVBygVkjiasO8J93QtY4+yp6gUPvzJ20Lr7gtKaLdm6FawhJrBt6/cHu2YyONpIR/RSV3TthW3qjqih+OFomQpHcAWPVzJDNrqzKWu2jc5jKF22Bbfa9wE3X3WzXYh3LKF0tsctxmS7QPg2HSnpWYDQDDDDsyaj3/iEJgS9uK2smqlvZjFFtPNZ3GbU7fnLjNlvo21hNg6jezqCXpVW2EKSPfobPgNluifegJUx6/Jgb2dp2/pzPjNluifRhJ9NLl0VTU25umdun5xtmHiQqeiMSa4XPFtV16voGvzwVhjddg6o7mqFeabJHq5v/ZJdBsRCycegAAAABJRU5ErkJggg==);background-size:contain;background-repeat:no-repeat;background-position:center;filter:invert(1);opacity:.92}
 .badge{display:inline-flex;align-items:center;gap:7px;background:var(--mint);color:#0d2417;font-weight:600;font-size:13px;padding:4px 10px 4px 8px;border-radius:6px;transform:translateY(-4px)}
 .badge i{width:7px;height:7px;border-radius:50%;background:#0d2417;display:inline-block}
 .clock{display:flex;align-items:baseline;gap:16px;line-height:1}
@@ -152,7 +153,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
 </style></head><body>
 <div class="screen">
 <header class="top">
-  <div class="place"><span class="badge"><i></i><span data-i18n="live">Live</span></span><h1 data-i18n="country">Portugal</h1><span class="where">Algarve fabfarm</span></div>
+  <div class="place"><span class="flogo" role="img" aria-label="FabFarm logo"></span><span class="badge"><i></i><span data-i18n="live">Live</span></span><h1 data-i18n="country">Portugal</h1><span class="where">Algarve fabfarm</span></div>
   <div class="clock"><button class="lang" id="langToggle" aria-label="Switch language">中文</button><time class="num" id="clock">--:--</time><small id="date">Lisbon time</small></div>
 </header>
 
@@ -338,14 +339,31 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
   window.setWindDirText=function(deg){const el=document.querySelector('[data-src="weather.wind_dir"]');if(!el||deg==null||isNaN(deg))return;
     el.textContent=SECTORS[Math.round(((+deg)%360)/45)%8]};
 
+  // centred moving-average smoothing (window w) to reduce noise/spikes while keeping the trend
+  function smoothSeries(vals,w){
+    const n=vals.length,h=Math.floor(w/2);
+    return vals.map((v,i)=>{let s=0,c=0;for(let j=Math.max(0,i-h);j<=Math.min(n-1,i+h);j++){s+=vals[j];c++}return s/c});
+  }
+
   // sparklines: one mini line chart per [data-spark] element, from /api/sparklines.
   function drawSpark(el,series){
     if(!series||series.length<2){el.innerHTML='';return}
-    const W=100,H=34,vs=series.map(p=>p[1]),min=Math.min(...vs),max=Math.max(...vs),rng=(max-min)||1,n=series.length;
-    const pts=series.map((p,i)=>[i*(W/(n-1)),H-3-((p[1]-min)/rng)*(H-8)]);
+    const W=100,H=34,n=series.length;
+    const vs=smoothSeries(series.map(p=>p[1]),3),min=Math.min(...vs),max=Math.max(...vs),rng=(max-min)||1;
+    const pts=vs.map((v,i)=>[i*(W/(n-1)),H-3-((v-min)/rng)*(H-8)]);
     const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
     const last=pts[pts.length-1];
+    // faint gridlines + axis labels
+    const gy1=(H-8)*.33+3,gy2=(H-8)*.66+3;
+    const t0=new Date(series[0][0]*1000),t1=new Date(series[n-1][0]*1000);
+    const fmt=d=>String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
     el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">`+
+      `<line x1="0" x2="${W}" y1="${gy1}" y2="${gy1}" stroke="#22344a" stroke-width=".5" stroke-opacity=".6"/>`+
+      `<line x1="0" x2="${W}" y1="${gy2}" y2="${gy2}" stroke="#22344a" stroke-width=".5" stroke-opacity=".6"/>`+
+      `<text x="1" y="8" font-size="6" fill="#5f7389" fill-opacity=".7">${max.toFixed(max<10?1:0)}</text>`+
+      `<text x="1" y="${H-1}" font-size="6" fill="#5f7389" fill-opacity=".7">${min.toFixed(min<10?1:0)}</text>`+
+      `<text x="${W-1}" y="${H-1}" font-size="6" fill="#5f7389" fill-opacity=".7" text-anchor="end">${fmt(t1)}</text>`+
+      `<text x="${W-1}" y="8" font-size="6" fill="#5f7389" fill-opacity=".5" text-anchor="end">${fmt(t0)}</text>`+
       `<path d="${line} L${W} ${H} L0 ${H}Z" fill="#3ec8d2" fill-opacity=".10"/>`+
       `<path d="${line}" fill="none" stroke="#3ec8d2" stroke-width="1.5" vector-effect="non-scaling-stroke" stroke-linejoin="round"/>`+
       `<circle cx="${last[0]}" cy="${last[1]}" r="2" fill="#3ec8d2"/></svg>`;
@@ -373,9 +391,9 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
   function drawTemp(series){
     if(!series||series.length<2){tg.innerHTML='<text x="110" y="50" font-size="11" fill="#5f7389" text-anchor="middle">collecting data</text>';return}
     const W=220,H=90,padT=14,padB=16,n=series.length;
-    // smooth the series with a centred moving average (window 3) to reduce noise/spikes
+    // smooth the series with a centred moving average (window 5) to reduce noise/spikes
     const raw=series.map(p=>p[1]);
-    const vs=raw.map((v,i)=>{const a=raw[Math.max(0,i-1)],b=raw[i],c=raw[Math.min(n-1,i+1)];return (a+b+c)/3});
+    const vs=smoothSeries(raw,5);
     let min=Math.min(...vs),max=Math.max(...vs);const rng=(max-min)||1;min-=rng*.08;max+=rng*.08;const r2=(max-min)||1;
     const pts=series.map((p,i)=>[6+i*((W-12)/(n-1)),padT+((max-vs[i])/r2)*(H-padT-padB)]);
     const line=smoothPath(pts),last=pts[pts.length-1],first=pts[0];
@@ -383,9 +401,24 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
     const cur=vs[vs.length-1],t=(cur-min)/r2,hue=200-t*160; // 200 (cool) -> 40 (warm)
     const col=`hsl(${hue},80%,60%)`;
     const minI=vs.indexOf(Math.min(...vs)),maxI=vs.indexOf(Math.max(...vs));
+    // faint gridlines: 3 horizontal lines at 25%, 50%, 75% of plot area
+    const gTop=padT,gBot=H-padB,gH=gBot-gTop;
+    const grid=[0.25,0.5,0.75].map(f=>{const y=gTop+gH*f;return `<line x1="6" x2="${W-6}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#2f4157" stroke-width=".5" stroke-opacity=".5"/>`}).join('');
+    // y-axis scale labels (min/max of data)
+    const dataMin=Math.min(...vs),dataMax=Math.max(...vs);
+    // x-axis time labels from epoch timestamps
+    const t0=new Date(series[0][0]*1000),t1=new Date(series[n-1][0]*1000);
+    const fmtT=d=>String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
     tg.innerHTML=
       `<defs><linearGradient id="tgG" x1="0" y1="0" x2="0" y2="1">`+
         `<stop offset="0" stop-color="${col}" stop-opacity=".45"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>`+
+      grid+
+      // y-axis labels
+      `<text x="2" y="${(gTop+3).toFixed(1)}" font-size="7" fill="#5f7389" fill-opacity=".8">${dataMax.toFixed(1)}°</text>`+
+      `<text x="2" y="${gBot.toFixed(1)}" font-size="7" fill="#5f7389" fill-opacity=".8">${dataMin.toFixed(1)}°</text>`+
+      // x-axis time labels
+      `<text x="6" y="${H-2}" font-size="7" fill="#5f7389" fill-opacity=".7">${fmtT(t0)}</text>`+
+      `<text x="${W-6}" y="${H-2}" font-size="7" fill="#5f7389" fill-opacity=".7" text-anchor="end">${fmtT(t1)}</text>`+
       `<path d="${line} L${last[0]} ${H-padB} L${first[0]} ${H-padB}Z" fill="url(#tgG)"/>`+
       `<path d="${line}" fill="none" stroke="${col}" stroke-width="2.5" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>`+
       // min / max markers
@@ -415,7 +448,11 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
       else bars+='<line x1="'+x.toFixed(2)+'" x2="'+(x+bw).toFixed(2)+'" y1="'+base+'" y2="'+base+'" stroke="#2f4157" stroke-width="1"/>';
       hits+='<rect data-i="'+i+'" x="'+(x-1).toFixed(2)+'" y="0" width="'+(bw+2).toFixed(2)+'" height="'+base+'" fill="rgba(0,0,0,0)"/>';
     });
-    svg.innerHTML='<line x1="0" x2="'+W+'" y1="'+base+'" y2="'+base+'" stroke="#2f4157" stroke-width="1"/>'+bars+hits;
+    // faint horizontal gridlines at 1/3 and 2/3 of bar area
+    const g1=Math.round(base-(H-24)/3),g2=Math.round(base-2*(H-24)/3);
+    const grid='<line x1="0" x2="'+W+'" y1="'+g1+'" y2="'+g1+'" stroke="#2f4157" stroke-width=".5" stroke-opacity=".4"/>'+
+      '<line x1="0" x2="'+W+'" y1="'+g2+'" y2="'+g2+'" stroke="#2f4157" stroke-width=".5" stroke-opacity=".4"/>';
+    svg.innerHTML=grid+'<line x1="0" x2="'+W+'" y1="'+base+'" y2="'+base+'" stroke="#2f4157" stroke-width="1"/>'+bars+hits;
     // current status from the latest hour
     const cur=RAIN[n-1]||0;
     const wet=cur>0.05;
