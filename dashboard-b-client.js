@@ -184,7 +184,7 @@
   function renderMsgs(list) {
     var box = document.querySelector('[data-src="mesh.msgs"]');
     if (!box || !Array.isArray(list)) return;
-    if (!list.length) return; // keep the mock/placeholder when no real messages yet
+    if (!list.length) { box.innerHTML = '<div class="m sys"><div class="t">No messages yet</div></div>'; return; }
     box.innerHTML = list.map(function (m) {
       if (m.sys) return '<div class="m sys"><div class="t">' + esc(m.text || '') + '</div></div>';
       var cls = m.me ? 'm me' : 'm';
