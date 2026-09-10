@@ -97,3 +97,4 @@ estufa   | aviso: temperatura acima dos 32
 vizinho  | chuva prevista para depois de amanha
 casa     | boa, poupa-nos uma rega
 furo     | deposito a 95 por cento
+vizinho | o cao ladrou a noite toda, era so o vento
