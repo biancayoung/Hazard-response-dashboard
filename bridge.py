@@ -163,8 +163,9 @@ def db_wind_history(hours=48, limit=2000):
     with _DB_LOCK:
         cur = _db.execute(
             "SELECT ts, field, value FROM readings"
-            " WHERE field IN ('wind speed','wind direction') AND ts>=?"
-            " ORDER BY ts ASC LIMIT ?", (since, limit))
+            " WHERE dev_eui=? AND field IN ('wind speed','wind direction') AND ts>=?"
+            " ORDER BY ts ASC LIMIT ?",
+            (SPARK_SOURCES["weather.wind"][0], since, limit))
         rows = cur.fetchall()
     # pair speed + direction by timestamp (same uplink shares ts)
     by_ts = {}
@@ -179,31 +180,23 @@ def db_wind_history(hours=48, limit=2000):
 
 
 # dashboard data-src key -> friendly field name in the readings table
-SPARK_FIELDS = {
-    "weather.temp": "air temperature",
-    "weather.hum": "humidity",
-    "weather.pressure": "barometric pressure",
-    "weather.light": "light",
-    "weather.co2": "co2",
-    "weather.pm25": "pm2.5",
-    "weather.pm10": "pm10",
-    "weather.rain_24h": "rain intensity",
-    "weather.wind": "wind speed",
-    "weather.wind_dir": "wind direction",
-    "soil.temp": "soil temperature",
-    "soil.hum": "soil moisture",
-    "soil.ec": "soil ec",
-}
+# dashboard key -> (dev_eui, field). Derived from DASHBOARD_MAP so a slot can
+# only ever be filled by the device it belongs to. Keying on the field name
+# alone silently mixed stations: the greenhouse S2100 also reports
+# "air temperature", "humidity" and "co2", so its readings landed in the
+# weather station's charts and, after a restart, in its live tiles.
+SPARK_SOURCES = {slot: (eui, field) for (eui, field), slot in DASHBOARD_MAP.items()}
 
 
 def db_sparklines(points=48):
     """Return {dashboard_key: [[ts, value], ...]} recent history for sparklines."""
     out = {}
     with _DB_LOCK:
-        for key, field in SPARK_FIELDS.items():
+        for key, (eui, field) in SPARK_SOURCES.items():
             cur = _db.execute(
-                "SELECT ts, value FROM readings WHERE field=? ORDER BY ts DESC LIMIT ?",
-                (field, points))
+                "SELECT ts, value FROM readings WHERE dev_eui=? AND field=?"
+                " ORDER BY ts DESC LIMIT ?",
+                (eui, field, points))
             rows = cur.fetchall()
             if rows:
                 out[key] = [[r[0], r[1]] for r in reversed(rows)]
@@ -216,10 +209,11 @@ def db_history(hours=24, max_points=400):
     since = time.time() - hours * 3600
     out = {}
     with _DB_LOCK:
-        for key, field in SPARK_FIELDS.items():
+        for key, (eui, field) in SPARK_SOURCES.items():
             cur = _db.execute(
-                "SELECT ts, value FROM readings WHERE field=? AND ts>=? ORDER BY ts ASC",
-                (field, since))
+                "SELECT ts, value FROM readings WHERE dev_eui=? AND field=? AND ts>=?"
+                " ORDER BY ts ASC",
+                (eui, field, since))
             rows = cur.fetchall()
             if not rows:
                 continue
@@ -235,10 +229,11 @@ def load_state_from_db():
     """Seed STATE with the most recent real value per dashboard key, so the
     dashboard shows live data immediately after a restart (not mock/empty)."""
     with _DB_LOCK:
-        for key, field in SPARK_FIELDS.items():
+        for key, (eui, field) in SPARK_SOURCES.items():
             cur = _db.execute(
-                "SELECT value FROM readings WHERE field=? ORDER BY ts DESC LIMIT 1",
-                (field,))
+                "SELECT value FROM readings WHERE dev_eui=? AND field=?"
+                " ORDER BY ts DESC LIMIT 1",
+                (eui, field))
             row = cur.fetchone()
             if row and key in STATE:
                 STATE[key] = row[0]
@@ -749,6 +744,13 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body)
+
+    def end_headers(self):
+        # The dashboard HTML may be served from another origin (the fab.lan
+        # module proxies it and points it back here), so the browser needs
+        # permission before it will read the /api/... responses.
+        self.send_header("Access-Control-Allow-Origin", "*")
+        super().end_headers()
 
     def log_message(self, fmt, *args):
         log.info("http " + fmt, *args)
