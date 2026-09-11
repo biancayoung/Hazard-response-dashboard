@@ -85,16 +85,22 @@
     });
   }
 
+  function setLive(up) {
+    var b = document.querySelector('.badge');
+    if (b) b.classList.toggle('off', !up);
+  }
+
   function connect() {
     var ws;
     try { ws = new WebSocket(url); } catch (e) { return setTimeout(connect, retry); }
+    ws.onopen = function () { setLive(true); };
     ws.onmessage = function (ev) {
       try {
         var msg = JSON.parse(ev.data);
         if (msg.data) apply(msg.data);
       } catch (e) {}
     };
-    ws.onclose = function () { setTimeout(connect, retry); };
+    ws.onclose = function () { setLive(false); setTimeout(connect, retry); };
     ws.onerror = function () { try { ws.close(); } catch (e) {} };
   }
   connect();
