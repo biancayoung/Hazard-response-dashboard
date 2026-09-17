@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Portugal · farm screen · dashboard A</title>
+<title>Algarve Fabfarm · Live dashboard</title>
 <!--
   DASHBOARD A · the clean, simple live dashboard ("Field panel": boxless, big
   numerals, bar chart, map dominant). This file (b.html) is the EDITABLE SOURCE;
@@ -210,7 +210,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
     <h3 data-i18n="soil">Soil · garden</h3>
     <div class="g"><svg viewBox="-10 0 220 130" id="gaugeB"></svg></div>
     <div class="legend"><span data-i18n="temperature">Temperature</span> <b class="num" data-src="soil.temp">--</b> · <span data-i18n="moisture">Moisture</span> <b class="num" data-src="soil.hum">--</b></div>
-    <div class="node"><a href="/ops">Source freshness / 来源状态 ↗</a></div>
+    <div class="node"><a href="/ops">Data freshness / 数据时效 ↗</a></div>
   </div>
   <div class="mapbox"><h3 data-i18n="map">Map</h3><svg class="map" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Map of Algarve fabfarm with sensor node positions">
   <defs>
@@ -243,7 +243,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
   <div class="chat">
     <header><h3 data-i18n="chat">Chat · Mesh</h3><div class="on"><b data-src="mesh.nodes">--</b> <span data-i18n="nodesheard">nodes heard</span></div></header>
     <div class="msgs" data-src="mesh.msgs"></div>
-    <p class="node">Receive only · use a mesh radio to transmit / 仅接收</p>
+    <p class="node">Receive only · use a mesh radio to transmit / 仅接收；发送请使用 Mesh 电台</p>
   </div>
 </section>
 </div>
@@ -251,8 +251,8 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
 (function(){
   // ---- language toggle (English / 中文) ----
   const I18N={
-    en:{live:'Live',country:'Portugal',weather:'Weather station',wind:'Wind',temp:'Temperature',co2status:'received value',gusts:'gusts',rain:'Rain intensity',rainunit:'mm/h',rainstatus:'Dry',raining:'Raining',dry:'Dry',ago24:'24 h ago',h12:'12 h',now:'now',nodes:'Sensor nodes',soil:'Soil',temperature:'Temperature',moisture:'Moisture',soiltemp:'soil temperature',humidity:'Humidity',pressure:'Pressure',light:'Light',map:'Illustrative farm layout',sensor:'Sensor',meshnode:'Meshtastic node',chat:'Chat · Meshtastic',nodesheard:'nodes heard',send:'Send',msgplaceholder:'Message the mesh…',lisbon:'Lisbon time'},
-    zh:{live:'实时',country:'葡萄牙',weather:'气象站',wind:'风',temp:'温度',co2status:'接收值',gusts:'阵风',rain:'降雨强度',rainunit:'毫米/小时',rainstatus:'干燥',raining:'下雨中',dry:'干燥',ago24:'24小时前',h12:'12小时',now:'现在',nodes:'传感器节点',soil:'土壤',temperature:'温度',moisture:'湿度',soiltemp:'土壤温度',humidity:'湿度',pressure:'气压',light:'光照',map:'农场布局示意（非实测）',sensor:'传感器',meshnode:'Meshtastic 节点',chat:'聊天 · Meshtastic',nodesheard:'个节点在线',send:'发送',msgplaceholder:'向 Meshtastic 发送消息…',lisbon:'里斯本时间'}
+    en:{live:'Live',country:'Portugal',weather:'Weather station',wind:'Wind',temp:'Temperature',co2status:'Received value',gusts:'gusts',rain:'Rain intensity',rainunit:'mm/h',rainstatus:'No rain',raining:'Raining',dry:'No rain',ago24:'24 h ago',h12:'12 h',now:'now',nodes:'Sensor nodes',soil:'Soil',temperature:'Temperature',moisture:'Moisture',soiltemp:'soil temperature',humidity:'Humidity',pressure:'Pressure',light:'Light',map:'Illustrative farm layout',sensor:'Sensor',meshnode:'Meshtastic node',chat:'Chat · Meshtastic',nodesheard:'nodes heard',send:'Send',msgplaceholder:'Message the mesh…',lisbon:'Lisbon time'},
+    zh:{live:'实时',country:'葡萄牙',weather:'气象站',wind:'风',temp:'温度',co2status:'接收读数',gusts:'阵风',rain:'降雨强度',rainunit:'毫米/小时',rainstatus:'无雨',raining:'下雨中',dry:'无雨',ago24:'24小时前',h12:'12小时',now:'现在',nodes:'传感器节点',soil:'土壤',temperature:'温度',moisture:'湿度',soiltemp:'土壤温度',humidity:'湿度',pressure:'气压',light:'光照',map:'农场布局示意（非实测）',sensor:'传感器',meshnode:'Meshtastic 节点',chat:'聊天 · Meshtastic',nodesheard:'个节点有数据',send:'发送',msgplaceholder:'向 Meshtastic 发送消息…',lisbon:'里斯本时间'}
   };
   let lang='en';try{if(localStorage.getItem('farm-lang')==='zh')lang='zh'}catch(_){}
   const toggle=document.getElementById('langToggle');
@@ -422,12 +422,12 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
   let RAIN=[];
   function renderRain(){
     const now=Date.now()/1000,start=now-86400,max=Math.max(1,...RAIN.map(p=>p[1]));
-    if(!RAIN.length){svg.innerHTML='<text x="200" y="60" text-anchor="middle" fill="#8fa3b8">No rain observations / 无降雨观测</text>';rainStatus.textContent='--';return;}
+    if(!RAIN.length){svg.innerHTML='<text x="200" y="60" text-anchor="middle" fill="#8fa3b8">No rain observations / 暂无降雨数据</text>';rainStatus.textContent='--';return;}
     svg.innerHTML=RAIN.map((p,i)=>{const x=(p[0]-start)/86400*392+4,h=Math.max(0,p[1])/max*90;
       return `<rect data-i="${i}" x="${x.toFixed(1)}" y="${116-h}" width="5" height="${Math.max(1,h)}" fill="#3d8ef0"/>`;}).join('');
     const last=RAIN[RAIN.length-1],fresh=now-last[0]<5400;
     rainDot.className='rdot'+(fresh&&last[1]>.05?' wet':'');
-    rainStatus.textContent=fresh?(last[1]>.05?I18N[lang].raining:I18N[lang].dry):(lang==='zh'?'读数已陈旧':'Reading stale');
+    rainStatus.textContent=fresh?(last[1]>.05?I18N[lang].raining:I18N[lang].dry):(lang==='zh'?'读数超时':'Reading stale');
   }
   svg.addEventListener('mousemove',e=>{
     const hit=e.target.closest('rect[data-i]');if(!hit)return;
@@ -438,7 +438,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
   svg.addEventListener('mouseleave',()=>tip.style.display='none');
   function loadRain(){fetch('/api/history?hours=24').then(r=>{if(!r.ok)throw Error();return r.json()}).then(d=>{
     RAIN=(d['weather.rain_rate']||d['weather.rain_24h']||[]).filter(p=>Array.isArray(p)&&Number.isFinite(p[0])&&Number.isFinite(p[1]));renderRain();
-  }).catch(()=>{rainStatus.textContent=lang==='zh'?'降雨数据不可用':'Rain data unavailable'});}
+  }).catch(()=>{rainStatus.textContent=lang==='zh'?'降雨数据未能加载':'Rain data could not be loaded'});}
   loadRain();setInterval(loadRain,60000);window.refreshRain=loadRain;renderRain();
 
   // soil gauge: temperature arc 0–40 °C, moisture 0–100 % as a thinner arc inside
@@ -492,7 +492,7 @@ window.drawSoil(null,null);
 (function () {
   const labels = {
     en:{operations:'Operations',data:'Sensor details',admin:'System diagnostics'},
-    zh:{operations:'运行总览',data:'传感器明细',admin:'系统诊断'}
+    zh:{operations:'现场监控',data:'传感器明细',admin:'系统诊断'}
   };
   window.FarmUI = {label:(key,lang)=>labels[lang]?.[key]};
 })();
@@ -570,7 +570,7 @@ window.drawSoil(null,null);
     var box = document.querySelector('[data-src="mesh.msgs"]');
     if (!box) return;
     if (!list || !list.length) {
-      box.innerHTML = '<div class="m sys"><div class="t">No messages yet</div></div>';
+      box.innerHTML = '<div class="m sys"><div class="t">No messages received</div></div>';
       return;
     }
     box.innerHTML = list.map(function (m) {
@@ -591,7 +591,7 @@ window.drawSoil(null,null);
 
   function setLive(up) {
     var b = document.querySelector('.badge');
-    if (b) { b.classList.toggle('off', !up); b.title=up?'Browser connected; check Diagnostics for source freshness':'Browser disconnected'; var label=b.querySelector('[data-i18n]'); if(label)label.textContent=document.documentElement.lang==='zh-CN'?(up?'已连接':'已断开'):(up?'Connected':'Disconnected'); }
+    if (b) { b.classList.toggle('off', !up); b.title=up?'Browser connected; check System diagnostics for data freshness':'Browser disconnected'; var label=b.querySelector('[data-i18n]'); if(label)label.textContent=document.documentElement.lang==='zh-CN'?(up?'已连接':'已断开'):(up?'Connected':'Disconnected'); }
   }
 
   async function connect() {

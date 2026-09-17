@@ -19,6 +19,30 @@
     }
     return groups;
   }
+  function extent(points) {
+    const values = series(points).map(p => p[1]);
+    return values.length ? [Math.min(...values), Math.max(...values)] : null;
+  }
+  function change(points, lookback = 10800, tolerance = 2700) {
+    const ordered = series(points);
+    if (ordered.length < 2) return null;
+    const latest = ordered.at(-1), target = latest[0] - lookback;
+    const candidate = ordered.reduce((best, point) =>
+      Math.abs(point[0] - target) < Math.abs(best[0] - target) ? point : best, ordered[0]);
+    return Math.abs(candidate[0] - target) <= tolerance ? latest[1] - candidate[1] : null;
+  }
+  function windBins(rows, speedEdges = [0,2,4,6,8,10,12]) {
+    const sectors = Array.from({length:16}, () => ({counts:Array(speedEdges.length).fill(0), total:0}));
+    let total = 0;
+    for (const row of Array.isArray(rows) ? rows : []) {
+      if (!Array.isArray(row) || !finite(row[1]) || !finite(row[2])) continue;
+      const sector = Math.round((((row[2] % 360) + 360) % 360) / 22.5) % 16;
+      let bin = 0;
+      for (let i=0;i<speedEdges.length;i++) if (row[1] >= speedEdges[i]) bin=i;
+      sectors[sector].counts[bin]++; sectors[sector].total++; total++;
+    }
+    return {sectors,total,max:Math.max(0,...sectors.map(s=>s.total)),speedEdges:[...speedEdges]};
+  }
   function direction(deg) {
     return finite(deg) ? ['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'][Math.round(((deg % 360)+360)%360/22.5)%16] : '—';
   }
@@ -79,7 +103,7 @@
     return object(d) && Object.values(d).every(dev=>object(dev) && object(dev.fields)
       && Object.values(dev.fields).every(f=>object(f) && (f.latest === null || finite(f.latest)) && Array.isArray(f.history)));
   }
-  const api = {finite, status, series, segments, direction, project, validOverview, fieldUnits, fieldSeries, fieldReceipt, validFields};
+  const api = {finite, status, series, segments, extent, change, windBins, direction, project, validOverview, fieldUnits, fieldSeries, fieldReceipt, validFields};
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   else root.OpsCore = api;
 })(globalThis);

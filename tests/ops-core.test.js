@@ -12,6 +12,19 @@ test('history rejects nonnumbers and filters exact time window',()=>{
 test('outage is a gap, not an interpolated line',()=>{
   assert.deepEqual(C.segments([[0,1],[3600,2],[10800,3],[14400,4]]),[[[0,1],[3600,2]],[[10800,3],[14400,4]]]);
 });
+test('extent and three-hour change use only real timestamped samples',()=>{
+  const points=[[0,8],[3600,8],[7200,10],[10800,13],[14400,12]];
+  assert.deepEqual(C.extent(points),[8,13]);
+  assert.equal(C.change(points,10800,1800),4);
+  assert.equal(C.change([[0,8],[14400,12]],10800,1800),null);
+  assert.equal(C.extent([]),null);
+});
+test('wind rose bins wrapped directions and speed ranges without inventing samples',()=>{
+  const b=C.windBins([[1,1,359],[2,3,1],[3,13,90],[4,null,180],['bad',2,null]]);
+  assert.equal(b.total,3);assert.equal(b.max,2);
+  assert.equal(b.sectors[0].counts[0],1);assert.equal(b.sectors[0].counts[1],1);
+  assert.equal(b.sectors[4].counts[6],1);
+});
 test('compass covers all 16 directions including wrapped values',()=>{
   assert.equal(C.direction(90),'E');assert.equal(C.direction(180),'S');assert.equal(C.direction(270),'W');
   assert.equal(C.direction(-90),'W');assert.equal(C.direction(360),'N');assert.equal(C.direction(null),'—');

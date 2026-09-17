@@ -29,7 +29,7 @@
 (function () {
   const labels = {
     en:{operations:'Operations',data:'Sensor details',admin:'System diagnostics'},
-    zh:{operations:'运行总览',data:'传感器明细',admin:'系统诊断'}
+    zh:{operations:'现场监控',data:'传感器明细',admin:'系统诊断'}
   };
   window.FarmUI = {label:(key,lang)=>labels[lang]?.[key]};
 })();

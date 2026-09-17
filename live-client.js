@@ -71,7 +71,7 @@
     var box = document.querySelector('[data-src="mesh.msgs"]');
     if (!box) return;
     if (!list || !list.length) {
-      box.innerHTML = '<div class="m sys"><div class="t">No messages yet</div></div>';
+      box.innerHTML = '<div class="m sys"><div class="t">No messages received</div></div>';
       return;
     }
     box.innerHTML = list.map(function (m) {
@@ -92,7 +92,7 @@
 
   function setLive(up) {
     var b = document.querySelector('.badge');
-    if (b) { b.classList.toggle('off', !up); b.title=up?'Browser connected; check Diagnostics for source freshness':'Browser disconnected'; var label=b.querySelector('[data-i18n]'); if(label)label.textContent=document.documentElement.lang==='zh-CN'?(up?'已连接':'已断开'):(up?'Connected':'Disconnected'); }
+    if (b) { b.classList.toggle('off', !up); b.title=up?'Browser connected; check System diagnostics for data freshness':'Browser disconnected'; var label=b.querySelector('[data-i18n]'); if(label)label.textContent=document.documentElement.lang==='zh-CN'?(up?'已连接':'已断开'):(up?'Connected':'Disconnected'); }
   }
 
   async function connect() {

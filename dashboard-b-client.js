@@ -3,9 +3,11 @@
   'use strict';
   const C = window.OpsCore, $ = id => document.getElementById(id);
   const copy = {
-    en: {skip:'Skip to observations',eyebrow:'Portugal / Environmental monitoring',refresh:'Refresh',conditions:'Current conditions',lastValues:'Last received values · select to inspect',spatial:'Spatial context',atlas:'Reported positions',atlasCaption:'Reported coordinates · north up · equal scale · position age shown',freshness:'System freshness',sources:'Observation sources',recent:'● Recent',delayed:'△ Delayed',silent:'× Silent',cadence:'Recent <90 min · delayed 90 min–3 h · silent ≥3 h',mesh:'Mesh communications',receiveOnly:'Receive only',messages:'Received messages',meshCaption:'Use a mesh radio to transmit. This console receives messages.',history:'Observation history',trends:'Environmental trends',window:'Time window',viewReadings:'View readings',chartCaption:'Time in Lisbon · raw samples · gaps over 90 minutes remain visible',footer:'Field observations support investigation; no hazard classification is configured.',simpleView:'Simple dashboard ↗',inspect:'Inspect observation',close:'Close',temp:'Air temperature',humidity:'Humidity',wind:'Wind speed',rain:'Rain intensity',soil:'Soil moisture',co2:'Carbon dioxide',pressure:'Pressure',light:'Illuminance',soilTemp:'Soil temperature',ec:'Soil conductivity',demo:'Demonstration',liveMode:'Live feed',connected:'● Browser connected',connecting:'○ Connecting',reconnecting:'△ Reconnecting',mqttOn:'● MQTT connected',mqttOff:'× MQTT disconnected',mqttDemo:'MQTT isolated',demoNotice:'Demonstration · synthetic observations and coordinates. No connection to the farm.',apiError:'Observation service unavailable. Last received values remain visible; retry with Refresh.',historyError:'History could not be refreshed. Showing the last available samples.',wsError:'Live connection lost. Polling observations every 30 seconds; reconnecting automatically.',unknown:'No reading',live:'Recent',stale:'Delayed',down:'Silent',never:'Never received',now:'Just received',ago:'ago',sourcesRecent:'sources recent',noSources:'No sensor uplinks received. Check the relay and MQTT connection in Diagnostics.',noPositions:'No coordinates received. Positioned mesh nodes will appear here when they report.',located:'located',unlocated:'without coordinates',selectNode:'Select a node to inspect its last reported position.',noMesh:'No mesh nodes received. Check the Meshtastic JSON feed in Diagnostics.',noMessages:'No messages received since the bridge started.',heard:'nodes heard',sample:'samples',noHistory:'No samples in this time window. Select another metric or check source freshness.',min:'Min',max:'Max',received:'Received',value:'Value',source:'Source',lastReceived:'Last received',positionReceived:'Position received',hops:'hops',externalPower:'External power',battery:'Battery',observations:'observations',waiting:'Waiting for observations',lisbon:'Lisbon',seen:'Last heard',noCoords:'No coordinates',raw:'Raw readings',snapshotOld:'The last service response is over 90 seconds old. Refresh or open Diagnostics.',inspectMore:'Additional observations',noPositionTime:'Position time unavailable',storageError:'Observation storage failed. Check disk space and database permissions in Diagnostics.'},
-    zh: {skip:'跳转到观测数据',eyebrow:'葡萄牙 / 环境监测',refresh:'刷新',conditions:'当前环境',lastValues:'最近接收的读数 · 点击查看详情',spatial:'空间信息',atlas:'已上报位置',atlasCaption:'上报坐标 · 北向上 · 等比例 · 标注位置数据年龄',freshness:'数据新鲜度',sources:'观测来源',recent:'● 新近',delayed:'△ 延迟',silent:'× 静默',cadence:'新近 <90 分钟 · 延迟 90 分钟–3 小时 · 静默 ≥3 小时',mesh:'Mesh 通讯',receiveOnly:'仅接收',messages:'已接收消息',meshCaption:'请使用 Mesh 电台发送消息。本控制台仅接收消息。',history:'观测历史',trends:'环境趋势',window:'时间范围',viewReadings:'查看读数',chartCaption:'里斯本时间 · 原始采样 · 超过 90 分钟的空缺不连线',footer:'环境观测用于辅助排查；尚未配置灾害分类规则。',simpleView:'简版仪表盘 ↗',inspect:'查看观测详情',close:'关闭',temp:'空气温度',humidity:'湿度',wind:'风速',rain:'降雨强度',soil:'土壤水分',co2:'二氧化碳',pressure:'气压',light:'照度',soilTemp:'土壤温度',ec:'土壤电导率',demo:'演示模式',liveMode:'实时采集',connected:'● 浏览器已连接',connecting:'○ 正在连接',reconnecting:'△ 正在重连',mqttOn:'● MQTT 已连接',mqttOff:'× MQTT 已断开',mqttDemo:'MQTT 已隔离',demoNotice:'演示模式 · 观测值和坐标均为模拟数据，未连接农场。',apiError:'观测服务不可用。保留最近接收的读数；可点击刷新重试。',historyError:'历史数据刷新失败，正在显示上次获取的采样。',wsError:'实时连接已断开。每 30 秒轮询观测数据，并自动重连。',unknown:'无读数',live:'新近',stale:'延迟',down:'静默',never:'尚未接收',now:'刚刚接收',ago:'前',sourcesRecent:'个来源新近上报',noSources:'尚未收到传感器数据。请在诊断页检查中继和 MQTT 连接。',noPositions:'尚未收到坐标。Mesh 节点上报位置后将显示在这里。',located:'个有坐标',unlocated:'个无坐标',selectNode:'选择节点以查看最近上报的位置。',noMesh:'尚未收到 Mesh 节点。请在诊断页检查 Meshtastic JSON 数据流。',noMessages:'桥接服务启动后尚未收到消息。',heard:'个节点已上报',sample:'个采样',noHistory:'此时间范围内无采样。请选择其他指标或检查数据新鲜度。',min:'最低',max:'最高',received:'接收时间',value:'数值',source:'来源',lastReceived:'最近接收',positionReceived:'位置接收时间',hops:'跳',externalPower:'外接电源',battery:'电量',observations:'个观测值',waiting:'等待观测数据',lisbon:'里斯本',seen:'最近收到消息',noCoords:'无坐标',raw:'原始读数',snapshotOld:'观测服务已超过 90 秒未响应。请刷新或打开诊断页。',inspectMore:'其他观测',noPositionTime:'位置时间不可用',storageError:'观测数据存储失败。请检查磁盘空间和数据库权限。'}
+    en: {skip:'Skip to observations',eyebrow:'Portugal / Environmental monitoring',refresh:'Refresh',conditions:'Current conditions',lastValues:'Last received values · select to inspect',spatial:'Spatial context',atlas:'Reported positions',atlasCaption:'Reported coordinates · north up · equal scale · position age shown',freshness:'Data freshness',sources:'Observation sources',recent:'● Recent',delayed:'△ Delayed',silent:'× No data',cadence:'Recent <90 min · delayed 90 min–3 h · no data ≥3 h',mesh:'Mesh communications',receiveOnly:'Receive only',messages:'Received messages',meshCaption:'Use a mesh radio to transmit. This console receives messages.',history:'Observation history',trends:'Environmental trends',window:'Time window',viewReadings:'View readings',chartCaption:'Time in Lisbon · raw samples · gaps over 90 minutes remain visible',footer:'Readings are for monitoring. No hazard classification rules are configured.',simpleView:'Simple dashboard ↗',inspect:'Observation details',close:'Close',temp:'Air temperature',humidity:'Humidity',wind:'Wind speed',rain:'Rain intensity',soil:'Soil moisture',co2:'Carbon dioxide',pressure:'Pressure',light:'Illuminance',soilTemp:'Soil temperature',ec:'Soil conductivity',demo:'Demonstration',liveMode:'Live feed',connected:'● Browser connected',connecting:'○ Connecting',reconnecting:'△ Reconnecting',mqttOn:'● MQTT connected',mqttOff:'× MQTT disconnected',mqttDemo:'MQTT isolated',demoNotice:'Demonstration · synthetic observations and coordinates. No connection to the farm.',apiError:'Data service unavailable. Last received values remain visible. Select Refresh to retry.',historyError:'History did not update. Showing the latest available samples.',wsError:'Live connection lost. Polling observations every 30 seconds; reconnecting automatically.',unknown:'No reading',live:'Recent',stale:'Delayed',down:'No data',never:'Never received',now:'Just received',ago:'ago',sourcesRecent:'sources reporting recently',noSources:'No sensor uplinks received. Check the relay and MQTT connection in System diagnostics.',noPositions:'No coordinates received. Positioned mesh nodes will appear here when they report.',located:'located',unlocated:'without coordinates',selectNode:'Select a node to inspect its last reported position.',noMesh:'No mesh nodes received. Check the Meshtastic JSON feed in System diagnostics.',noMessages:'No messages received since the bridge started.',heard:'nodes heard',sample:'samples',noHistory:'No samples in this time window. Select another metric or check data freshness.',min:'Min',max:'Max',received:'Received',value:'Value',source:'Source',lastReceived:'Last received',positionReceived:'Position received',hops:'hops',externalPower:'External power',battery:'Battery',observations:'observations',waiting:'Waiting for observations',lisbon:'Lisbon',seen:'Last heard',noCoords:'No coordinates',raw:'Raw readings',snapshotOld:'The last service response is over 90 seconds old. Refresh or open System diagnostics.',inspectMore:'Additional observations',noPositionTime:'Position time unavailable',storageError:'Observation storage failed. Check disk space and database permissions in System diagnostics.'},
+    zh: {skip:'跳转到观测数据',eyebrow:'葡萄牙 / 环境监测',refresh:'刷新',conditions:'当前环境',lastValues:'最近接收的读数 · 点击查看详情',spatial:'空间信息',atlas:'已上报位置',atlasCaption:'上报坐标 · 北向上 · 等比例 · 标注位置时效',freshness:'数据时效',sources:'观测来源',recent:'● 最近',delayed:'△ 延迟',silent:'× 超时',cadence:'最近 <90 分钟 · 延迟 90 分钟–3 小时 · 超时 ≥3 小时',mesh:'Mesh 通讯',receiveOnly:'仅接收',messages:'已接收消息',meshCaption:'本页仅接收消息；发送请使用 Mesh 电台。',history:'观测历史',trends:'环境趋势',window:'时间范围',viewReadings:'查看读数',chartCaption:'里斯本时间 · 原始采样 · 超过 90 分钟的空缺不连线',footer:'读数仅供监测；未设置灾害分级规则。',simpleView:'简版仪表盘 ↗',inspect:'查看观测详情',close:'关闭',temp:'空气温度',humidity:'湿度',wind:'风速',rain:'降雨强度',soil:'土壤水分',co2:'二氧化碳',pressure:'气压',light:'照度',soilTemp:'土壤温度',ec:'土壤电导率',demo:'演示模式',liveMode:'实时数据',connected:'● 浏览器已连接',connecting:'○ 正在连接',reconnecting:'△ 正在重连',mqttOn:'● MQTT 已连接',mqttOff:'× MQTT 已断开',mqttDemo:'MQTT 已隔离',demoNotice:'演示模式 · 观测值和坐标均为模拟数据，未连接农场。',apiError:'数据服务无响应。当前保留最近读数，可点击刷新重试。',historyError:'历史数据未更新，显示最近可用采样。',wsError:'实时连接断开。改为每 30 秒轮询，正在自动重连。',unknown:'无读数',live:'最近',stale:'延迟',down:'超时',never:'从未接收',now:'刚刚',ago:'前',sourcesRecent:'个来源最近有上报',noSources:'未收到传感器上行数据。请在系统诊断中检查中继与 MQTT 连接。',noPositions:'未收到坐标。Mesh 节点上报位置后在此显示。',located:'个已定位',unlocated:'个未定位',selectNode:'选择节点查看最近上报位置。',noMesh:'未发现 Mesh 节点。请在系统诊断中检查 Meshtastic JSON 数据流。',noMessages:'Bridge 启动后未收到消息。',heard:'个节点有数据',sample:'条采样',noHistory:'此时间段无采样数据。请切换指标或检查数据时效。',min:'最低',max:'最高',received:'接收时间',value:'数值',source:'来源',lastReceived:'最近接收',positionReceived:'位置接收时间',hops:'跳',externalPower:'外接电源',battery:'电量',observations:'个观测值',waiting:'等待观测数据',lisbon:'里斯本',seen:'最近收到消息',noCoords:'无坐标',raw:'原始读数',snapshotOld:'数据服务超过 90 秒未更新。请刷新或进入系统诊断。',inspectMore:'更多观测项',noPositionTime:'位置时间缺失',storageError:'数据写入数据库失败。请在系统诊断中检查磁盘空间与权限。'}
   };
+  Object.assign(copy.en,{fieldInstruments:'Field instruments',northUp:'N ↑',windRose:'Wind rose · 48 h',windScale:'Direction frequency · colour shows wind speed',windEmpty:'No matching wind speed and direction samples.',range:'Range',change3h:'Change over 3 h',steady:'No change',trendOverview:'Trend overview',freshnessScale:'Time since receipt: 0–3 h'});
+  Object.assign(copy.zh,{fieldInstruments:'现场仪表',northUp:'北 ↑',windRose:'风向玫瑰 · 48 小时',windScale:'方向频次 · 颜色表示风速',windEmpty:'暂无关联的风速与风向采样。',range:'范围',change3h:'3 小时变化',steady:'无变化',trendOverview:'趋势总览',freshnessScale:'接收距今：0–3 小时'});
   let lang = 'en';
   try { if (localStorage.getItem('farm-lang') === 'zh') lang = 'zh'; } catch (_) {}
   const t = key => window.FarmUI?.label(key,lang) || copy[lang][key] || key;
@@ -20,7 +22,7 @@
   };
   const primary = ['weather.temp','weather.wind','weather.rain_rate','soil.hum','weather.co2'];
   let state = {}, meta = {}, health = {lora:[],meshtastic:[]}, mesh = {nodes:[]}, server = {};
-  let history = {}, chartKey = primary[0], hours = 24, selectedNode = null, detailKey = null;
+  let history = {}, sparklines = {}, windHistory = [], chartKey = primary[0], hours = 24, selectedNode = null, detailKey = null;
   let receivedAt = 0, serverTime = 0, socketState = 'connecting', apiError = false, historyError = false, busy = false;
   let renderedMessages = '', historyEnd = 0;
   const now = () => serverTime ? serverTime + (performance.now() - receivedAt)/1000 : Date.now()/1000;
@@ -43,10 +45,41 @@
     if(key) [...el.querySelectorAll('[data-focus]')].find(n=>n.dataset.focus===key)?.focus({preventScroll:true});
   }
   function bootMetrics() {
-    $('readouts').innerHTML=primary.map(key=>`<button type="button" class="metric" data-metric="${key}"><span class="metric-name"></span><span class="metric-value"></span><span class="secondary"></span><span class="stamp"></span></button>`).join('');
+    $('readouts').innerHTML=primary.map(key=>`<button type="button" class="metric" data-metric="${key}"><span class="metric-name"></span><span class="metric-main"><span class="metric-value"></span><span class="metric-delta"></span></span><span class="metric-visual" aria-hidden="true"></span><span class="metric-range"></span><span class="secondary"></span><span class="stamp"></span></button>`).join('');
     $('readouts').addEventListener('click', e=>{const button=e.target.closest('[data-metric]');if(button)openDetail(button.dataset.metric);});
     $('trend-tabs').innerHTML=Object.keys(metrics).slice(0,6).map(key=>`<button type="button" data-key="${key}"></button>`).join('');
     $('trend-tabs').addEventListener('click',e=>{if(e.target.dataset.key){chartKey=e.target.dataset.key;renderChart();}});
+    $('mini-trends').addEventListener('click',e=>{const button=e.target.closest('[data-key]');if(button){chartKey=button.dataset.key;renderChart();}});
+  }
+  function metricPoints(key) {
+    const source=C.series(sparklines[key]);
+    return source.length?source:C.series(history[key]);
+  }
+  function sparkSvg(key, points, type='line') {
+    const ordered=C.series(points); if(!ordered.length)return '<span class="viz-empty">—</span>';
+    const W=180,H=46,left=2,right=178,top=4,bottom=42,start=ordered[0][0],end=Math.max(start+1,ordered.at(-1)[0]);
+    const ext=C.extent(ordered), rawMin=ext[0],rawMax=ext[1],pad=(rawMax-rawMin||1)*.08,min=rawMin-pad,max=rawMax+pad;
+    const x=ts=>left+(ts-start)/(end-start)*(right-left),y=v=>bottom-(v-min)/(max-min)*(bottom-top);
+    if(type==='bars')return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${ordered.map((p,i)=>{const next=ordered[i+1]?.[0]||p[0]+Math.max(900,(end-start)/ordered.length),w=Math.max(1,Math.min(7,x(next)-x(p[0])-1)),h=Math.max(1,bottom-y(Math.max(0,p[1])));return `<rect x="${x(p[0]).toFixed(1)}" y="${(bottom-h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}"/>`;}).join('')}</svg>`;
+    let paths='';for(const group of C.segments(ordered))paths+=`<path d="${group.map((p,i)=>(i?'L':'M')+x(p[0]).toFixed(1)+' '+y(p[1]).toFixed(1)).join(' ')}"/>`;
+    const last=ordered.at(-1);return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><line x1="2" x2="178" y1="42" y2="42"/>${paths}<circle cx="${x(last[0]).toFixed(1)}" cy="${y(last[1]).toFixed(1)}" r="2.5"/></svg>`;
+  }
+  function gaugeSvg(key) {
+    if(key==='soil.hum'){
+      const moisture=C.finite(state[key])?Math.max(0,Math.min(100,state[key])):0,temp=C.finite(state['soil.temp'])?Math.max(0,Math.min(40,state['soil.temp'])):0;
+      return `<svg class="dual-gauge" viewBox="0 0 180 54"><path class="gauge-bg" d="M22 45 A68 68 0 0 1 158 45"/><path class="gauge-value" pathLength="100" stroke-dasharray="${moisture} 100" d="M22 45 A68 68 0 0 1 158 45"/><path class="gauge-inner-bg" d="M39 45 A51 51 0 0 1 141 45"/><path class="gauge-inner" pathLength="100" stroke-dasharray="${temp/40*100} 100" d="M39 45 A51 51 0 0 1 141 45"/><text x="90" y="42" text-anchor="middle">${format('soil.temp',state['soil.temp'])}°C</text></svg>`;
+    }
+    const limits=key==='weather.co2'?[350,1200]:[0,100],v=state[key],pct=C.finite(v)?Math.max(0,Math.min(100,(v-limits[0])/(limits[1]-limits[0])*100)):0;
+    return `<div class="range-gauge"><i style="width:${pct.toFixed(1)}%"></i><span>${limits[0]}</span><span>${limits[1]}</span></div>`;
+  }
+  function metricVisual(key, points) {
+    if(key==='weather.wind'){
+      const deg=state['weather.wind_dir'],turn=C.finite(deg)?deg:0;
+      return `<div class="wind-mini"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="22"/><path transform="rotate(${turn} 27 27)" d="M27 7l5 21-5-4-5 4z"/><text x="27" y="13">N</text></svg>${sparkSvg(key,points)}</div>`;
+    }
+    if(key==='weather.rain_rate')return sparkSvg(key,points,'bars');
+    if(key==='soil.hum'||key==='weather.co2')return gaugeSvg(key);
+    return sparkSvg(key,points);
   }
   function renderMetrics() {
     for(const button of $('readouts').children){
@@ -54,6 +87,12 @@
       button.className='metric '+st;
       button.querySelector('.metric-name').innerHTML=`${t(m.name)} <span aria-hidden="true">↗</span>`;
       button.querySelector('.metric-value').innerHTML=`${format(key,state[key])}<small>${m.unit}</small>`;
+      const points=metricPoints(key), ext=C.extent(points),delta=C.change(points);
+      button.querySelector('.metric-visual').innerHTML=metricVisual(key,points);
+      button.querySelector('.metric-range').textContent=ext?`${t('range')} ${format(key,ext[0])}–${format(key,ext[1])} ${m.unit}`:`${t('range')} —`;
+      const deltaEl=button.querySelector('.metric-delta');
+      deltaEl.textContent=C.finite(delta)?`${delta>0?'↑':delta<0?'↓':'→'} ${format(key,Math.abs(delta))} ${m.unit}`:'—';
+      deltaEl.title=t('change3h');
       const secondary = key==='weather.temp'?`${t('humidity')} ${format('weather.hum',state['weather.hum'])}%`
         : key==='weather.wind'?`${C.direction(state['weather.wind_dir'])} · ${C.finite(state['weather.wind_dir'])?Math.round(state['weather.wind_dir'])+'°':'—'}`
         : key==='weather.rain_rate'?(lang==='zh'?'瞬时强度 · 非累计雨量':'Instantaneous · not accumulated')
@@ -98,8 +137,22 @@
     $('sources').closest('.health').dataset.attention=String(sources.some(s=>status(s.last_seen)!=='live'));
     content('sources',sources.length?sources.map(source=>{
       const st=status(source.last_seen);
-      return `<div class="source-row ${st}"><span class="symbol" aria-hidden="true">${symbols[st]}</span><div class="source-name">${esc(sourceName(source))}<small>${esc(t('received'))} ${esc(date(source.last_seen))}</small></div><div class="source-age">${t(st)}<span>${age(source.last_seen)}</span></div></div>`;
+      const threshold=health.thresholds?.stale_s||10800,elapsed=C.finite(source.last_seen)?Math.max(0,now()-source.last_seen):threshold,pct=Math.min(100,elapsed/threshold*100);
+      return `<div class="source-row ${st}"><span class="symbol" aria-hidden="true">${symbols[st]}</span><div class="source-name">${esc(sourceName(source))}<small>${esc(t('received'))} ${esc(date(source.last_seen))}</small><span class="freshness-track" title="${esc(t('freshnessScale'))}" aria-hidden="true"><i style="width:${pct.toFixed(1)}%"></i></span></div><div class="source-age">${t(st)}<span>${age(source.last_seen)}</span></div></div>`;
     }).join(''):`<p class="empty">${t('noSources')}</p>`);
+  }
+  function polar(cx,cy,r,deg){const a=(deg-90)*Math.PI/180;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+  function wedge(cx,cy,r0,r1,a0,a1){const p0=polar(cx,cy,r1,a0),p1=polar(cx,cy,r1,a1),p2=polar(cx,cy,r0,a1),p3=polar(cx,cy,r0,a0);return `M${p0[0].toFixed(1)} ${p0[1].toFixed(1)}A${r1} ${r1} 0 0 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}L${p2[0].toFixed(1)} ${p2[1].toFixed(1)}A${r0} ${r0} 0 0 0 ${p3[0].toFixed(1)} ${p3[1].toFixed(1)}Z`;}
+  function renderWindRose(){
+    const chart=C.windBins(windHistory),cx=90,cy=90,R=58,colors=['#F0BE68','#D4D66F','#72DFEB','#4CB9D5','#758DE2','#A887E7','#F28D84'],labels=['0–2','2–4','4–6','6–8','8–10','10–12','12+'];
+    $('wind-samples').textContent=`n=${chart.total}`;$('wind-empty').hidden=chart.total>0;$('wind-empty').textContent=t('windEmpty');
+    let svg='';
+    for(let i=1;i<=4;i++)svg+=`<circle class="rose-grid" cx="${cx}" cy="${cy}" r="${R*i/4}"/>`;
+    for(let i=0;i<16;i++){const p=polar(cx,cy,R+13,i*22.5),major=i%4===0;svg+=`<line class="rose-grid" x1="${cx}" y1="${cy}" x2="${polar(cx,cy,R,i*22.5-11.25).map(n=>n.toFixed(1)).join('" y2="')}"/><text class="rose-label ${major?'major':''}" x="${p[0].toFixed(1)}" y="${(p[1]+3).toFixed(1)}">${['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'][i]}</text>`;}
+    if(chart.max)chart.sectors.forEach((sector,i)=>{let r0=0;sector.counts.forEach((count,b)=>{if(!count)return;const r1=r0+count/chart.max*R;svg+=`<path class="rose-wedge" fill="${colors[b]}" d="${wedge(cx,cy,r0,r1,i*22.5-10.5,i*22.5+10.5)}"><title>${labels[b]} m/s · ${count} ${t('sample')}</title></path>`;r0=r1;});});
+    const current=state['weather.wind_dir'];if(C.finite(current)){const a=polar(cx,cy,R-2,current),b=polar(cx,cy,9,current);svg+=`<line class="rose-needle" x1="${b[0]}" y1="${b[1]}" x2="${a[0]}" y2="${a[1]}"/><circle class="rose-current" cx="${a[0]}" cy="${a[1]}" r="3"/>`;}
+    $('wind-rose').innerHTML=svg;
+    $('wind-legend').innerHTML=labels.map((label,i)=>`<span><i style="background:${colors[i]}"></i>${label}</span>`).join('')+'<b>m/s</b>';
   }
   function renderAtlas() {
     const positions=C.project(mesh.nodes);
@@ -126,7 +179,9 @@
     $('mesh-summary').innerHTML=`<strong>${mesh.nodes.length}</strong> ${t('heard')} · ${mesh.nodes.filter(n=>status(n.last_heard_ts)==='live').length} ${t('live')}`;
     content('mesh-nodes',mesh.nodes.length?mesh.nodes.map(n=>{
       const st=status(n.last_heard_ts);
-      return `<div class="mesh-node ${st}"><button data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(n.name+', '+t(st)+', '+t('battery')+' '+battery(n))}">${symbols[st]} ${esc(n.name)}<span class="mesh-node-state">${t(st)} · ${age(n.last_heard_ts)}</span></button><small>${esc(battery(n))} · ${C.finite(n.hops)?n.hops+' '+t('hops'):'—'}</small></div>`;
+      const batteryGraphic=n.battery===101?`<span class="power-label">↯ ${t('externalPower')}</span>`:C.finite(n.battery)?`<span class="battery-rail" aria-label="${t('battery')} ${Math.round(n.battery)}%"><i style="width:${Math.max(0,Math.min(100,n.battery))}%"></i><b>${Math.round(n.battery)}%</b></span>`:'<span>—</span>';
+      const hops=C.finite(n.hops)?`<span class="hop-marks" aria-label="${n.hops} ${t('hops')}">${Array.from({length:Math.min(5,n.hops+1)},(_,i)=>`<i class="${i<=n.hops?'on':''}"></i>`).join('')}<b>${n.hops}</b></span>`:'<span>—</span>';
+      return `<div class="mesh-node ${st}"><button data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(n.name+', '+t(st)+', '+t('battery')+' '+battery(n))}">${symbols[st]} ${esc(n.name)}<span class="mesh-node-state">${t(st)} · ${age(n.last_heard_ts)}</span></button><div class="node-instruments">${batteryGraphic}${hops}</div></div>`;
     }).join(''):`<p class="empty">${t('noMesh')}</p>`);
     const msgs=Array.isArray(state['mesh.msgs'])?state['mesh.msgs']:[];
     $('messageCount').textContent=String(msgs.length);
@@ -134,7 +189,12 @@
     if(renderedMessages!==html){const box=$('messages'),bottom=box.scrollHeight-box.scrollTop-box.clientHeight<40;box.innerHTML=html;if(bottom)box.scrollTop=box.scrollHeight;renderedMessages=html;}
   }
   function chartSeries(key=chartKey) {return C.series(history[key],historyEnd-hours*3600,historyEnd);}
+  function renderSmallMultiples(){
+    const keys=['weather.temp','weather.rain_rate','soil.hum','weather.co2'];
+    content('mini-trends',keys.map(key=>{const m=metrics[key],points=chartSeries(key),ext=C.extent(points);return `<button type="button" class="mini-trend${key===chartKey?' active':''}" data-key="${key}" data-focus="${key}" aria-pressed="${key===chartKey}"><span><b>${esc(t(m.name))}</b><strong>${format(key,state[key])}<small>${m.unit}</small></strong></span><span class="mini-chart">${sparkSvg(key,points,key==='weather.rain_rate'?'bars':'line')}</span><small>${ext?`${format(key,ext[0])}–${format(key,ext[1])}`:t('waiting')} · ${points.length} ${t('sample')}</small></button>`;}).join(''));
+  }
   function renderChart() {
+    renderSmallMultiples();
     [...$('trend-tabs').children].forEach(button=>{button.textContent=t(metrics[button.dataset.key].name);button.setAttribute('aria-pressed',String(button.dataset.key===chartKey));});
     const points=chartSeries(), m=metrics[chartKey];
     $('chart-label').textContent=`${t(m.name)} · ${m.unit}`;
@@ -166,7 +226,7 @@
     const extra = Object.entries(metrics).filter(([k])=>k.startsWith(key.split('.')[0]+'.')&&k!==key);
     $('detail-body').innerHTML=`<p class="detail-value">${format(key,state[key])} <small>${m.unit}</small></p><p class="detail-meta">${symbols[status(data.last_received)]} ${t(status(data.last_received))} · ${t('lastReceived')}: ${date(data.last_received)} (${age(data.last_received)})<br>${t('source')}: ${esc(data.source || '—')} · ${esc(data.field || '—')}</p><details><summary>${t('inspectMore')}</summary><table class="detail-table"><tbody>${extra.map(([k,v])=>`<tr><td>${t(v.name)}</td><td>${format(k,state[k])} ${v.unit}<br><small>${t(status(meta[k]?.last_received))} · ${age(meta[k]?.last_received)}</small></td></tr>`).join('')}</tbody></table></details><h3 style="margin-top:20px">${t('raw')} · ${hours} h</h3>${points.length?`<table class="detail-table"><thead><tr><th>${t('received')} · ${t('lisbon')}</th><th>${t('value')} (${m.unit})</th></tr></thead><tbody>${points.map(p=>`<tr><td>${date(p[0])}</td><td>${format(key,p[1])}</td></tr>`).join('')}</tbody></table>`:`<p class="empty">${t('noHistory')}</p>`}`;
   }
-  function render() {renderSystem();renderMetrics();renderHealth();renderAtlas();renderMesh();}
+  function render() {renderSystem();renderMetrics();renderHealth();renderAtlas();renderWindRose();renderMesh();}
   function applyLang() {
     document.documentElement.lang=lang==='zh'?'zh-CN':'en';
     document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
@@ -182,7 +242,7 @@
   async function refresh() {
     if(busy)return;busy=true;$('refresh').disabled=true;$('window').disabled=true;
     try {
-      const results=await Promise.allSettled([json('/api/overview'),json('/api/history?hours='+hours)]);
+      const results=await Promise.allSettled([json('/api/overview'),json('/api/history?hours='+hours),json('/api/sparklines'),json('/api/wind')]);
       const overview=results[0];
       if(overview.status==='fulfilled' && C.validOverview(overview.value)) {
         const d=overview.value;
@@ -194,6 +254,8 @@
       if(h.status==='fulfilled' && h.value && typeof h.value==='object' && !Array.isArray(h.value)) {
         history=h.value;historyEnd=now();historyError=false;
       } else historyError=true;
+      const sparks=results[2];if(sparks.status==='fulfilled'&&sparks.value&&typeof sparks.value==='object'&&!Array.isArray(sparks.value))sparklines=sparks.value;
+      const wind=results[3];if(wind.status==='fulfilled'&&Array.isArray(wind.value?.wind))windHistory=wind.value.wind;
       render();renderChart();
     } finally {busy=false;$('refresh').disabled=false;$('window').disabled=false;}
   }
@@ -208,7 +270,7 @@
         if((msg.type==='snapshot'||msg.type==='update') && msg.data && typeof msg.data==='object') {
           for(const [key,value] of Object.entries(msg.data))if(C.finite(value)||value===null||key==='mesh.msgs'&&Array.isArray(value))state[key]=value;
           if(msg.meta && typeof msg.meta==='object')Object.assign(meta,msg.meta);
-          renderMetrics();renderMesh();
+          renderMetrics();renderWindRose();renderMesh();
         }
       }catch(_){/* Ignore malformed packets without losing the reconnect loop. */}
     };
@@ -229,7 +291,7 @@
   $('atlas').addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();selectNode(event);}});
   $('mesh-nodes').addEventListener('click',selectNode);
   bootMetrics();historyEnd=now();applyLang();refresh();connect();
-  new ResizeObserver(()=>{renderChart();renderAtlas();}).observe($('trend-chart').parentElement);
+  new ResizeObserver(()=>{renderChart();renderAtlas();renderWindRose();}).observe($('trend-chart').parentElement);
   setInterval(refresh,30000);
   setInterval(()=>{tick();render();},15000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
