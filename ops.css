@@ -1281,10 +1281,12 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
   .atlas .caption {margin-top:3px;font-size:11px;}
 }
 @media(min-width:1100px) and (min-height:650px) and (max-height:900px) {
-  .conditions .metric {grid-template-rows:auto auto 32px auto auto;}
-  .metric-visual {height:32px;}
+  .conditions .metric {grid-template-rows:auto auto 38px auto auto;padding:8px 14px 7px;}
+  .metric-visual {height:38px;}
   .conditions .metric .secondary {display:none;}
-  .metric .metric-main .metric-value {font-size:36px;}
+  .metric .metric-main .metric-value {font-size:42px;}
+  .metric-delta {font-size:14px;}
+  .metric-range,.conditions .metric .stamp {font-size:13px;}
   .instrument-grid {grid-template-columns:minmax(0,1.35fr) minmax(190px,.65fr);}
   #wind-rose {min-height:122px;}
   .wind-legend {font-size:9px;}
@@ -1309,4 +1311,90 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
 @media(min-width:761px) and (max-width:1500px) {
   .wb-table td,.wb-table th {padding:6px 8px;}
   .wb-table small {margin-top:2px;}
+}
+
+/* Operations groups presentation by subject: weather observations and off-grid communications. */
+.header-tools #refresh {padding:4px 10px;min-height:30px;background:var(--soft);border-color:var(--line);}
+.header-tools .mode {padding:3px 8px;border:1px solid var(--amber);border-radius:4px;color:var(--amber);}
+.workspace {
+  grid-template-columns:minmax(0,2.25fr) minmax(360px,.9fr);
+  grid-template-rows:minmax(560px,1fr);
+}
+.weather-region {display:flex;flex-direction:column;min-width:0;min-height:0;}
+.region-head {display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:0 2px 8px;min-height:48px;}
+.region-head h2 {font:600 24px/1 "Barlow Condensed","Noto Sans SC",sans-serif;}
+.region-head>span {font-size:14px;color:var(--muted);text-align:right;}
+.weather-grid {display:grid;grid-template-columns:minmax(270px,.68fr) minmax(0,1.65fr);gap:10px;flex:1;min-height:0;}
+.wind-station,.weather-grid .trends {grid-column:auto;grid-row:auto;min-height:0;}
+.wind-station .panel-head h3 {font-size:21px;}
+.wind-current {display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:14px 0 4px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+.wind-current>span {display:flex;align-items:baseline;gap:5px;}
+.wind-current strong {font:500 46px/1 "Barlow Condensed",sans-serif;color:var(--green);}
+.wind-current b {font:500 23px/1 "IBM Plex Mono",monospace;color:var(--ink);}
+.wind-current small {font-size:13px;color:var(--muted);}
+.wind-current>span:last-child {flex-direction:column;align-items:flex-end;gap:3px;text-align:right;}
+.wind-station .windrose-wrap {grid-template-columns:minmax(170px,1fr) 64px;min-height:0;}
+.wind-station #wind-rose {min-height:210px;}
+.weather-grid .trend-dense {grid-template-columns:minmax(220px,.72fr) minmax(280px,1.28fr);}
+.communications {grid-column:2;grid-row:1;display:flex;min-height:0;}
+.mesh-summary-row {display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:10px 0 8px;color:var(--muted);font:12px "IBM Plex Mono",monospace;}
+.mesh-summary-row .mesh-summary {margin:0;}
+.communications .instrument-map {flex:0 0 42%;padding:8px;}
+.communications .instrument-map .atlas-body {flex:1;min-height:170px;}
+.communications .instrument-map .micro-caption {margin-top:2px;text-align:left;}
+.offgrid-feed {display:grid;grid-template-rows:minmax(95px,.8fr) minmax(110px,1fr);gap:8px;flex:1;min-height:0;margin-top:8px;}
+.node-feed,.message-feed {display:flex;flex-direction:column;min-height:0;border-top:1px solid var(--line);}
+.offgrid-feed .message-heading {flex:none;margin:0;padding:7px 0 5px;border:0;}
+.offgrid-feed .mesh-nodes,.offgrid-feed .messages {flex:1;max-height:none;min-height:0;}
+.mesh-node.selected {background:color-mix(in srgb,var(--accent) 10%,transparent);box-shadow:inset 3px 0 var(--accent);padding-left:7px;}
+.mesh-node.selected button {color:var(--accent);}
+.communications>.caption {margin-top:6px;}
+
+@media(min-width:1100px) and (min-height:650px) {
+  .workspace {grid-template-columns:minmax(0,2.25fr) minmax(360px,.9fr);grid-template-rows:minmax(0,1fr);}
+  .weather-grid {grid-template-columns:minmax(270px,.68fr) minmax(0,1.65fr);}
+  .communications {grid-column:2;grid-row:1;}
+  .communications .instrument-map {flex-basis:42%;}
+  .communications .mesh-nodes {max-height:none;}
+  .communications .messages {max-height:none;}
+  .communications .message-heading {margin:0;padding-top:7px;}
+}
+@media(min-width:1100px) and (min-height:650px) and (max-height:900px) {
+  .region-head {min-height:36px;padding-bottom:5px;}
+  .region-head h2 {font-size:21px;}
+  .wind-current {margin-top:9px;padding-bottom:7px;}
+  .wind-current strong {font-size:38px;}
+  .wind-station #wind-rose {min-height:170px;}
+  .weather-grid .trend-dense {grid-template-columns:minmax(205px,.7fr) minmax(250px,1.3fr);gap:8px;}
+  .communications .instrument-map {flex-basis:40%;}
+  .offgrid-feed {grid-template-rows:minmax(82px,.72fr) minmax(96px,1fr);margin-top:5px;}
+}
+@media(min-width:1100px) and (max-width:1500px) {
+  .workspace {grid-template-columns:minmax(0,2fr) minmax(340px,.9fr);}
+  .weather-grid {grid-template-columns:minmax(245px,.62fr) minmax(0,1.38fr);}
+  .weather-grid .trend-dense {grid-template-columns:minmax(190px,.66fr) minmax(235px,1.34fr);}
+  .wind-station .windrose-wrap {grid-template-columns:minmax(145px,1fr) 56px;}
+}
+@media(max-width:1099px) {
+  .workspace {display:block;margin-top:14px;}
+  .weather-grid {grid-template-columns:1fr;}
+  .wind-station {min-height:390px;}
+  .weather-grid .trends {min-height:620px;}
+  .communications {margin-top:12px;min-height:760px;}
+  .communications .instrument-map {flex-basis:330px;}
+}
+@media(max-width:760px) {
+  .header-tools {gap:8px;}
+  .header-tools #refresh {order:0;}
+  .clockbox {min-width:0;}
+  .region-head {align-items:flex-start;flex-direction:column;gap:2px;padding:4px 2px 8px;}
+  .region-head>span {text-align:left;}
+  .wind-station {min-height:370px;}
+  .weather-grid .trends {height:780px;min-height:780px;}
+  .weather-grid .trend-dense {grid-template-columns:1fr;grid-template-rows:320px 330px;}
+  .wind-station .windrose-wrap {grid-template-columns:minmax(0,1fr) 58px;}
+  .communications {height:auto;min-height:900px;}
+  .communications .instrument-map {flex-basis:340px;}
+  .offgrid-feed {grid-template-rows:minmax(180px,.8fr) minmax(240px,1fr);}
+  .node-instruments {min-width:110px;}
 }
