@@ -3,7 +3,7 @@
 The farm's Meshtastic mesh is quiet for hours at a time, and the LoRaWAN sensors
 only speak once an hour. A dashboard built against that is a dashboard built
 against a blank screen. So a small service invents a full day of farm life and
-publishes it, on a loop, straight to the brokers the real data goes to.
+can publish it, on a loop, to an explicitly configured isolated test broker.
 
 It is never mistaken for real traffic: every node is called `SIM ...` and the
 gateway is `!51000001`, which does not exist.
@@ -40,22 +40,24 @@ run out.
 
 Write without accents — that is what the radios display cleanly.
 
-## What happens after you push
+## Local preview and optional publishing
 
-The farm fetches `falas.txt` every ten minutes. Before it replaces the running
-copy it parses it; if the file is broken the old one stays and the mesh keeps
-talking. The service does not restart and nothing is interrupted.
+Prefer `python3 bridge.py --demo` from the project root. It exercises the bridge
+with synthetic data without any broker or filesystem database.
 
-A malformed line is skipped with a warning rather than taken as an error, and a
-line from a node that is not in `[nos]` is dropped with a note saying so. You
-cannot break the farm by writing a bad line — the worst case is that your line
-does not appear.
+`meshsim.py` is a separate publisher and refuses to publish unless
+`SIM_ALLOW_PUBLISH=1` is explicitly set. Configure `SIM_HOST`, `SIM_PORT`,
+`SIM_PREFIX`, `SIM_USER`, `SIM_PASSWORD`, and optional `SIM_CAFILE` privately.
+Use an isolated, authenticated TLS test broker and a namespace distinct from
+production. There are no embedded credentials or automatic multi-broker targets.
+Default coordinates are synthetic. Never treat simulator node names as proof
+that traffic cannot affect production: the operator must isolate the broker.
 
-To check a file before pushing: `python3 meshsim.py --verifica falas.txt`.
+Validate the script data without publishing:
 
-## Where it runs
+```sh
+.venv/bin/python sim/meshsim.py --verifica sim/falas.txt
+```
 
-`meshsim` (systemd) on the Jetson at the farm. It publishes to the Seeed EMQX
-broker under `fabfarm/msh/2/json/LongFast/!51000001` and to the public test
-broker under its own prefix. It never publishes into the farm's own broker:
-invented data does not enter the house.
+The `falas.txt` file is read again when it changes. Repository changes do not
+implicitly authorize copying to a target or restarting any service.

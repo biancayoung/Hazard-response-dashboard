@@ -1,182 +1,29 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Portugal · farm screen · data</title>
-<!--
-  DATA page: auto-generated, data-driven. One clickable card per device;
-  click to drill into its sensor fields with live values and sparklines.
-  Connects to ws://host:8765/ws/admin. Same design tokens as the dashboard.
--->
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Semi+Condensed:wght@500;600&display=swap" rel="stylesheet">
-<style>
-:root{
-  --bg:#141d28; --bg-2:#1a2634; --tile:#1f2c3b; --tile-2:#25334a; --line:#2f4157;
-  --ink:#f2f6fa; --muted:#8fa3b8; --dim:#5f7389;
-  --teal:#3ec8d2; --blue:#3d8ef0; --mint:#7be0a8; --amber:#f0b45a;
-  --r:14px; --gap:18px;
-}
-*{box-sizing:border-box}
-html,body{height:100%}
-body{margin:0;background:radial-gradient(120% 90% at 50% 0%,var(--bg-2) 0%,var(--bg) 60%);color:var(--ink);
-  font:15px/1.4 Barlow,"Segoe UI",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
-.num{font-family:"Barlow Semi Condensed",Barlow,system-ui,sans-serif;font-variant-numeric:tabular-nums;letter-spacing:-.01em}
-a{color:inherit}
-
-.screen{min-height:100%;display:grid;grid-template-rows:auto 1fr;gap:var(--gap);padding:22px 28px 24px}
-
-.top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:0 4px}
-.place{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
-.place h1{margin:0;font-size:34px;font-weight:600;letter-spacing:-.01em}
-.place .where{color:var(--muted);font-size:16px}
-.badge{display:inline-flex;align-items:center;gap:7px;background:var(--teal);color:#0d2428;font-weight:600;font-size:13px;padding:4px 10px 4px 8px;border-radius:6px;transform:translateY(-4px)}
-.badge i{width:7px;height:7px;border-radius:50%;background:#0d2428;display:inline-block}
-.links{display:flex;gap:16px;font-size:14px;align-items:center}
-.links a{color:var(--muted);text-decoration:none}
-.links a:hover{color:var(--mint)}
-.conn{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:13px}
-.conn i{width:8px;height:8px;border-radius:50%;background:var(--dim)}
-.conn.up i{background:var(--mint)}
-
-section{display:grid;gap:0;min-height:0;align-content:start}
-section>h2{grid-column:1/-1;margin:0 0 12px;font-size:14px;font-weight:500;color:var(--muted);letter-spacing:.02em;padding:0 4px}
-
-/* device card grid */
-.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:var(--gap)}
-.card{background:var(--tile);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;cursor:pointer;transition:border-color .15s}
-.card:hover{border-color:var(--teal)}
-.card .nm{font-size:18px;font-weight:600;display:flex;justify-content:space-between;align-items:baseline}
-.card .nm .cnt{font-size:12px;color:var(--dim);font-weight:400}
-.card .sub{color:var(--muted);font-size:12.5px;margin-top:3px}
-.card .preview{margin-top:12px;display:flex;flex-direction:column;gap:6px}
-.card .kv{display:flex;justify-content:space-between;font-size:13.5px}
-.card .kv span{color:var(--muted)}
-.card .kv b{color:var(--teal);font-weight:600}
-.card .go{margin-top:12px;color:var(--dim);font-size:13px}
-.card:hover .go{color:var(--mint)}
-.empty{color:var(--dim);font-size:14px;padding:20px 4px}
-
-/* detail view */
-.detail{display:none;grid-template-rows:auto 1fr;gap:var(--gap);min-height:0}
-.detail.on{display:grid}
-.back{color:var(--muted);font-size:14px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;padding:0 4px}
-.back:hover{color:var(--mint)}
-.fields{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:var(--gap);align-content:start}
-.field{background:var(--tile);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;min-height:120px}
-.field .fk{color:var(--muted);font-size:13px;display:flex;justify-content:space-between;align-items:baseline}
-.field .fk .pt{color:var(--dim);font-size:11px}
-.field .fv{font-size:clamp(30px,3.4vw,46px);font-weight:600;line-height:1;margin:8px 0 4px;color:var(--ink)}
-.field .spark{flex:1;min-height:40px;margin-top:6px}
-.field .spark svg{width:100%;height:100%;display:block;overflow:visible}
-</style></head><body>
-<div class="screen">
-<header class="top">
-  <div class="place"><span class="badge"><i></i>Data</span><h1>Portugal</h1><span class="where" id="subtitle">all devices</span></div>
-  <div class="links"><span class="conn" id="conn"><i></i>connecting</span><a href="/a">dashboard A</a><a href="/b">dashboard B</a><a href="/admin">admin</a></div>
-</header>
-
-<section id="listView">
-  <h2>Devices</h2>
-  <div class="cards" id="cards"><div class="empty">Waiting for data…</div></div>
+<meta name="theme-color" content="#0D1922">
+<title>Sensor details · Algarve Fabfarm</title>
+<link rel="stylesheet" href="/ops.css?v=20260917">
+<script defer src="/ops-core.js?v=20260917"></script>
+<script defer src="/farm-connection.js?v=20260917"></script>
+<script defer src="/workbench.js?v=20260917"></script>
+</head><body data-workbench="data">
+<a class="skip" href="#workbench" data-wb="skip">Skip to workspace</a>
+<div class="screen wb-screen">
+<header class="masthead" id="wb-header"></header>
+<div class="systembar wb-system"><span id="wb-mode" class="mode">—</span><span id="wb-browser">○ Browser connecting</span><span id="wb-bridge">○ Bridge waiting</span><span id="wb-mqtt">○ MQTT unknown</span><button id="wb-refresh" type="button" data-wb="refresh">Refresh</button></div>
+<p class="notice" id="wb-notice" role="status" hidden></p>
+<main id="workbench" class="wb-main data-workspace" tabindex="-1">
+<section class="panel device-panel" aria-labelledby="device-list-title">
+<div class="panel-head"><h2 id="device-list-title" data-wb="devices">Devices</h2><span id="device-count" class="tag">—</span></div>
+<div id="device-list" class="wb-scroll device-list" tabindex="0"></div>
+<p class="caption" data-wb="deviceHint">Select a device to inspect every decoded field.</p>
 </section>
-
-<section class="detail" id="detailView">
-  <div><span class="back" id="back">‹ all devices</span></div>
-  <div class="fields" id="fields"></div>
-</section>
-</div>
-<script>
-(function(){
-  var url=(location.protocol==='https:')?'wss://'+location.host+'/ws/admin':'ws://'+location.hostname+':8765/ws/admin';
-  var conn=document.getElementById('conn'),cards=document.getElementById('cards'),
-      listView=document.getElementById('listView'),detailView=document.getElementById('detailView'),
-      fieldsBox=document.getElementById('fields'),subtitle=document.getElementById('subtitle');
-  var FIELDS={}, current=null;
-
-  function setConn(up){conn.className='conn'+(up?' up':'');conn.innerHTML='<i></i>'+(up?'live':'reconnecting');}
-  function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
-  function nice(k){return k.replace(/[_-]+/g,' ')}
-  function fmtv(v){return (typeof v==='number')?((v%1)?(+v).toFixed(1):v):v}
-
-  // sparkline from history [[ts,v],...]
-  function spark(hist){
-    if(!hist||hist.length<2)return '';
-    var W=100,H=34,vs=hist.map(function(p){return p[1]}),
-        min=Math.min.apply(null,vs),max=Math.max.apply(null,vs),
-        rng=(max-min)||1,n=hist.length;
-    var pts=hist.map(function(p,i){return [i*(W/(n-1)),H-3-((p[1]-min)/rng)*(H-8)]});
-    var line=pts.map(function(p,i){return (i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)}).join(' ');
-    return '<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none">'+
-      '<path d="'+line+' L'+W+' '+H+' L0 '+H+'Z" fill="#3ec8d2" fill-opacity=".12"/>'+
-      '<path d="'+line+'" fill="none" stroke="#3ec8d2" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg>';
-  }
-
-  function renderList(){
-    var ids=Object.keys(FIELDS);
-    if(!ids.length){cards.innerHTML='<div class="empty">Waiting for data…</div>';return}
-    cards.innerHTML=ids.map(function(id){
-      var d=FIELDS[id],fkeys=Object.keys(d.fields),
-          preview=fkeys.slice(0,3).map(function(k){
-            return '<div class="kv"><span>'+esc(nice(k))+'</span><b class="num">'+esc(fmtv(d.fields[k].latest))+'</b></div>';
-          }).join('');
-      return '<div class="card" data-id="'+esc(id)+'"><div class="nm">'+esc(d.name)+'<span class="cnt">'+fkeys.length+' fields</span></div>'+
-        '<div class="sub">'+esc(id)+'</div><div class="preview">'+preview+'</div>'+
-        '<div class="go">view all ›</div></div>';
-    }).join('');
-    var els=cards.querySelectorAll('.card');
-    for(var i=0;i<els.length;i++)els[i].addEventListener('click',function(){openDetail(this.getAttribute('data-id'))});
-  }
-
-  function renderDetail(){
-    if(!current||!FIELDS[current])return;
-    var d=FIELDS[current],fkeys=Object.keys(d.fields);
-    fieldsBox.innerHTML=fkeys.map(function(k){
-      var f=d.fields[k];
-      return '<div class="field"><div class="fk"><span>'+esc(nice(k))+'</span><span class="pt">'+f.history.length+' pts</span></div>'+
-        '<div class="fv num">'+esc(fmtv(f.latest))+'</div>'+
-        '<div class="spark">'+spark(f.history)+'</div></div>';
-    }).join('');
-  }
-
-  function openDetail(id){current=id;subtitle.textContent=FIELDS[id].name;
-    listView.style.display='none';detailView.classList.add('on');renderDetail();}
-  function closeDetail(){current=null;subtitle.textContent='all devices';
-    detailView.classList.remove('on');listView.style.display='grid';renderList();}
-  document.getElementById('back').addEventListener('click',closeDetail);
-
-  function ingest(fields){
-    FIELDS=fields||{};
-    if(current)renderDetail();else renderList();
-  }
-
-  function connect(){
-    var ws;
-    try{ws=new WebSocket(url)}catch(e){return setTimeout(connect,3000)}
-    ws.onopen=function(){setConn(true)};
-    ws.onmessage=function(ev){
-      try{
-        var msg=JSON.parse(ev.data);
-        if(msg.type==='admin_snapshot'){ingest(msg.data.fields)}
-        else if(msg.type==='raw'){
-          // fold the new uplink into FIELDS client-side
-          var e=msg.data,obj=e.object;
-          if(obj&&e.dev_eui){
-            var dev=FIELDS[e.dev_eui]=FIELDS[e.dev_eui]||{name:e.device,fields:{}};
-            dev.name=e.device;
-            for(var k in obj){var v=obj[k];
-              if(typeof v==='number'){
-                var f=dev.fields[k]=dev.fields[k]||{latest:null,history:[]};
-                f.latest=v;f.history.push([e.ts,v]);
-                if(f.history.length>48)f.history.shift();
-              }}
-            if(current===e.dev_eui)renderDetail();else if(!current)renderList();
-          }
-        }
-      }catch(e){}
-    };
-    ws.onclose=function(){setConn(false);setTimeout(connect,3000)};
-    ws.onerror=function(){try{ws.close()}catch(e){}};
-  }
-  connect();
-})();
-</script>
-</body></html>
+<section class="panel fields-panel" aria-labelledby="device-title">
+<div class="panel-head"><div><h2 id="device-title" tabindex="-1" data-wb="selectDevice">Select a device</h2><p class="caption" id="device-subtitle"></p></div><button id="device-back" type="button" data-wb="back" disabled>Back to devices</button></div>
+<p class="caption" data-wb="historyNote">Charts use dated samples only. Time-only legacy history is not plotted.</p>
+<div id="field-list" class="wb-scroll field-list" tabindex="0"></div>
+</section></main>
+<footer><span data-wb="receiptNote">Times are Bridge receipt times · Lisbon</span><span data-wb="readOnly">Receive only</span></footer>
+</div></body></html>

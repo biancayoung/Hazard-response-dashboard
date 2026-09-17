@@ -12,3 +12,15 @@ tmp_*.js
 Thumbs.db
 __pycache__/
 *.pyc
+
+# Local configuration, validation artifacts and isolated environments
+.agent-local/
+.artifacts/
+.venv/
+.env
+.env.*
+!.env.example
+*.db
+*.db-*
+*.sqlite*
+*.pem

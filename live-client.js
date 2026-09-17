@@ -10,7 +10,7 @@
 
   // Format a raw value for a given data-src key.
   function fmt(key, v) {
-    if (v === null || v === undefined) return null;
+    if (v === null || v === undefined) return '--';
     switch (key) {
       case 'weather.co2':  return Math.round(v);
       case 'weather.wind': return (+v).toFixed(1);
@@ -38,9 +38,10 @@
     else if (el.tagName === 'I' || el.tagName === 'B' && el.parentElement.classList.contains('hum')) {
       el.style.width = s; // soil humidity bar
     }
-    else { el.textContent = s; }
+    else if (el.tagName.toLowerCase() !== 'path') { el.textContent = s; }
   }
 
+  var soilState = {};
   function apply(data) {
     for (var key in data) {
       // wind direction (degrees) updates the cardinal text + the rose arrow.
@@ -49,6 +50,10 @@
         if (window.setWindRoseDir) window.setWindRoseDir(data[key]);
         else if (window.refreshWindRose) window.refreshWindRose();
         continue; // handled by the wind rose, not the generic filler
+      }
+      if (key === 'soil.temp' || key === 'soil.hum') {
+        soilState[key] = data[key];
+        if (window.drawSoil) window.drawSoil(soilState['soil.temp'], soilState['soil.hum']);
       }
       var els = document.querySelectorAll('[data-src="' + key + '"]');
       for (var i = 0; i < els.length; i++) setEl(els[i], key, data[key]);
@@ -87,10 +92,11 @@
 
   function setLive(up) {
     var b = document.querySelector('.badge');
-    if (b) b.classList.toggle('off', !up);
+    if (b) { b.classList.toggle('off', !up); b.title=up?'Browser connected; check Diagnostics for source freshness':'Browser disconnected'; var label=b.querySelector('[data-i18n]'); if(label)label.textContent=document.documentElement.lang==='zh-CN'?(up?'已连接':'已断开'):(up?'Connected':'Disconnected'); }
   }
 
-  function connect() {
+  async function connect() {
+    url = await window.farmSocketURL();
     var ws;
     try { ws = new WebSocket(url); } catch (e) { return setTimeout(connect, retry); }
     ws.onopen = function () { setLive(true); };

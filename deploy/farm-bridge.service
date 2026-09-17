@@ -1,0 +1,25 @@
+[Unit]
+Description=Fabfarm environmental observation bridge
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=fabfarm
+Group=fabfarm
+WorkingDirectory=/opt/fabfarm/current
+EnvironmentFile=/etc/fabfarm/bridge.env
+ExecStart=/opt/fabfarm/venv/bin/python /opt/fabfarm/current/bridge.py
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=15
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=read-only
+ProtectSystem=strict
+# Adjust to the EXISTING database's parent directory before installation.
+ReadWritePaths=/var/lib/fabfarm
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target
