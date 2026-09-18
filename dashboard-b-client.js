@@ -6,8 +6,8 @@
     en: {skip:'Skip to observations',eyebrow:'Portugal / Environmental monitoring',refresh:'Refresh',conditions:'Current conditions',lastValues:'Last received values · select a card to update the trend',spatial:'Spatial context',atlas:'Reported positions',atlasCaption:'Reported coordinates · north up · equal scale',freshness:'Data freshness',sources:'Observation sources',recent:'● Recent',delayed:'△ Delayed',silent:'× No data',cadence:'Recent <90 min · delayed 90 min–3 h · no data ≥3 h',mesh:'Mesh communications',offgrid:'Off-grid communications',nodes:'Mesh nodes',weatherVisuals:'Farm observations',weatherStation:'Agricultural weather',weatherSummary:'Wind, soil and environmental history',windObservation:'Wind observation',currentWind:'Current wind',receiveOnly:'Receive only',messages:'Received messages',meshCaption:'Use a mesh radio to transmit. This display receives messages.',history:'Observation history',trends:'Environmental trends',window:'Time window',viewReadings:'View readings',chartCaption:'Time in Lisbon · raw samples · gaps over 90 minutes remain visible',footer:'Readings are for monitoring. No hazard classification rules are configured.',simpleView:'Simple dashboard ↗',inspect:'Observation details',close:'Close',temp:'Air temperature',humidity:'Humidity',wind:'Wind speed',rain:'Rain intensity',soil:'Soil moisture',co2:'Carbon dioxide',pressure:'Pressure',light:'Illuminance',soilTemp:'Soil temperature',ec:'Soil conductivity',demo:'Demonstration',liveMode:'Live feed',connected:'● Browser connected',connecting:'○ Connecting',reconnecting:'△ Reconnecting',mqttOn:'● MQTT connected',mqttOff:'× MQTT disconnected',mqttDemo:'MQTT isolated',demoNotice:'Demonstration · synthetic observations and coordinates. No connection to the farm.',apiError:'Latest observations are unavailable. Previously received values remain visible.',historyError:'History did not update. Showing the latest available samples.',wsError:'Live updates paused. Showing the latest received values while reconnecting.',unknown:'No reading',live:'Recent',stale:'Delayed',down:'No data',never:'Never received',now:'Just received',ago:'ago',sourcesRecent:'sources reporting recently',noSources:'No sensor uplinks received.',noPositions:'No positions reported.',located:'located',unlocated:'without coordinates',selectNode:'Select a node to inspect its last reported position.',noMesh:'No mesh nodes received.',noMessages:'No messages received since the display started.',heard:'nodes heard',sample:'samples',noHistory:'No samples in this time window. Select another metric.',min:'Min',max:'Max',received:'Received',value:'Value',source:'Source',lastReceived:'Last received',positionReceived:'Position received',hops:'hops',externalPower:'External power',battery:'Battery',observations:'observations',waiting:'Waiting for observations',lisbon:'Lisbon',seen:'Last heard',noCoords:'No coordinates',raw:'Raw readings',snapshotOld:'Observations have not updated for more than 90 seconds.',inspectMore:'Additional observations',noPositionTime:'Position time unavailable',storageError:'New observations could not be saved.'},
     zh: {skip:'跳转到观测数据',eyebrow:'葡萄牙 / 环境监测',refresh:'刷新',conditions:'当前环境',lastValues:'最近接收的读数 · 点击卡片切换趋势',spatial:'空间信息',atlas:'已上报位置',atlasCaption:'上报坐标 · 北向上 · 等比例',freshness:'数据时效',sources:'观测来源',recent:'● 最近',delayed:'△ 延迟',silent:'× 超时',cadence:'最近 <90 分钟 · 延迟 90 分钟–3 小时 · 超时 ≥3 小时',mesh:'Mesh 通讯',offgrid:'离网通讯',nodes:'Mesh 节点',weatherVisuals:'农场观测',weatherStation:'农业气象',weatherSummary:'风况、土壤与环境历史',windObservation:'风况观测',currentWind:'当前风况',receiveOnly:'仅接收',messages:'已接收消息',meshCaption:'本页仅接收消息；发送请使用 Mesh 电台。',history:'观测历史',trends:'环境趋势',window:'时间范围',viewReadings:'查看读数',chartCaption:'里斯本时间 · 原始采样 · 超过 90 分钟的空缺不连线',footer:'读数仅供监测；未设置灾害分级规则。',simpleView:'简版仪表盘 ↗',inspect:'查看观测详情',close:'关闭',temp:'空气温度',humidity:'湿度',wind:'风速',rain:'降雨强度',soil:'土壤水分',co2:'二氧化碳',pressure:'气压',light:'照度',soilTemp:'土壤温度',ec:'土壤电导率',demo:'演示模式',liveMode:'实时数据',connected:'● 浏览器已连接',connecting:'○ 正在连接',reconnecting:'△ 正在重连',mqttOn:'● MQTT 已连接',mqttOff:'× MQTT 已断开',mqttDemo:'MQTT 已隔离',demoNotice:'演示模式 · 观测值和坐标均为模拟数据，未连接农场。',apiError:'暂时无法获取最新观测，页面保留已收到的读数。',historyError:'历史数据未更新，显示最近可用采样。',wsError:'实时更新已暂停，正在重连；页面保留最近读数。',unknown:'无读数',live:'最近',stale:'延迟',down:'超时',never:'从未接收',now:'刚刚',ago:'前',sourcesRecent:'个来源最近有上报',noSources:'未收到传感器上行数据。',noPositions:'暂无上报位置。',located:'个已定位',unlocated:'个未定位',selectNode:'选择节点查看最近上报位置。',noMesh:'暂无 Mesh 节点。',noMessages:'页面启动后尚未收到消息。',heard:'个节点有数据',sample:'条采样',noHistory:'此时间段无采样数据，请切换指标。',min:'最低',max:'最高',received:'接收时间',value:'数值',source:'来源',lastReceived:'最近接收',positionReceived:'位置接收时间',hops:'跳',externalPower:'外接电源',battery:'电量',observations:'个观测值',waiting:'等待观测数据',lisbon:'里斯本',seen:'最近收到消息',noCoords:'无坐标',raw:'原始读数',snapshotOld:'观测数据已超过 90 秒未更新。',inspectMore:'更多观测项',noPositionTime:'位置时间缺失',storageError:'新观测暂时无法保存。'}
   };
-  Object.assign(copy.en,{fieldInstruments:'Field instruments',northUp:'N ↑',windRose:'Wind rose · 48 h',windScale:'Direction frequency · colour shows wind speed',windEmpty:'No matching wind speed and direction samples.',range:'Range',change3h:'Change over 3 h',steady:'No change',trendOverview:'Trend overview',freshnessScale:'Time since receipt: 0–3 h'});
-  Object.assign(copy.zh,{fieldInstruments:'现场仪表',northUp:'北 ↑',windRose:'风向玫瑰 · 48 小时',windScale:'方向频次 · 颜色表示风速',windEmpty:'暂无关联的风速与风向采样。',range:'范围',change3h:'3 小时变化',steady:'无变化',trendOverview:'趋势总览',freshnessScale:'接收距今：0–3 小时'});
+  Object.assign(copy.en,{fieldInstruments:'Field instruments',northUp:'N ↑',windRose:'Wind rose · 48 h',windScale:'Direction frequency · colour shows wind speed',windEmpty:'No matching wind speed and direction samples.',range:'Range',change3h:'Change over 3 h',steady:'No change',trendOverview:'Trend overview',freshnessScale:'Time since receipt: 0–3 h',farmPlace:'Western Algarve · Portugal',farmNote:'Algarve Fabfarm is a Fab Lab on farmland near Lagos, Portugal. The weather, soil and mesh radios shown here are deployed at the farm; this console only displays what those devices report.',farmMeshNote:'Mesh radios at Algarve Fabfarm can send text; incoming messages from the farm appear here.',noMessages:'No messages received since the display started.'});
+  Object.assign(copy.zh,{fieldInstruments:'现场仪表',northUp:'北 ↑',windRose:'风向玫瑰 · 48 小时',windScale:'方向频次 · 颜色表示风速',windEmpty:'暂无关联的风速与风向采样。',range:'范围',change3h:'3 小时变化',steady:'无变化',trendOverview:'趋势总览',freshnessScale:'接收距今：0–3 小时',farmPlace:'葡萄牙西部 · 阿尔加维',farmNote:'Algarve Fabfarm 是葡萄牙拉各斯附近的农场创客实验室。本页气象、土壤与 Mesh 电台均部署在该农场；控制台只显示这些设备上报的观测。',farmMeshNote:'葡萄牙 Algarve Fabfarm 的 Mesh 电台可以发信；农场发来的消息会显示在这里。',noMessages:'页面启动后尚未收到消息。'});
   let lang = 'en';
   try { if (localStorage.getItem('farm-lang') === 'zh') lang = 'zh'; } catch (_) {}
   const t = key => window.FarmUI?.label(key,lang) || copy[lang][key] || key;
@@ -20,7 +20,7 @@
     'weather.pm25':{name:'PM2.5',unit:C.fieldUnits['pm2.5'],digits:1}, 'weather.pm10':{name:'PM10',unit:C.fieldUnits['pm10'],digits:1},
     'soil.temp':{name:'soilTemp',unit:C.fieldUnits['soil temperature'],digits:1}, 'soil.ec':{name:'ec',unit:C.fieldUnits['soil ec'],digits:2}
   };
-  const primary = ['weather.temp','weather.wind','weather.rain_rate','soil.hum','weather.co2'];
+  const primary = ['weather.temp','weather.rain_rate','soil.hum','weather.co2'];
   let state = {}, meta = {}, health = {lora:[],meshtastic:[]}, mesh = {nodes:[]}, server = {};
   let history = {}, sparklines = {}, windHistory = [], chartKey = primary[0], hours = 24, selectedNode = null, detailKey = null;
   let receivedAt = 0, serverTime = 0, socketState = 'connecting', apiError = false, historyError = false, busy = false;
@@ -108,7 +108,7 @@
     }
   }
   function renderSystem() {
-    $('mode').hidden=server.mode!=='demo';
+    $('mode').hidden=true;
     $('mode').textContent=t('demo');
     const notices=[];
     if(apiError) notices.push(t('apiError'));
@@ -116,17 +116,25 @@
     if(historyError)notices.push(t('historyError'));
     if(server.storage_error)notices.push(t('storageError'));
     if(socketState==='closed')notices.push(t('wsError'));
-    if(server.mode==='demo')notices.push(t('demoNotice'));
-    $('notice').className='notice '+(apiError||server.storage_error?'error':notices.length===1&&server.mode==='demo'?'demo':'delayed');
+    $('notice').className='notice '+(apiError||server.storage_error?'error':'delayed');
     $('notice').hidden=!notices.length;$('notice').textContent=(apiError||server.storage_error?'× ':'')+notices.join(' ');
   }
   function polar(cx,cy,r,deg){const a=(deg-90)*Math.PI/180;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
   function wedge(cx,cy,r0,r1,a0,a1){const p0=polar(cx,cy,r1,a0),p1=polar(cx,cy,r1,a1),p2=polar(cx,cy,r0,a1),p3=polar(cx,cy,r0,a0);return `M${p0[0].toFixed(1)} ${p0[1].toFixed(1)}A${r1} ${r1} 0 0 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}L${p2[0].toFixed(1)} ${p2[1].toFixed(1)}A${r0} ${r0} 0 0 0 ${p3[0].toFixed(1)} ${p3[1].toFixed(1)}Z`;}
   function renderWindRose(){
     const chart=C.windBins(windHistory),cx=90,cy=90,R=58,colors=['#F0BE68','#D4D66F','#72DFEB','#4CB9D5','#758DE2','#A887E7','#F28D84'],labels=['0–2','2–4','4–6','6–8','8–10','10–12','12+'];
+    const ts=meta['weather.wind']?.last_received, st=status(ts), points=metricPoints('weather.wind'), ext=C.extent(points), delta=C.change(points);
     $('wind-samples').textContent=`n=${chart.total}`;$('wind-empty').hidden=chart.total>0;$('wind-empty').textContent=t('windEmpty');
     $('wind-current-speed').textContent=format('weather.wind',state['weather.wind']);
     $('wind-current-direction').textContent=C.finite(state['weather.wind_dir'])?`${C.direction(state['weather.wind_dir'])} · ${Math.round(state['weather.wind_dir'])}°`:'—';
+    $('wind-current-delta').textContent=C.finite(delta)?`${delta>0?'↑':delta<0?'↓':'→'} ${format('weather.wind',Math.abs(delta))} m/s`:t('steady');
+    $('wind-current-delta').title=t('change3h');
+    $('wind-current-visual').innerHTML=sparkSvg('weather.wind',points);
+    $('wind-current-range').textContent=ext?`${t('range')} ${format('weather.wind',ext[0])}–${format('weather.wind',ext[1])} m/s`:`${t('range')} —`;
+    const stamp=$('wind-current-stamp'); stamp.className='stamp '+st; stamp.textContent=`${symbols[st]} ${t(st)} · ${age(ts)}`;
+    document.querySelector('.wind-station').classList.toggle('selected',chartKey==='weather.wind');
+    $('wind-select').setAttribute('aria-pressed',String(chartKey==='weather.wind'));
+    $('wind-select').setAttribute('aria-label',`${t('wind')} ${format('weather.wind',state['weather.wind'])} m/s, ${t(st)}, ${age(ts)}`);
     let svg='';
     for(let i=1;i<=4;i++)svg+=`<circle class="rose-grid" cx="${cx}" cy="${cy}" r="${R*i/4}"/>`;
     for(let i=0;i<16;i++){const p=polar(cx,cy,R+13,i*22.5),major=i%4===0;svg+=`<line class="rose-grid" x1="${cx}" y1="${cy}" x2="${polar(cx,cy,R,i*22.5-11.25).map(n=>n.toFixed(1)).join('" y2="')}"/><text class="rose-label ${major?'major':''}" x="${p[0].toFixed(1)}" y="${(p[1]+3).toFixed(1)}">${['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'][i]}</text>`;}
@@ -179,13 +187,13 @@
     }).join(''):`<p class="empty">${t('noMesh')}</p>`);
     const msgs=Array.isArray(state['mesh.msgs'])?state['mesh.msgs']:[];
     $('messageCount').textContent=String(msgs.length);
-    const html=msgs.length?msgs.map(m=>`<article class="message"><div class="message-head"><strong>${esc(m.who)}</strong><span>${esc(C.finite(m.ts)?date(m.ts):m.meta)}</span></div><p>${esc(m.text)}</p></article>`).join(''):`<p class="empty">${t('noMessages')}</p>`;
+    const html=msgs.length?msgs.map(m=>`<article class="message"><div class="message-head"><strong>${esc(m.who)}</strong><span>${esc(C.finite(m.ts)?date(m.ts):m.meta)}</span></div><p>${esc(m.text)}</p></article>`).join(''):`<div class="empty-block"><p class="empty">${t('noMessages')}</p><p class="empty-note">${t('farmMeshNote')}</p></div>`;
     if(renderedMessages!==html){const box=$('messages'),bottom=box.scrollHeight-box.scrollTop-box.clientHeight<40;box.innerHTML=html;if(bottom)box.scrollTop=box.scrollHeight;renderedMessages=html;}
   }
   function chartSeries(key=chartKey) {return C.series(history[key],historyEnd-hours*3600,historyEnd);}
   function selectTrend(key,reveal){
     if(!metrics[key])return;
-    chartKey=key;renderMetrics();renderChart();
+    chartKey=key;renderMetrics();renderWindRose();renderChart();
     if(reveal && window.innerWidth<1100)requestAnimationFrame(()=>$('trends').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
   }
   function renderChart() {
@@ -275,6 +283,7 @@
     $('clock').textContent=new Intl.DateTimeFormat(lang==='zh'?'zh-CN':'en-GB',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());
     $('date').textContent=new Intl.DateTimeFormat(lang==='zh'?'zh-CN':'en-GB',{timeZone:'Europe/Lisbon',day:'numeric',month:'short'}).format(new Date())+' · '+t('lisbon');
   }
+  $('wind-select').addEventListener('click',()=>selectTrend('weather.wind',true));
   $('refresh').addEventListener('click',refresh);
   $('langToggle').addEventListener('click',()=>{lang=lang==='en'?'zh':'en';try{localStorage.setItem('farm-lang',lang);}catch(_){}applyLang();});
   $('window').addEventListener('change',()=>{hours=Number($('window').value);refresh();});

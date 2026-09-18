@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0D1922">
 <title>Algarve Fabfarm · Field operations</title>
-<link rel="stylesheet" href="/ops.css?v=20260918d">
-<script defer src="/ops-core.js?v=20260918d"></script>
-<script defer src="/farm-connection.js?v=20260918d"></script>
-<script defer src="/dashboard-b-client.js?v=20260918d"></script>
+<link rel="stylesheet" href="/ops.css?v=20260918l">
+<script defer src="/ops-core.js?v=20260918l"></script>
+<script defer src="/farm-connection.js?v=20260918l"></script>
+<script defer src="/dashboard-b-client.js?v=20260918l"></script>
 </head>
 <body>
 <a class="skip" href="#conditions" data-i18n="skip">Skip to observations</a>
@@ -16,24 +16,21 @@
 <header class="masthead">
   <div class="identity"><svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 30V18l14-9 14 9v12M6 24h28M20 9v21M12 34h16"/><circle cx="20" cy="9" r="3"/></svg><div><p data-i18n="eyebrow">Portugal / Environmental monitoring</p><h1>Algarve <span>Fabfarm</span></h1></div></div>
   <nav aria-label="Main"><a href="/ops" aria-current="page" data-i18n="operations">Operations</a><a href="/data" data-i18n="data">Sensor details</a><a href="/admin" data-i18n="admin">System diagnostics</a></nav>
+  <aside class="site-note" aria-labelledby="farm-note-title">
+    <p class="eyebrow" id="farm-note-title" data-i18n="farmPlace">Western Algarve · Portugal</p>
+    <p class="site-note-body"><span data-i18n="farmNote">Algarve Fabfarm is a Fab Lab on farmland near Lagos, Portugal. The weather, soil and mesh radios shown here are deployed at the farm; this console only displays what those devices report.</span> <a class="site-note-link" href="https://www.fablabs.io/labs/algarvefabfarm" rel="noopener noreferrer" target="_blank">fablabs.io/labs/algarvefabfarm</a></p>
+  </aside>
   <div class="header-tools"><span id="mode" class="mode" hidden>…</span><button id="refresh" type="button" data-i18n="refresh">Refresh</button><button id="langToggle" type="button" aria-label="切换到中文">中文</button><div class="clockbox"><time id="clock">--:--</time><span id="date">Lisbon time</span></div></div>
 </header>
 <p id="notice" class="notice" role="status" hidden></p>
 <main>
 <section class="conditions" id="conditions" tabindex="-1" aria-labelledby="conditions-title">
-  <div class="section-title"><h2 id="conditions-title" data-i18n="conditions">Current conditions</h2><span data-i18n="lastValues">Last received values · select to inspect</span></div>
+  <div class="section-title"><h2 id="conditions-title" data-i18n="weatherStation">Agricultural weather</h2><span data-i18n="lastValues">Last received values · select to inspect</span></div>
   <div class="readouts" id="readouts"></div>
 </section>
 <div class="workspace">
-<section class="weather-region" aria-labelledby="weather-region-title">
-  <div class="region-head"><div><p class="eyebrow" data-i18n="weatherVisuals">Farm observations</p><h2 id="weather-region-title" data-i18n="weatherStation">Agricultural weather</h2></div><span data-i18n="weatherSummary">Wind, soil and environmental history</span></div>
+<section class="weather-region" aria-labelledby="trends-title">
   <div class="weather-grid">
-    <section class="panel wind-station" aria-labelledby="windrose-title">
-      <div class="panel-head"><div><p class="eyebrow" data-i18n="windObservation">Wind observation</p><h3 id="windrose-title" data-i18n="windRose">Wind rose · 48 h</h3></div><span class="tag" id="wind-samples">—</span></div>
-      <div class="wind-current"><span><strong id="wind-current-speed">—</strong><small>m/s</small></span><span><b id="wind-current-direction">—</b><small data-i18n="currentWind">Current wind</small></span></div>
-      <div class="windrose-wrap"><svg id="wind-rose" viewBox="0 0 180 180" role="img" aria-labelledby="windrose-title windrose-note"></svg><div id="wind-legend" class="wind-legend"></div><p id="wind-empty" class="atlas-empty" hidden></p></div>
-      <p id="windrose-note" class="micro-caption" data-i18n="windScale">Direction frequency · colour is wind speed</p>
-    </section>
     <section class="panel trends" id="trends" aria-labelledby="trends-title">
       <div class="panel-head"><div><p class="eyebrow" data-i18n="history">Observation history</p><h2 id="trends-title" data-i18n="trends">Environmental trends</h2></div><div class="trend-controls"><label><span class="sr-only" data-i18n="window">Time window</span><select id="window"><option value="24">24 h</option><option value="48">48 h</option></select></label><button id="viewReadings" type="button" data-i18n="viewReadings">View readings</button></div></div>
       <div class="trend-dense">
@@ -44,6 +41,20 @@
         </div>
       </div>
       <p class="caption" id="chart-description" data-i18n="chartCaption">Time in Lisbon · raw samples · gaps over 90 minutes remain visible</p>
+    </section>
+    <section class="panel wind-station" aria-labelledby="windrose-title">
+      <div class="panel-head"><div><p class="eyebrow" data-i18n="windObservation">Wind observation</p><h3 id="windrose-title" data-i18n="windRose">Wind rose · 48 h</h3></div><span class="tag" id="wind-samples">—</span></div>
+      <div class="wind-main">
+        <button type="button" class="wind-current" id="wind-select">
+          <span class="metric-main"><span class="metric-value"><strong id="wind-current-speed">—</strong><small>m/s</small></span><span id="wind-current-delta" class="metric-delta">—</span></span>
+          <span id="wind-current-visual" class="metric-visual" aria-hidden="true"></span>
+          <span id="wind-current-range" class="metric-range"></span>
+          <span><b id="wind-current-direction">—</b><small data-i18n="currentWind">Current wind</small></span>
+          <span id="wind-current-stamp" class="stamp"></span>
+        </button>
+        <div class="windrose-wrap"><svg id="wind-rose" viewBox="0 0 180 180" role="img" aria-labelledby="windrose-title windrose-note"></svg><div id="wind-legend" class="wind-legend"></div><p id="wind-empty" class="atlas-empty" hidden></p></div>
+      </div>
+      <p id="windrose-note" class="micro-caption" data-i18n="windScale">Direction frequency · colour is wind speed</p>
     </section>
   </div>
 </section>

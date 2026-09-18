@@ -27,9 +27,9 @@ bounded panels. At narrow mobile widths, panels stack with document scrolling.
 ```
 Operations / Sensor details / System diagnostics       language / Lisbon time
 Browser / Bridge or MQTT / feed mode / source problems
-OPS: temperature | wind | rain rate | soil moisture | CO2
-+ Source freshness + Reported positions + Mesh nodes / received messages +
-+ Timestamped trend / sample inspection +                              +
+OPS: temperature | rain rate | soil moisture | CO2
++ Timestamped trend / wind rose (current wind lives with the rose)
++ Reported positions + Mesh nodes / received messages +
 DATA: device list  | selected device / all decoded fields / dated trends
 ADMIN: source health + LoRa / Mesh last seen, RSSI, SNR, received frames
        raw LoRa uplinks / filter / bounded list / pause display / expand JSON

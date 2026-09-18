@@ -84,7 +84,7 @@ h3 {
 .masthead {
   display:flex;
   align-items:center;
-  justify-content:space-between;
+  justify-content:flex-start;
   gap:24px;
   padding-bottom:20px;
 }
@@ -131,7 +131,20 @@ h3 {
   display:flex;
   gap:24px;
   align-items:center;
+  margin-left:auto;
 }
+.site-note {
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:2px;
+  flex:1;
+  min-width:0;
+  max-width:46rem;
+}
+.site-note .eyebrow {margin:0;}
+.site-note-body {margin:0;font-size:14px;line-height:1.35;color:var(--muted);}
+.site-note-link {font:13px/1.35 "IBM Plex Mono",monospace;color:var(--green);text-decoration:underline;text-underline-offset:3px;word-break:break-all;}
 .clockbox {
   text-align:right;
   min-width:165px;
@@ -193,7 +206,7 @@ h3 {
 }
 .readouts {
   display:grid;
-  grid-template-columns:repeat(5,minmax(0,1fr));
+  grid-template-columns:repeat(4,minmax(0,1fr));
   background:var(--paper);
   border:1px solid var(--line);
   border-radius:var(--radius);
@@ -770,6 +783,11 @@ dialog::backdrop {
     width:100%;
     justify-content:space-between;
   }
+  .site-note {
+    order:4;
+    flex:1 1 100%;
+    max-width:none;
+  }
   .systembar {
     flex-wrap:wrap;
     gap:8px 14px;
@@ -1016,13 +1034,16 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
     display:flex;
     flex-direction:column;
   }
-  .masthead {flex:none;min-height:38px;padding-bottom:6px;gap:20px;}
+  .masthead {flex:none;min-height:38px;padding-bottom:6px;gap:16px;}
   .identity {gap:8px;}
   .identity svg {width:26px;height:26px;}
   .identity p {display:none;}
   .identity h1 {font-size:28px;line-height:1;}
-  .masthead nav {margin-left:12px;margin-right:auto;gap:22px;}
+  .masthead nav {margin-left:8px;gap:22px;}
   .masthead nav a {font-size:14px;padding:5px 0;}
+  .site-note {max-width:none;padding:0 4px;}
+  .site-note .eyebrow {font-size:12px;letter-spacing:.06em;}
+  .site-note-body {font-size:14px;line-height:1.3;}
   .header-tools {gap:18px;}
   .header-tools button {padding:4px 10px;min-height:30px;font-size:14px;}
   .clockbox {display:flex;align-items:baseline;gap:12px;min-width:0;}
@@ -1321,82 +1342,83 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
 
 /* Operations groups presentation by subject: weather observations and off-grid communications. */
 .header-tools #refresh {padding:4px 10px;min-height:30px;background:var(--soft);border-color:var(--line);}
-.header-tools .mode {padding:3px 8px;border:1px solid var(--amber);border-radius:4px;color:var(--amber);}
+.header-tools .mode,.header-tools #mode {display:none;}
 .workspace {
-  grid-template-columns:minmax(0,2.25fr) minmax(360px,.9fr);
+  grid-template-columns:minmax(0,1.2fr) minmax(400px,1fr);
   grid-template-rows:minmax(560px,1fr);
 }
 .weather-region {display:flex;flex-direction:column;min-width:0;min-height:0;}
-.region-head {display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:0 2px 8px;min-height:48px;}
-.region-head h2 {font:600 24px/1 "Barlow Condensed","Noto Sans SC",sans-serif;}
-.region-head>span {font-size:14px;color:var(--muted);text-align:right;}
-.weather-grid {display:grid;grid-template-columns:clamp(220px,18vw,260px) minmax(0,1fr);gap:10px;flex:1;min-height:0;align-items:start;}
-.wind-station,.weather-grid .trends {grid-column:auto;grid-row:auto;min-height:0;}
-.wind-station {align-self:start;height:auto;}
+.weather-grid {display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(160px,.72fr) minmax(280px,1.28fr);gap:10px;flex:1;min-height:0;align-items:stretch;}
+.wind-station,.weather-grid .trends {grid-column:auto;grid-row:auto;min-height:0;align-self:stretch;height:100%;}
 .wind-station .panel-head h3 {font-size:21px;}
-.wind-current {display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:14px 0 4px;padding-bottom:10px;border-bottom:1px solid var(--line);}
+.wind-main {display:grid;grid-template-columns:minmax(130px,.38fr) minmax(0,1.62fr);gap:14px;flex:1;min-height:0;align-items:stretch;margin-top:6px;}
+.wind-current {display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:6px;margin:0;padding:4px 12px 4px 0;width:100%;border:0;border-right:1px solid var(--line);background:transparent;text-align:left;border-radius:0;color:inherit;}
+.wind-current:hover,.wind-current[aria-pressed="true"] {background:transparent;}
+.wind-station.selected {border-color:var(--accent);box-shadow:inset 0 -3px var(--accent);}
 .wind-current>span {display:flex;align-items:baseline;gap:5px;}
-.wind-current strong {font:500 46px/1 "Barlow Condensed",sans-serif;color:var(--green);}
+.wind-current .metric-main {width:100%;}
+.wind-current .metric-visual {width:100%;height:36px;}
+.wind-current strong {font:500 52px/1 "Barlow Condensed",sans-serif;color:var(--green);}
 .wind-current b {font:500 23px/1 "IBM Plex Mono",monospace;color:var(--ink);}
 .wind-current small {font-size:13px;color:var(--muted);}
-.wind-current>span:last-child {flex-direction:column;align-items:flex-end;gap:3px;text-align:right;}
-.wind-station .windrose-wrap {grid-template-columns:minmax(140px,1fr) 58px;height:210px;flex:none;min-height:0;}
-.wind-station #wind-rose {width:100%;height:auto;min-height:0;max-height:180px;align-self:center;}
+.wind-current .stamp {font-size:13px;}
+.wind-station .windrose-wrap {grid-template-columns:minmax(180px,1fr) 64px;height:auto;flex:1;min-height:200px;}
+.wind-station #wind-rose {width:100%;height:100%;min-height:180px;max-height:none;align-self:center;justify-self:center;}
 .weather-grid .trends {align-self:stretch;height:100%;}
-.weather-grid .trend-dense {grid-template-columns:minmax(215px,.55fr) minmax(320px,1.45fr);}
+.weather-grid .trend-dense {display:flex;flex-direction:column;flex:1;min-height:0;}
 .weather-grid .mini-trends {grid-template-columns:1fr;grid-template-rows:repeat(4,minmax(0,1fr));}
 .weather-grid .mini-trend {grid-template-rows:auto minmax(32px,1fr) auto;}
 .weather-grid .mini-trend b {min-width:0;}
 .communications {grid-column:2;grid-row:1;display:flex;min-height:0;}
-.mesh-summary-row {display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:10px 0 8px;color:var(--muted);font:12px "IBM Plex Mono",monospace;}
+.mesh-summary-row {display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:8px 0 6px;color:var(--muted);font:12px "IBM Plex Mono",monospace;}
 .mesh-summary-row .mesh-summary {margin:0;}
-.communications .instrument-map {flex:0 0 55%;padding:8px;}
-.communications .instrument-map .atlas-body {flex:1;min-height:170px;}
+.communications .instrument-map {flex:1 1 auto;min-height:160px;max-height:none;padding:6px 8px;}
+.communications .instrument-map .atlas-body {flex:1;min-height:120px;}
 .communications .instrument-map .micro-caption {margin-top:2px;text-align:left;}
-.offgrid-feed {display:grid;grid-template-rows:minmax(58px,.42fr) minmax(90px,1fr);gap:6px;flex:1;min-height:0;margin-top:6px;}
+.offgrid-feed {display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.25fr);grid-template-rows:auto;gap:14px;flex:0 0 auto;min-height:0;margin-top:8px;}
 .node-feed,.message-feed {display:flex;flex-direction:column;min-height:0;border-top:1px solid var(--line);}
-.offgrid-feed .message-heading {flex:none;margin:0;padding:7px 0 5px;border:0;}
-.offgrid-feed .mesh-nodes,.offgrid-feed .messages {flex:1;max-height:none;min-height:0;}
-.offgrid-feed .mesh-node {padding:3px 0;font-size:12px;}
-.offgrid-feed .mesh-node-state {display:inline;margin-left:6px;font-size:11px;}
-.offgrid-feed .node-instruments {min-width:112px;transform:scale(.86);transform-origin:right center;}
+.offgrid-feed .message-heading {flex:none;margin:0;padding:8px 0 6px;border:0;}
+.offgrid-feed .message-heading h3 {font-size:16px;}
+.offgrid-feed .mesh-nodes,.offgrid-feed .messages {flex:none;max-height:240px;min-height:0;overflow:auto;}
+.offgrid-feed .mesh-node {padding:7px 0;font-size:14px;}
+.offgrid-feed .mesh-node-state {display:inline;margin-left:6px;font-size:13px;}
+.offgrid-feed .node-instruments {min-width:118px;transform:none;}
+.offgrid-feed .message {margin-bottom:14px;padding:4px 0 6px 12px;}
+.offgrid-feed .message-head {font-size:14px;margin-bottom:4px;}
+.offgrid-feed .message p {font-size:16px;line-height:1.45;}
 .mesh-node.selected {background:color-mix(in srgb,var(--accent) 10%,transparent);box-shadow:inset 3px 0 var(--accent);padding-left:7px;}
 .mesh-node.selected button {color:var(--accent);}
 .communications>.caption {margin-top:6px;}
 
 @media(min-width:1100px) and (min-height:650px) {
-  .workspace {grid-template-columns:minmax(0,2.25fr) minmax(360px,.9fr);grid-template-rows:minmax(0,1fr);}
-  .weather-grid {grid-template-columns:clamp(220px,18vw,260px) minmax(0,1fr);}
+  .workspace {grid-template-columns:minmax(0,1.2fr) minmax(400px,1fr);grid-template-rows:minmax(0,1fr);}
+  .weather-grid {grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(160px,.72fr) minmax(280px,1.28fr);}
   .communications {grid-column:2;grid-row:1;}
-  .communications .instrument-map {flex-basis:55%;}
-  .communications .mesh-nodes {max-height:none;}
-  .communications .messages {max-height:none;}
-  .communications .message-heading {margin:0;padding-top:7px;}
+  .communications .instrument-map {flex:1 1 auto;max-height:none;}
+  .communications .message-heading {margin:0;padding-top:8px;}
 }
 @media(min-width:1100px) and (min-height:650px) and (max-height:900px) {
-  .region-head {min-height:36px;padding-bottom:5px;}
-  .region-head h2 {font-size:21px;}
-  .wind-current {margin-top:9px;padding-bottom:7px;}
-  .wind-current strong {font-size:38px;}
-  .wind-station .windrose-wrap {height:190px;}
-  .wind-station #wind-rose {max-height:165px;}
-  .weather-grid .trend-dense {grid-template-columns:minmax(205px,.54fr) minmax(300px,1.46fr);gap:8px;}
-  .communications .instrument-map {flex-basis:55%;}
-  .offgrid-feed {grid-template-rows:minmax(52px,.4fr) minmax(82px,1fr);margin-top:4px;}
+  .wind-current strong {font-size:42px;}
+  .wind-station .windrose-wrap {min-height:160px;}
+  .communications .instrument-map {flex:1 1 auto;min-height:140px;max-height:none;}
+  .offgrid-feed {margin-top:4px;}
+  .offgrid-feed .mesh-nodes,.offgrid-feed .messages {max-height:180px;}
 }
 @media(min-width:1100px) and (max-width:1500px) {
-  .workspace {grid-template-columns:minmax(0,2fr) minmax(340px,.9fr);}
-  .weather-grid {grid-template-columns:minmax(220px,250px) minmax(0,1fr);}
-  .weather-grid .trend-dense {grid-template-columns:minmax(205px,.54fr) minmax(300px,1.46fr);}
-  .wind-station .windrose-wrap {grid-template-columns:minmax(135px,1fr) 54px;}
+  .workspace {grid-template-columns:minmax(0,1.15fr) minmax(380px,1fr);}
+  .weather-grid {grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(150px,.7fr) minmax(250px,1.3fr);}
+  .wind-main {grid-template-columns:minmax(120px,.36fr) minmax(0,1.64fr);gap:10px;}
+  .wind-station .windrose-wrap {grid-template-columns:minmax(160px,1fr) 58px;}
 }
 @media(max-width:1099px) {
   .workspace {display:block;margin-top:14px;}
-  .weather-grid {grid-template-columns:1fr;}
-  .wind-station {min-height:390px;}
-  .weather-grid .trends {min-height:620px;}
+  .weather-grid {grid-template-columns:1fr;grid-template-rows:none;}
+  .wind-station {min-height:0;height:auto;}
+  .wind-main {grid-template-columns:minmax(140px,.5fr) minmax(0,1fr);}
+  .weather-grid .trends {min-height:500px;height:500px;}
   .communications {margin-top:12px;min-height:760px;}
-  .communications .instrument-map {flex-basis:330px;}
+  .communications .instrument-map {flex:1 1 auto;min-height:180px;max-height:none;}
+  .offgrid-feed {grid-template-columns:1fr;grid-template-rows:auto auto;flex:0 0 auto;}
 }
 @media(max-width:760px) {
   .header-tools {gap:8px;}
@@ -1404,15 +1426,17 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
   .clockbox {min-width:0;}
   .region-head {align-items:flex-start;flex-direction:column;gap:2px;padding:4px 2px 8px;}
   .region-head>span {text-align:left;}
-  .wind-station {min-height:370px;}
-  .weather-grid .trends {height:780px;min-height:780px;}
-  .weather-grid .trend-dense {grid-template-columns:1fr;grid-template-rows:320px 330px;}
+  .wind-station {min-height:0;height:auto;}
+  .wind-main {grid-template-columns:1fr;grid-template-rows:auto minmax(210px,auto);}
+  .wind-current {border-right:0;border-bottom:1px solid var(--line);padding:0 0 10px;}
+  .weather-grid .trends {height:440px;min-height:440px;}
+  .weather-grid .trend-dense {display:flex;flex-direction:column;}
   .weather-grid .mini-trends {grid-template-columns:1fr 1fr;grid-template-rows:none;}
-  .wind-station .windrose-wrap {grid-template-columns:minmax(0,1fr) 58px;height:230px;}
+  .wind-station .windrose-wrap {grid-template-columns:minmax(0,1fr) 58px;min-height:210px;height:230px;}
   .wind-station #wind-rose {max-height:210px;}
   .communications {height:auto;min-height:900px;}
-  .communications .instrument-map {flex-basis:340px;}
-  .offgrid-feed {grid-template-rows:minmax(180px,.8fr) minmax(240px,1fr);}
+  .communications .instrument-map {flex:1 1 auto;min-height:180px;max-height:none;}
+  .offgrid-feed {grid-template-columns:1fr;grid-template-rows:auto auto;flex:0 0 auto;}
   .node-instruments {min-width:110px;}
 }
 
@@ -1421,8 +1445,11 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
   border-color:var(--accent);
   box-shadow:inset 0 -3px var(--accent);
 }
-.weather-grid .trend-dense {display:block;}
-.weather-grid .focus-trend {height:100%;}
+.weather-grid .trend-dense {display:flex;flex-direction:column;flex:1;min-height:0;}
+.weather-grid .focus-trend {flex:1;min-height:0;height:auto;}
+.empty-block {display:flex;flex-direction:column;gap:8px;padding:4px 0 8px;min-height:0;}
+.empty-block .empty {padding:8px 0 0;margin:0;}
+.empty-note {margin:0;font-size:14px;line-height:1.45;color:var(--muted);}
 
 @media(max-width:1099px) {
   .conditions .readouts {grid-template-columns:repeat(3,minmax(0,1fr));}
@@ -1431,8 +1458,8 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
   .weather-grid .trends {order:1;}
   .weather-grid .wind-station {order:2;}
   .wind-station {min-height:0;height:auto;}
-  .wind-station .windrose-wrap {height:190px;}
-  .wind-station #wind-rose {max-height:170px;}
+  .wind-station .windrose-wrap {height:auto;min-height:210px;}
+  .wind-station #wind-rose {max-height:none;}
   .weather-grid .trends {height:500px;min-height:500px;}
 }
 
@@ -1440,10 +1467,9 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
   .conditions .readouts {grid-template-columns:repeat(2,minmax(0,1fr));}
   .conditions .metric-main {align-items:flex-start;flex-direction:column;gap:2px;}
   .wind-station {min-height:0;}
-  .wind-station .windrose-wrap {height:190px;}
-  .wind-station #wind-rose {max-height:170px;}
+  .wind-station .windrose-wrap {height:220px;min-height:220px;}
+  .wind-station #wind-rose {max-height:200px;}
   .weather-grid .trends {height:440px;min-height:440px;}
-  .weather-grid .trend-dense {display:block;}
 }
 
 @media(max-width:520px) {
