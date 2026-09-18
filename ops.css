@@ -1523,3 +1523,17 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
   .trends .caption {display:none;}
   .trend-toolbar {margin:6px 0 4px;}
 }
+
+/* Atlas reticle: corner-bracket frame, edge ticks and crosshair node markers. */
+.map-grid {stroke-dasharray:4 4;}
+.map-corner {fill:none;stroke:var(--muted);stroke-width:1.5;}
+.map-tick {stroke:var(--muted);stroke-width:1;opacity:.8;}
+.map-node .node-ring {fill:var(--bg);stroke:var(--muted);stroke-width:1;}
+.map-node .node-cross {fill:none;stroke:var(--muted);stroke-width:1;}
+.map-node .node-dot {fill:var(--muted);}
+.map-node.live .node-ring,.map-node.live .node-cross {stroke:var(--green);}
+.map-node.live .node-dot {fill:var(--green);}
+.map-node.stale .node-ring,.map-node.stale .node-cross {stroke:var(--amber);}
+.map-node.stale .node-dot {fill:var(--amber);}
+.map-node.down .node-ring,.map-node.down .node-cross {stroke:var(--red);}
+.map-node.down .node-dot {fill:var(--red);}

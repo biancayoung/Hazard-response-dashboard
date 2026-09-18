@@ -162,7 +162,8 @@
     const frame={left:76,right:width-18,top:28,bottom:height-48};
     const scale=Math.min((frame.right-frame.left-70)/Math.max(spanX,1),(frame.bottom-frame.top-55)/Math.max(spanY,1),2);
     const px=x=>(frame.left+frame.right)/2+(x-300)*scale, py=y=>(frame.top+frame.bottom)/2+(y-140)*scale;
-    let svg=`<path class="map-grid" d="M${frame.left} ${frame.top}H${frame.right}V${frame.bottom}H${frame.left}Z"/>`;
+    const cl=10;
+    let svg=`<path class="map-grid" d="M${frame.left} ${frame.top}H${frame.right}V${frame.bottom}H${frame.left}Z"/><path class="map-corner" d="M${frame.left} ${frame.top+cl}V${frame.top}H${frame.left+cl}M${frame.right-cl} ${frame.top}H${frame.right}V${frame.top+cl}M${frame.right} ${frame.bottom-cl}V${frame.bottom}H${frame.right-cl}M${frame.left+cl} ${frame.bottom}H${frame.left}V${frame.bottom-cl}"/>`;
     if(positions.length){
       const lats=positions.map(n=>n.lat),lons=positions.map(n=>n.lon),minLat=Math.min(...lats),maxLat=Math.max(...lats),minLon=Math.min(...lons),maxLon=Math.max(...lons);
       const minLonX=positions.find(n=>n.lon===minLon)?.x??300,maxLonX=positions.find(n=>n.lon===maxLon)?.x??300;
@@ -170,14 +171,15 @@
       const ticks=(min,max)=>min===max?[min]:[min,(min+max)/2,max];
       const lonX=lon=>px(minLon===maxLon?300:minLonX+(lon-minLon)/(maxLon-minLon)*(maxLonX-minLonX));
       const latY=lat=>py(minLat===maxLat?140:minLatY+(lat-minLat)/(maxLat-minLat)*(maxLatY-minLatY));
-      ticks(minLon,maxLon).forEach(lon=>{const x=lonX(lon);svg+=`<line class="map-axis" x1="${x}" x2="${x}" y1="${frame.top}" y2="${frame.bottom}"/>`;});
-      ticks(minLat,maxLat).forEach(lat=>{const y=latY(lat);svg+=`<line class="map-axis" x1="${frame.left}" x2="${frame.right}" y1="${y}" y2="${y}"/><text class="map-axis-label" x="${frame.left-7}" y="${y+4}" text-anchor="end">${lat.toFixed(5)}°</text>`;});
+      ticks(minLon,maxLon).forEach(lon=>{const x=lonX(lon);svg+=`<line class="map-axis" x1="${x}" x2="${x}" y1="${frame.top}" y2="${frame.bottom}"/><line class="map-tick" x1="${x}" x2="${x}" y1="${frame.top}" y2="${frame.top+5}"/><line class="map-tick" x1="${x}" x2="${x}" y1="${frame.bottom-5}" y2="${frame.bottom}"/><text class="map-axis-label" x="${x}" y="${frame.bottom+15}" text-anchor="middle">${lon.toFixed(5)}°</text>`;});
+      ticks(minLat,maxLat).forEach(lat=>{const y=latY(lat);svg+=`<line class="map-axis" x1="${frame.left}" x2="${frame.right}" y1="${y}" y2="${y}"/><line class="map-tick" x1="${frame.left}" x2="${frame.left+5}" y1="${y}" y2="${y}"/><line class="map-tick" x1="${frame.right-5}" x2="${frame.right}" y1="${y}" y2="${y}"/><text class="map-axis-label" x="${frame.left-7}" y="${y+4}" text-anchor="end">${lat.toFixed(5)}°</text>`;});
       svg+=`<text class="map-axis-title" x="${(frame.left+frame.right)/2}" y="${height-6}" text-anchor="middle">LON</text><text class="map-axis-title" transform="translate(12 ${(frame.top+frame.bottom)/2}) rotate(-90)" text-anchor="middle">LAT</text>`;
     }
     svg+=`<path d="M${width-28} 55V33m-4 7 4-7 4 7" fill="none" stroke="var(--muted)"/><text class="map-text" x="${width-33}" y="22">N</text>`;
     positions.forEach(n=>{
       const st=status(n.position_ts), label=n.name || n.id, selected=selectedNode===n.id, align=n.x>300?'end':'start', tx=n.x>300?-13:13;
-      svg+=`<g class="map-node ${st}${selected?' selected':''}" role="button" tabindex="0" data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(label+', '+t(st))}" transform="translate(${px(n.x).toFixed(2)} ${py(n.y).toFixed(2)})"><title>${esc(label)} · ${n.lat.toFixed(5)}, ${n.lon.toFixed(5)} · ${age(n.position_ts)}</title><circle class="node-ring" r="${selected?9:6}"/><text class="node-symbol" text-anchor="middle" y="4">${symbols[st]}</text>${selected?`<text class="node-label" x="${tx}" y="-3" text-anchor="${align}">${esc(label)}</text><text class="node-age" x="${tx}" y="11" text-anchor="${align}">${esc(age(n.position_ts))}</text>`:''}</g>`;
+      const r=selected?9:7, c=r+4.5;
+      svg+=`<g class="map-node ${st}${selected?' selected':''}" role="button" tabindex="0" data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(label+', '+t(st))}" transform="translate(${px(n.x).toFixed(2)} ${py(n.y).toFixed(2)})"><title>${esc(label)} · ${n.lat.toFixed(5)}, ${n.lon.toFixed(5)} · ${age(n.position_ts)}</title><circle class="node-ring" r="${r}"/><path class="node-cross" d="M0 ${-c}V${-r-1}M0 ${r+1}V${c}M${-c} 0H${-r-1}M${r+1} 0H${c}"/><circle class="node-dot" r="1.8"/>${selected?`<text class="node-label" x="${tx}" y="-3" text-anchor="${align}">${esc(label)}</text><text class="node-age" x="${tx}" y="11" text-anchor="${align}">${esc(age(n.position_ts))}</text>`:''}</g>`;
     });
     content('atlas',svg);$('atlas-empty').hidden=positions.length>0;$('atlas-empty').textContent=t('noPositions');
     const node=mesh.nodes.find(n=>n.id===selectedNode);
