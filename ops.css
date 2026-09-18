@@ -1546,3 +1546,23 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
 @media(max-width:760px) {
   .identity .brand-logo {display:none;}
 }
+
+/* Instrument-block layout: panels share edges instead of floating in gutters — one continuous console. */
+.workspace {gap:0;margin-top:12px;}
+.weather-grid {gap:0;}
+.weather-grid .panel,.communications {border-radius:0;padding-left:18px;padding-right:18px;}
+.weather-grid .trends {border-bottom:0;}
+.communications {border-left:0;}
+@media(max-width:1099px) {
+  .weather-grid .trends {border-bottom:1px solid var(--line);}
+  .communications {border-left:1px solid var(--line);}
+}
+
+/* Square the remaining strips on this page so the whole console reads as one block. */
+.conditions .readouts {border-radius:0;}
+.site-note {border-radius:0;}
+
+/* Mobile: the clock group stays hidden (the earlier hide rule is overridden by the inline clockbox layout above). */
+@media(max-width:760px) {
+  .clockbox {display:none;}
+}
