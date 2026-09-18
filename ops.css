@@ -1537,3 +1537,12 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
 .map-node.stale .node-dot {fill:var(--amber);}
 .map-node.down .node-ring,.map-node.down .node-cross {stroke:var(--red);}
 .map-node.down .node-dot {fill:var(--red);}
+
+/* Brand: the farm's own logo marks the console; black artwork is inverted for the dark theme. */
+.identity .brand-logo {width:42px;height:42px;flex:none;filter:brightness(0) invert(1);opacity:.92;}
+@media(min-width:1100px) and (min-height:650px) {
+  .identity .brand-logo {width:26px;height:26px;}
+}
+@media(max-width:760px) {
+  .identity .brand-logo {display:none;}
+}
