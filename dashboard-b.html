@@ -5,10 +5,10 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#0D1922">
 <title>Algarve Fabfarm · Field operations</title>
-<link rel="stylesheet" href="/ops.css?v=20260918c">
-<script defer src="/ops-core.js?v=20260918c"></script>
-<script defer src="/farm-connection.js?v=20260918c"></script>
-<script defer src="/dashboard-b-client.js?v=20260918c"></script>
+<link rel="stylesheet" href="/ops.css?v=20260918d">
+<script defer src="/ops-core.js?v=20260918d"></script>
+<script defer src="/farm-connection.js?v=20260918d"></script>
+<script defer src="/dashboard-b-client.js?v=20260918d"></script>
 </head>
 <body>
 <a class="skip" href="#conditions" data-i18n="skip">Skip to observations</a>
@@ -34,10 +34,9 @@
       <div class="windrose-wrap"><svg id="wind-rose" viewBox="0 0 180 180" role="img" aria-labelledby="windrose-title windrose-note"></svg><div id="wind-legend" class="wind-legend"></div><p id="wind-empty" class="atlas-empty" hidden></p></div>
       <p id="windrose-note" class="micro-caption" data-i18n="windScale">Direction frequency · colour is wind speed</p>
     </section>
-    <section class="panel trends" aria-labelledby="trends-title">
+    <section class="panel trends" id="trends" aria-labelledby="trends-title">
       <div class="panel-head"><div><p class="eyebrow" data-i18n="history">Observation history</p><h2 id="trends-title" data-i18n="trends">Environmental trends</h2></div><div class="trend-controls"><label><span class="sr-only" data-i18n="window">Time window</span><select id="window"><option value="24">24 h</option><option value="48">48 h</option></select></label><button id="viewReadings" type="button" data-i18n="viewReadings">View readings</button></div></div>
       <div class="trend-dense">
-        <div id="mini-trends" class="mini-trends" role="group" aria-label="Trend overview"></div>
         <div class="focus-trend">
           <div id="trend-tabs" class="trend-tabs" role="group" aria-label="Trend metric"></div>
           <div class="chart-heading"><strong id="chart-label"></strong><span id="chart-summary"></span></div>

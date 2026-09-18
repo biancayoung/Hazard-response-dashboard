@@ -1415,3 +1415,37 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
   .offgrid-feed {grid-template-rows:minmax(180px,.8fr) minmax(240px,1fr);}
   .node-instruments {min-width:110px;}
 }
+
+/* Sensor cards select the single detailed trend; intermediate widths stay legible. */
+.conditions .metric.selected {
+  border-color:var(--accent);
+  box-shadow:inset 0 -3px var(--accent);
+}
+.weather-grid .trend-dense {display:block;}
+.weather-grid .focus-trend {height:100%;}
+
+@media(max-width:1099px) {
+  .conditions .readouts {grid-template-columns:repeat(3,minmax(0,1fr));}
+  .conditions .metric,.conditions .metric:last-child {grid-column:auto;}
+  .workspace {margin-top:6px;}
+  .weather-grid .trends {order:1;}
+  .weather-grid .wind-station {order:2;}
+  .wind-station {min-height:0;height:auto;}
+  .wind-station .windrose-wrap {height:190px;}
+  .wind-station #wind-rose {max-height:170px;}
+  .weather-grid .trends {height:500px;min-height:500px;}
+}
+
+@media(max-width:760px) {
+  .conditions .readouts {grid-template-columns:repeat(2,minmax(0,1fr));}
+  .conditions .metric-main {align-items:flex-start;flex-direction:column;gap:2px;}
+  .wind-station {min-height:0;}
+  .wind-station .windrose-wrap {height:190px;}
+  .wind-station #wind-rose {max-height:170px;}
+  .weather-grid .trends {height:440px;min-height:440px;}
+  .weather-grid .trend-dense {display:block;}
+}
+
+@media(max-width:520px) {
+  .conditions .readouts {grid-template-columns:1fr;}
+}
