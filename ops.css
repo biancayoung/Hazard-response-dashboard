@@ -1562,7 +1562,8 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
 .conditions .readouts {border-radius:0;}
 .site-note {border-radius:0;}
 
-/* Mobile: the clock group stays hidden (the earlier hide rule is overridden by the inline clockbox layout above). */
-@media(max-width:760px) {
+/* Narrow headers: the clock group hides below the workspace breakpoint (the earlier 760px hide
+   rule is overridden by the inline clockbox layout above, and 761–1000px overflows otherwise). */
+@media(max-width:1099px) {
   .clockbox {display:none;}
 }
