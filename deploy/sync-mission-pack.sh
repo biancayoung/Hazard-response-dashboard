@@ -14,7 +14,7 @@ set -euo pipefail
 root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 exclude="$root/deploy/rsync-exclude"
 host="${FARM_SYNC_HOST:-}"
-dry=()
+dry_run=0
 
 usage() {
   cat <<EOF
@@ -35,7 +35,7 @@ EOF
 while [[ $# -gt 0 ]]; do
   case "$1" in
     -h|--help) usage; exit 0 ;;
-    -n|--dry-run) dry=(--dry-run); shift ;;
+    -n|--dry-run) dry_run=1; shift ;;
     --) shift; break ;;
     -*) echo "unknown option: $1" >&2; usage >&2; exit 2 ;;
     *) break ;;
@@ -58,7 +58,11 @@ if [[ "$target" != *:* ]]; then
   target="$host:$target"
 fi
 
-rsync -az "${dry[@]}" \
+rsync_opts=(-az)
+if [[ "$dry_run" -eq 1 ]]; then
+  rsync_opts+=(--dry-run)
+fi
+rsync "${rsync_opts[@]}" \
   --exclude-from="$exclude" \
   --exclude 'farm.db*' \
   --filter 'P farm.db' \
