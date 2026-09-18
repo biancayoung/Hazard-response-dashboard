@@ -14,7 +14,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 src = ROOT / (sys.argv[1] if len(sys.argv) > 1 else "b.html")
 out = ROOT / (sys.argv[2] if len(sys.argv) > 2 else "dashboard-a.html")
-client = (ROOT / "live-client.js").read_text(encoding="utf-8")
+client = (ROOT / "farm-connection.js").read_text(encoding="utf-8") + "\n" + (ROOT / "live-client.js").read_text(encoding="utf-8")
 
 html = src.read_text(encoding="utf-8")
 inject = "<script>\n" + client + "\n</script>\n</body>"

@@ -15,10 +15,9 @@ if ! command -v tailscale >/dev/null 2>&1; then
 fi
 
 echo "== configuring mosquitto =="
-# Listen on all interfaces so the Tailscale IP is reachable.
-# ChirpStack will publish to this broker over the tailnet.
+# Local development only. Configure authenticated TLS separately for remote clients.
 sudo tee /etc/mosquitto/conf.d/farm.conf >/dev/null <<'EOF'
-listener 1883 0.0.0.0
+listener 1883 127.0.0.1
 allow_anonymous true
 EOF
 

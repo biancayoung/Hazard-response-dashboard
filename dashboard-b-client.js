@@ -1,362 +1,301 @@
-// OPS CONSOLE client: live feed + all visualizations.
+/* Operations console: honest observations, independent transport and source health. */
 (function () {
   'use strict';
-
-  // ---------- i18n ----------
-  var I18N = {
-    en: { temp: 'Temperature', humidity: 'Humidity', wind: 'Wind', rain: 'Rain', pressure: 'Pressure', light: 'Light', soil: 'Soil', moisture: 'Moisture', log: 'Event log', trends: 'Environmental trends · 24 h', direction: 'Direction', gusts: 'Gust', avg24: 'Avg 24h', max24: 'Max 24h', nominal: 'All systems nominal', raining: 'Raining', dry: 'Dry', lisbon: 'lisbon' },
-    zh: { temp: '温度', humidity: '湿度', wind: '风', rain: '降雨', pressure: '气压', light: '光照', soil: '土壤', moisture: '湿度', log: '事件日志', trends: '环境趋势 · 24小时', direction: '风向', gusts: '阵风', avg24: '24小时平均', max24: '24小时最大', nominal: '所有系统正常', raining: '下雨中', dry: '干燥', lisbon: '里斯本' }
+  const C = window.OpsCore, $ = id => document.getElementById(id);
+  const copy = {
+    en: {skip:'Skip to observations',eyebrow:'Portugal / Environmental monitoring',refresh:'Refresh',conditions:'Current conditions',lastValues:'Last received values · select a card to update the trend',spatial:'Spatial context',atlas:'Reported positions',atlasCaption:'Reported coordinates · north up · equal scale',freshness:'Data freshness',sources:'Observation sources',recent:'● Recent',delayed:'△ Delayed',silent:'× No data',cadence:'Recent <90 min · delayed 90 min–3 h · no data ≥3 h',mesh:'Mesh communications',offgrid:'Off-grid communications',nodes:'Mesh nodes',weatherVisuals:'Farm observations',weatherStation:'Agricultural weather',weatherSummary:'Wind, soil and environmental history',windObservation:'Wind observation',currentWind:'Current wind',receiveOnly:'Receive only',messages:'Received messages',meshCaption:'Use a mesh radio to transmit. This display receives messages.',history:'Observation history',trends:'Environmental trends',window:'Time window',viewReadings:'View readings',chartCaption:'Time in Lisbon · raw samples · gaps over 90 minutes remain visible',footer:'Readings are for monitoring. No hazard classification rules are configured.',simpleView:'Simple dashboard ↗',inspect:'Observation details',close:'Close',temp:'Air temperature',humidity:'Humidity',wind:'Wind speed',rain:'Rain intensity',soil:'Soil moisture',co2:'Carbon dioxide',pressure:'Pressure',light:'Illuminance',soilTemp:'Soil temperature',ec:'Soil conductivity',demo:'Demonstration',liveMode:'Live feed',connected:'● Browser connected',connecting:'○ Connecting',reconnecting:'△ Reconnecting',mqttOn:'● MQTT connected',mqttOff:'× MQTT disconnected',mqttDemo:'MQTT isolated',demoNotice:'Demonstration · synthetic observations and coordinates. No connection to the farm.',apiError:'Latest observations are unavailable. Previously received values remain visible.',historyError:'History did not update. Showing the latest available samples.',wsError:'Live updates paused. Showing the latest received values while reconnecting.',unknown:'No reading',live:'Recent',stale:'Delayed',down:'No data',never:'Never received',now:'Just received',ago:'ago',sourcesRecent:'sources reporting recently',noSources:'No sensor uplinks received.',noPositions:'No positions reported.',located:'located',unlocated:'without coordinates',selectNode:'Select a node to inspect its last reported position.',noMesh:'No mesh nodes received.',noMessages:'No messages received since the display started.',heard:'nodes heard',sample:'samples',noHistory:'No samples in this time window. Select another metric.',min:'Min',max:'Max',received:'Received',value:'Value',source:'Source',lastReceived:'Last received',positionReceived:'Position received',hops:'hops',externalPower:'External power',battery:'Battery',observations:'observations',waiting:'Waiting for observations',lisbon:'Lisbon',seen:'Last heard',noCoords:'No coordinates',raw:'Raw readings',snapshotOld:'Observations have not updated for more than 90 seconds.',inspectMore:'Additional observations',noPositionTime:'Position time unavailable',storageError:'New observations could not be saved.'},
+    zh: {skip:'跳转到观测数据',eyebrow:'葡萄牙 / 环境监测',refresh:'刷新',conditions:'当前环境',lastValues:'最近接收的读数 · 点击卡片切换趋势',spatial:'空间信息',atlas:'已上报位置',atlasCaption:'上报坐标 · 北向上 · 等比例',freshness:'数据时效',sources:'观测来源',recent:'● 最近',delayed:'△ 延迟',silent:'× 超时',cadence:'最近 <90 分钟 · 延迟 90 分钟–3 小时 · 超时 ≥3 小时',mesh:'Mesh 通讯',offgrid:'离网通讯',nodes:'Mesh 节点',weatherVisuals:'农场观测',weatherStation:'农业气象',weatherSummary:'风况、土壤与环境历史',windObservation:'风况观测',currentWind:'当前风况',receiveOnly:'仅接收',messages:'已接收消息',meshCaption:'本页仅接收消息；发送请使用 Mesh 电台。',history:'观测历史',trends:'环境趋势',window:'时间范围',viewReadings:'查看读数',chartCaption:'里斯本时间 · 原始采样 · 超过 90 分钟的空缺不连线',footer:'读数仅供监测；未设置灾害分级规则。',simpleView:'简版仪表盘 ↗',inspect:'查看观测详情',close:'关闭',temp:'空气温度',humidity:'湿度',wind:'风速',rain:'降雨强度',soil:'土壤水分',co2:'二氧化碳',pressure:'气压',light:'照度',soilTemp:'土壤温度',ec:'土壤电导率',demo:'演示模式',liveMode:'实时数据',connected:'● 浏览器已连接',connecting:'○ 正在连接',reconnecting:'△ 正在重连',mqttOn:'● MQTT 已连接',mqttOff:'× MQTT 已断开',mqttDemo:'MQTT 已隔离',demoNotice:'演示模式 · 观测值和坐标均为模拟数据，未连接农场。',apiError:'暂时无法获取最新观测，页面保留已收到的读数。',historyError:'历史数据未更新，显示最近可用采样。',wsError:'实时更新已暂停，正在重连；页面保留最近读数。',unknown:'无读数',live:'最近',stale:'延迟',down:'超时',never:'从未接收',now:'刚刚',ago:'前',sourcesRecent:'个来源最近有上报',noSources:'未收到传感器上行数据。',noPositions:'暂无上报位置。',located:'个已定位',unlocated:'个未定位',selectNode:'选择节点查看最近上报位置。',noMesh:'暂无 Mesh 节点。',noMessages:'页面启动后尚未收到消息。',heard:'个节点有数据',sample:'条采样',noHistory:'此时间段无采样数据，请切换指标。',min:'最低',max:'最高',received:'接收时间',value:'数值',source:'来源',lastReceived:'最近接收',positionReceived:'位置接收时间',hops:'跳',externalPower:'外接电源',battery:'电量',observations:'个观测值',waiting:'等待观测数据',lisbon:'里斯本',seen:'最近收到消息',noCoords:'无坐标',raw:'原始读数',snapshotOld:'观测数据已超过 90 秒未更新。',inspectMore:'更多观测项',noPositionTime:'位置时间缺失',storageError:'新观测暂时无法保存。'}
   };
-  var lang = localStorage.getItem('farm-lang') || 'en';
-  var toggle = document.getElementById('langToggle');
+  Object.assign(copy.en,{fieldInstruments:'Field instruments',northUp:'N ↑',windRose:'Wind rose · 48 h',windScale:'Direction frequency · colour shows wind speed',windEmpty:'No matching wind speed and direction samples.',range:'Range',change3h:'Change over 3 h',steady:'No change',trendOverview:'Trend overview',freshnessScale:'Time since receipt: 0–3 h',farmPlace:'Western Algarve · Portugal',farmNote:'Algarve Fabfarm is a Fab Lab on farmland near Lagos, Portugal. The weather, soil and mesh radios shown here are deployed at the farm; this console only displays what those devices report.',farmMeshNote:'Mesh radios at Algarve Fabfarm can send text; incoming messages from the farm appear here.',noMessages:'No messages received since the display started.'});
+  Object.assign(copy.zh,{fieldInstruments:'现场仪表',northUp:'北 ↑',windRose:'风向玫瑰 · 48 小时',windScale:'方向频次 · 颜色表示风速',windEmpty:'暂无关联的风速与风向采样。',range:'范围',change3h:'3 小时变化',steady:'无变化',trendOverview:'趋势总览',freshnessScale:'接收距今：0–3 小时',farmPlace:'葡萄牙西部 · 阿尔加维',farmNote:'Algarve Fabfarm 是葡萄牙拉各斯附近的农场创客实验室。本页气象、土壤与 Mesh 电台均部署在该农场；控制台只显示这些设备上报的观测。',farmMeshNote:'葡萄牙 Algarve Fabfarm 的 Mesh 电台可以发信；农场发来的消息会显示在这里。',noMessages:'页面启动后尚未收到消息。'});
+  let lang = 'en';
+  try { if (localStorage.getItem('farm-lang') === 'zh') lang = 'zh'; } catch (_) {}
+  const t = key => window.FarmUI?.label(key,lang) || copy[lang][key] || key;
+  const esc = str => String(str ?? '').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const metrics = {
+    'weather.temp':{name:'temp',unit:C.fieldUnits['air temperature'],digits:1}, 'weather.hum':{name:'humidity',unit:C.fieldUnits['humidity'],digits:0},
+    'weather.wind':{name:'wind',unit:C.fieldUnits['wind speed'],digits:1}, 'weather.rain_rate':{name:'rain',unit:C.fieldUnits['rain intensity'],digits:1},
+    'soil.hum':{name:'soil',unit:C.fieldUnits['soil moisture'],digits:1}, 'weather.co2':{name:'co2',unit:C.fieldUnits['co2'],digits:0},
+    'weather.pressure':{name:'pressure',unit:'hPa',digits:1,scale:.01}, 'weather.light':{name:'light',unit:C.fieldUnits['light'],digits:0},
+    'weather.pm25':{name:'PM2.5',unit:C.fieldUnits['pm2.5'],digits:1}, 'weather.pm10':{name:'PM10',unit:C.fieldUnits['pm10'],digits:1},
+    'soil.temp':{name:'soilTemp',unit:C.fieldUnits['soil temperature'],digits:1}, 'soil.ec':{name:'ec',unit:C.fieldUnits['soil ec'],digits:2}
+  };
+  const primary = ['weather.temp','weather.rain_rate','soil.hum','weather.co2'];
+  let state = {}, meta = {}, health = {lora:[],meshtastic:[]}, mesh = {nodes:[]}, server = {};
+  let history = {}, sparklines = {}, windHistory = [], chartKey = primary[0], hours = 24, selectedNode = null, detailKey = null;
+  let receivedAt = 0, serverTime = 0, socketState = 'connecting', apiError = false, historyError = false, busy = false;
+  let renderedMessages = '', historyEnd = 0;
+  const now = () => serverTime ? serverTime + (performance.now() - receivedAt)/1000 : Date.now()/1000;
+  const symbols = {live:'●',stale:'△',down:'×',unknown:'○'};
+  const status = ts => C.status(ts, now(), health.thresholds);
+  const format = (key,v) => C.finite(v) ? (v*(metrics[key]?.scale || 1)).toLocaleString(lang === 'zh' ? 'zh-CN' : 'en-GB', {minimumFractionDigits:metrics[key]?.digits || 0, maximumFractionDigits:metrics[key]?.digits || 0}) : '—';
+  const date = ts => C.finite(ts) ? new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN':'en-GB',{timeZone:'Europe/Lisbon',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date(ts*1000)) : t('never');
+  function age(ts) {
+    if (!C.finite(ts)) return t('never');
+    const seconds=Math.max(0,now()-ts);
+    if(seconds<60) return t('now');
+    const number=seconds<3600?Math.floor(seconds/60):seconds<86400?Math.floor(seconds/3600):Math.floor(seconds/86400);
+    const unit=seconds<3600?(lang==='zh'?'分钟':'m'):seconds<86400?(lang==='zh'?'小时':'h'):(lang==='zh'?'天':'d');
+    return lang==='zh'?`${number}${unit}前`:`${number}${unit} ago`;
+  }
+  function content(id, html) {
+    const el=$(id); if(el.innerHTML===html) return;
+    const active=document.activeElement, key=el.contains(active)?active.dataset.focus:null, scroll=el.scrollTop;
+    el.innerHTML=html; el.scrollTop=scroll;
+    if(key) [...el.querySelectorAll('[data-focus]')].find(n=>n.dataset.focus===key)?.focus({preventScroll:true});
+  }
+  function bootMetrics() {
+    $('readouts').innerHTML=primary.map(key=>`<button type="button" class="metric" data-metric="${key}"><span class="metric-name"></span><span class="metric-main"><span class="metric-value"></span><span class="metric-delta"></span></span><span class="metric-visual" aria-hidden="true"></span><span class="metric-range"></span><span class="secondary"></span><span class="stamp"></span></button>`).join('');
+    $('readouts').addEventListener('click', e=>{const button=e.target.closest('[data-metric]');if(button)selectTrend(button.dataset.metric,true);});
+    $('trend-tabs').innerHTML=Object.keys(metrics).slice(0,6).map(key=>`<button type="button" data-key="${key}"></button>`).join('');
+    $('trend-tabs').addEventListener('click',e=>{if(e.target.dataset.key)selectTrend(e.target.dataset.key,false);});
+  }
+  function metricPoints(key) {
+    const source=C.series(sparklines[key]);
+    return source.length?source:C.series(history[key]);
+  }
+  function sparkSvg(key, points, type='line') {
+    const ordered=C.series(points); if(!ordered.length)return '<span class="viz-empty">—</span>';
+    const W=180,H=46,left=2,right=178,top=4,bottom=42,start=ordered[0][0],end=Math.max(start+1,ordered.at(-1)[0]);
+    const ext=C.extent(ordered), rawMin=ext[0],rawMax=ext[1],pad=(rawMax-rawMin||1)*.08,min=rawMin-pad,max=rawMax+pad;
+    const x=ts=>left+(ts-start)/(end-start)*(right-left),y=v=>bottom-(v-min)/(max-min)*(bottom-top);
+    if(type==='bars')return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">${ordered.map((p,i)=>{const next=ordered[i+1]?.[0]||p[0]+Math.max(900,(end-start)/ordered.length),w=Math.max(1,Math.min(7,x(next)-x(p[0])-1)),h=Math.max(1,bottom-y(Math.max(0,p[1])));return `<rect x="${x(p[0]).toFixed(1)}" y="${(bottom-h).toFixed(1)}" width="${w.toFixed(1)}" height="${h.toFixed(1)}"/>`;}).join('')}</svg>`;
+    let paths='';for(const group of C.segments(ordered))paths+=`<path d="${group.map((p,i)=>(i?'L':'M')+x(p[0]).toFixed(1)+' '+y(p[1]).toFixed(1)).join(' ')}"/>`;
+    const last=ordered.at(-1);return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><line x1="2" x2="178" y1="42" y2="42"/>${paths}<circle cx="${x(last[0]).toFixed(1)}" cy="${y(last[1]).toFixed(1)}" r="2.5"/></svg>`;
+  }
+  function gaugeSvg(key) {
+    if(key==='soil.hum'){
+      const moisture=C.finite(state[key])?Math.max(0,Math.min(100,state[key])):0,temp=C.finite(state['soil.temp'])?Math.max(0,Math.min(40,state['soil.temp'])):0;
+      return `<svg class="dual-gauge" viewBox="0 0 180 54"><path class="gauge-bg" d="M22 45 A68 68 0 0 1 158 45"/><path class="gauge-value" pathLength="100" stroke-dasharray="${moisture} 100" d="M22 45 A68 68 0 0 1 158 45"/><path class="gauge-inner-bg" d="M39 45 A51 51 0 0 1 141 45"/><path class="gauge-inner" pathLength="100" stroke-dasharray="${temp/40*100} 100" d="M39 45 A51 51 0 0 1 141 45"/><text x="90" y="42" text-anchor="middle">${format('soil.temp',state['soil.temp'])}°C</text></svg>`;
+    }
+    const limits=key==='weather.co2'?[350,1200]:[0,100],v=state[key],pct=C.finite(v)?Math.max(0,Math.min(100,(v-limits[0])/(limits[1]-limits[0])*100)):0;
+    return `<div class="range-gauge"><i style="width:${pct.toFixed(1)}%"></i><span>${limits[0]}</span><span>${limits[1]}</span></div>`;
+  }
+  function metricVisual(key, points) {
+    if(key==='weather.wind'){
+      const deg=state['weather.wind_dir'],turn=C.finite(deg)?deg:0;
+      return `<div class="wind-mini"><svg viewBox="0 0 54 54"><circle cx="27" cy="27" r="22"/><path transform="rotate(${turn} 27 27)" d="M27 7l5 21-5-4-5 4z"/><text x="27" y="13">N</text></svg>${sparkSvg(key,points)}</div>`;
+    }
+    if(key==='weather.rain_rate')return sparkSvg(key,points,'bars');
+    if(key==='soil.hum'||key==='weather.co2')return gaugeSvg(key);
+    return sparkSvg(key,points);
+  }
+  function renderMetrics() {
+    for(const button of $('readouts').children){
+      const key=button.dataset.metric, m=metrics[key], ts=meta[key]?.last_received, st=status(ts);
+      button.className='metric '+st+(key===chartKey?' selected':'');
+      button.setAttribute('aria-pressed',String(key===chartKey));
+      button.querySelector('.metric-name').innerHTML=`${t(m.name)} <span aria-hidden="true">↗</span>`;
+      button.querySelector('.metric-value').innerHTML=`${format(key,state[key])}<small>${m.unit}</small>`;
+      const points=metricPoints(key), ext=C.extent(points),delta=C.change(points);
+      button.querySelector('.metric-visual').innerHTML=metricVisual(key,points);
+      button.querySelector('.metric-range').textContent=ext?`${t('range')} ${format(key,ext[0])}–${format(key,ext[1])} ${m.unit}`:`${t('range')} —`;
+      const deltaEl=button.querySelector('.metric-delta');
+      deltaEl.textContent=C.finite(delta)?`${delta>0?'↑':delta<0?'↓':'→'} ${format(key,Math.abs(delta))} ${m.unit}`:'—';
+      deltaEl.title=t('change3h');
+      const secondary = key==='weather.temp'?`${t('humidity')} ${format('weather.hum',state['weather.hum'])}%`
+        : key==='weather.wind'?`${C.direction(state['weather.wind_dir'])} · ${C.finite(state['weather.wind_dir'])?Math.round(state['weather.wind_dir'])+'°':'—'}`
+        : key==='weather.rain_rate'?(lang==='zh'?'瞬时强度 · 非累计雨量':'Instantaneous · not accumulated')
+        : key==='soil.hum'?`${t('soilTemp')} ${format('soil.temp',state['soil.temp'])}°C`
+        : `PM2.5 ${format('weather.pm25',state['weather.pm25'])} µg/m³`;
+      const secondaryKey={'weather.temp':'weather.hum','weather.wind':'weather.wind_dir','soil.hum':'soil.temp','weather.co2':'weather.pm25'}[key];
+      const secondaryStatus=secondaryKey?status(meta[secondaryKey]?.last_received):null;
+      button.querySelector('.secondary').textContent=secondary+(secondaryStatus && secondaryStatus!=='live'?' · '+symbols[secondaryStatus]+' '+t(secondaryStatus):'');
+      button.querySelector('.secondary').title=secondaryKey?`${t('lastReceived')}: ${date(meta[secondaryKey]?.last_received)}`:'';
+      const stamp=button.querySelector('.stamp'); stamp.className='stamp '+st;
+      stamp.textContent=`${symbols[st]} ${t(st)} · ${age(ts)}`;
+      button.setAttribute('aria-label',`${t(m.name)} ${format(key,state[key])} ${m.unit}, ${t(st)}, ${age(ts)}`);
+    }
+  }
+  function renderSystem() {
+    $('mode').hidden=true;
+    $('mode').textContent=t('demo');
+    const notices=[];
+    if(apiError) notices.push(t('apiError'));
+    else if(receivedAt && performance.now()-receivedAt>90000) notices.push(t('snapshotOld'));
+    if(historyError)notices.push(t('historyError'));
+    if(server.storage_error)notices.push(t('storageError'));
+    if(socketState==='closed')notices.push(t('wsError'));
+    $('notice').className='notice '+(apiError||server.storage_error?'error':'delayed');
+    $('notice').hidden=!notices.length;$('notice').textContent=(apiError||server.storage_error?'× ':'')+notices.join(' ');
+  }
+  function polar(cx,cy,r,deg){const a=(deg-90)*Math.PI/180;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+  function wedge(cx,cy,r0,r1,a0,a1){const p0=polar(cx,cy,r1,a0),p1=polar(cx,cy,r1,a1),p2=polar(cx,cy,r0,a1),p3=polar(cx,cy,r0,a0);return `M${p0[0].toFixed(1)} ${p0[1].toFixed(1)}A${r1} ${r1} 0 0 1 ${p1[0].toFixed(1)} ${p1[1].toFixed(1)}L${p2[0].toFixed(1)} ${p2[1].toFixed(1)}A${r0} ${r0} 0 0 0 ${p3[0].toFixed(1)} ${p3[1].toFixed(1)}Z`;}
+  function renderWindRose(){
+    const chart=C.windBins(windHistory),cx=90,cy=90,R=58,colors=['#F0BE68','#D4D66F','#72DFEB','#4CB9D5','#758DE2','#A887E7','#F28D84'],labels=['0–2','2–4','4–6','6–8','8–10','10–12','12+'];
+    const ts=meta['weather.wind']?.last_received, st=status(ts), points=metricPoints('weather.wind'), ext=C.extent(points), delta=C.change(points);
+    $('wind-samples').textContent=`n=${chart.total}`;$('wind-empty').hidden=chart.total>0;$('wind-empty').textContent=t('windEmpty');
+    $('wind-current-speed').textContent=format('weather.wind',state['weather.wind']);
+    $('wind-current-direction').textContent=C.finite(state['weather.wind_dir'])?`${C.direction(state['weather.wind_dir'])} · ${Math.round(state['weather.wind_dir'])}°`:'—';
+    $('wind-current-delta').textContent=C.finite(delta)?`${delta>0?'↑':delta<0?'↓':'→'} ${format('weather.wind',Math.abs(delta))} m/s`:t('steady');
+    $('wind-current-delta').title=t('change3h');
+    $('wind-current-visual').innerHTML=sparkSvg('weather.wind',points);
+    $('wind-current-range').textContent=ext?`${t('range')} ${format('weather.wind',ext[0])}–${format('weather.wind',ext[1])} m/s`:`${t('range')} —`;
+    const stamp=$('wind-current-stamp'); stamp.className='stamp '+st; stamp.textContent=`${symbols[st]} ${t(st)} · ${age(ts)}`;
+    document.querySelector('.wind-station').classList.toggle('selected',chartKey==='weather.wind');
+    $('wind-select').setAttribute('aria-pressed',String(chartKey==='weather.wind'));
+    $('wind-select').setAttribute('aria-label',`${t('wind')} ${format('weather.wind',state['weather.wind'])} m/s, ${t(st)}, ${age(ts)}`);
+    let svg='';
+    for(let i=1;i<=4;i++)svg+=`<circle class="rose-grid" cx="${cx}" cy="${cy}" r="${R*i/4}"/>`;
+    for(let i=0;i<16;i++){const p=polar(cx,cy,R+13,i*22.5),major=i%4===0;svg+=`<line class="rose-grid" x1="${cx}" y1="${cy}" x2="${polar(cx,cy,R,i*22.5-11.25).map(n=>n.toFixed(1)).join('" y2="')}"/><text class="rose-label ${major?'major':''}" x="${p[0].toFixed(1)}" y="${(p[1]+3).toFixed(1)}">${['N','NNE','NE','ENE','E','ESE','SE','SSE','S','SSW','SW','WSW','W','WNW','NW','NNW'][i]}</text>`;}
+    if(chart.max)chart.sectors.forEach((sector,i)=>{let r0=0;sector.counts.forEach((count,b)=>{if(!count)return;const r1=r0+count/chart.max*R;svg+=`<path class="rose-wedge" fill="${colors[b]}" d="${wedge(cx,cy,r0,r1,i*22.5-10.5,i*22.5+10.5)}"><title>${labels[b]} m/s · ${count} ${t('sample')}</title></path>`;r0=r1;});});
+    const current=state['weather.wind_dir'];if(C.finite(current)){const a=polar(cx,cy,R-2,current),b=polar(cx,cy,9,current);svg+=`<line class="rose-needle" x1="${b[0]}" y1="${b[1]}" x2="${a[0]}" y2="${a[1]}"/><circle class="rose-current" cx="${a[0]}" cy="${a[1]}" r="3"/>`;}
+    $('wind-rose').innerHTML=svg;
+    $('wind-legend').innerHTML=labels.map((label,i)=>`<span><i style="background:${colors[i]}"></i>${label}</span>`).join('')+'<b>m/s</b>';
+  }
+  function renderAtlas() {
+    const positions=C.project(mesh.nodes);
+    $('positionCount').textContent=`${positions.length} ${t('located')} / ${mesh.nodes.length-positions.length} ${t('unlocated')}`;
+    const plot=$('atlas'), width=Math.max(300,plot.clientWidth), height=Math.max(180,plot.clientHeight);
+    plot.setAttribute('viewBox',`0 0 ${width} ${height}`);
+    const xs=positions.map(n=>n.x), ys=positions.map(n=>n.y);
+    const spanX=positions.length?Math.max(...xs)-Math.min(...xs):0, spanY=positions.length?Math.max(...ys)-Math.min(...ys):0;
+    const frame={left:76,right:width-18,top:28,bottom:height-48};
+    const scale=Math.min((frame.right-frame.left-70)/Math.max(spanX,1),(frame.bottom-frame.top-55)/Math.max(spanY,1),2);
+    const px=x=>(frame.left+frame.right)/2+(x-300)*scale, py=y=>(frame.top+frame.bottom)/2+(y-140)*scale;
+    let svg=`<path class="map-grid" d="M${frame.left} ${frame.top}H${frame.right}V${frame.bottom}H${frame.left}Z"/>`;
+    if(positions.length){
+      const lats=positions.map(n=>n.lat),lons=positions.map(n=>n.lon),minLat=Math.min(...lats),maxLat=Math.max(...lats),minLon=Math.min(...lons),maxLon=Math.max(...lons);
+      const minLonX=positions.find(n=>n.lon===minLon)?.x??300,maxLonX=positions.find(n=>n.lon===maxLon)?.x??300;
+      const minLatY=positions.find(n=>n.lat===minLat)?.y??140,maxLatY=positions.find(n=>n.lat===maxLat)?.y??140;
+      const ticks=(min,max)=>min===max?[min]:[min,(min+max)/2,max];
+      const lonX=lon=>px(minLon===maxLon?300:minLonX+(lon-minLon)/(maxLon-minLon)*(maxLonX-minLonX));
+      const latY=lat=>py(minLat===maxLat?140:minLatY+(lat-minLat)/(maxLat-minLat)*(maxLatY-minLatY));
+      ticks(minLon,maxLon).forEach(lon=>{const x=lonX(lon);svg+=`<line class="map-axis" x1="${x}" x2="${x}" y1="${frame.top}" y2="${frame.bottom}"/>`;});
+      ticks(minLat,maxLat).forEach(lat=>{const y=latY(lat);svg+=`<line class="map-axis" x1="${frame.left}" x2="${frame.right}" y1="${y}" y2="${y}"/><text class="map-axis-label" x="${frame.left-7}" y="${y+4}" text-anchor="end">${lat.toFixed(5)}°</text>`;});
+      svg+=`<text class="map-axis-title" x="${(frame.left+frame.right)/2}" y="${height-6}" text-anchor="middle">LON</text><text class="map-axis-title" transform="translate(12 ${(frame.top+frame.bottom)/2}) rotate(-90)" text-anchor="middle">LAT</text>`;
+    }
+    svg+=`<path d="M${width-28} 55V33m-4 7 4-7 4 7" fill="none" stroke="var(--muted)"/><text class="map-text" x="${width-33}" y="22">N</text>`;
+    positions.forEach(n=>{
+      const st=status(n.position_ts), label=n.name || n.id, selected=selectedNode===n.id, align=n.x>300?'end':'start', tx=n.x>300?-13:13;
+      svg+=`<g class="map-node ${st}${selected?' selected':''}" role="button" tabindex="0" data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(label+', '+t(st))}" transform="translate(${px(n.x).toFixed(2)} ${py(n.y).toFixed(2)})"><title>${esc(label)} · ${n.lat.toFixed(5)}, ${n.lon.toFixed(5)} · ${age(n.position_ts)}</title><circle class="node-ring" r="${selected?9:6}"/><text class="node-symbol" text-anchor="middle" y="4">${symbols[st]}</text>${selected?`<text class="node-label" x="${tx}" y="-3" text-anchor="${align}">${esc(label)}</text><text class="node-age" x="${tx}" y="11" text-anchor="${align}">${esc(age(n.position_ts))}</text>`:''}</g>`;
+    });
+    content('atlas',svg);$('atlas-empty').hidden=positions.length>0;$('atlas-empty').textContent=t('noPositions');
+    const node=mesh.nodes.find(n=>n.id===selectedNode);
+    if(node) $('position-detail').innerHTML=`<b>${esc(node.name)}</b> · ${C.finite(node.lat)&&C.finite(node.lon)?`${node.lat.toFixed(5)}, ${node.lon.toFixed(5)} · ${t('positionReceived')}: ${age(node.position_ts)}`:t('noCoords')}`;
+    else if(positions.length){const lats=positions.map(n=>n.lat),lons=positions.map(n=>n.lon);$('position-detail').textContent=`LAT ${Math.min(...lats).toFixed(5)}–${Math.max(...lats).toFixed(5)} · LON ${Math.min(...lons).toFixed(5)}–${Math.max(...lons).toFixed(5)}`;}
+    else $('position-detail').textContent='';
+  }
+  function battery(n) {return n.battery===101?t('externalPower'):C.finite(n.battery)?`${Math.round(n.battery)}%`:'—';}
+  function renderMesh() {
+    $('mesh-summary').innerHTML=`<strong>${mesh.nodes.length}</strong> ${t('heard')} · ${mesh.nodes.filter(n=>status(n.last_heard_ts)==='live').length} ${t('live')}`;
+    content('mesh-nodes',mesh.nodes.length?mesh.nodes.map(n=>{
+      const st=status(n.last_heard_ts);
+      const batteryGraphic=n.battery===101?`<span class="power-label">↯ ${t('externalPower')}</span>`:C.finite(n.battery)?`<span class="battery-rail" aria-label="${t('battery')} ${Math.round(n.battery)}%"><i style="width:${Math.max(0,Math.min(100,n.battery))}%"></i><b>${Math.round(n.battery)}%</b></span>`:'<span>—</span>';
+      const hops=C.finite(n.hops)?`<span class="hop-marks" aria-label="${n.hops} ${t('hops')}">${Array.from({length:Math.min(5,n.hops+1)},(_,i)=>`<i class="${i<=n.hops?'on':''}"></i>`).join('')}<b>${n.hops}</b></span>`:'<span>—</span>';
+      return `<div class="mesh-node ${st}${selectedNode===n.id?' selected':''}"><button data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-pressed="${selectedNode===n.id}" aria-label="${esc(n.name+', '+t(st)+', '+t('battery')+' '+battery(n))}">${symbols[st]} ${esc(n.name)}<span class="mesh-node-state">${t(st)} · ${age(n.last_heard_ts)}</span></button><div class="node-instruments">${batteryGraphic}${hops}</div></div>`;
+    }).join(''):`<p class="empty">${t('noMesh')}</p>`);
+    const msgs=Array.isArray(state['mesh.msgs'])?state['mesh.msgs']:[];
+    $('messageCount').textContent=String(msgs.length);
+    const html=msgs.length?msgs.map(m=>`<article class="message"><div class="message-head"><strong>${esc(m.who)}</strong><span>${esc(C.finite(m.ts)?date(m.ts):m.meta)}</span></div><p>${esc(m.text)}</p></article>`).join(''):`<div class="empty-block"><p class="empty">${t('noMessages')}</p><p class="empty-note">${t('farmMeshNote')}</p></div>`;
+    if(renderedMessages!==html){const box=$('messages'),bottom=box.scrollHeight-box.scrollTop-box.clientHeight<40;box.innerHTML=html;if(bottom)box.scrollTop=box.scrollHeight;renderedMessages=html;}
+  }
+  function chartSeries(key=chartKey) {return C.series(history[key],historyEnd-hours*3600,historyEnd);}
+  function selectTrend(key,reveal){
+    if(!metrics[key])return;
+    chartKey=key;renderMetrics();renderWindRose();renderChart();
+    if(reveal && window.innerWidth<1100)requestAnimationFrame(()=>$('trends').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
+  }
+  function renderChart() {
+    [...$('trend-tabs').children].forEach(button=>{button.textContent=t(metrics[button.dataset.key].name);button.setAttribute('aria-pressed',String(button.dataset.key===chartKey));});
+    const points=chartSeries(), m=metrics[chartKey];
+    $('chart-label').textContent=`${t(m.name)} · ${m.unit}`;
+    $('chart-summary').textContent=points.length?`${points.length} ${t('sample')} · ${t('min')} ${format(chartKey,Math.min(...points.map(p=>p[1])))} · ${t('max')} ${format(chartKey,Math.max(...points.map(p=>p[1])))}`:t('waiting');
+    $('chart-empty').hidden=points.length>0;$('chart-empty').textContent=t('noHistory');
+    if(!points.length){$('trend-chart').innerHTML='';return;}
+    const width=Math.max(300,$('trend-chart').clientWidth),height=Math.max(60,$('trend-chart').clientHeight);
+    $('trend-chart').setAttribute('viewBox',`0 0 ${width} ${height}`);
+    const start=historyEnd-hours*3600,left=46,right=width-8,top=10,bottom=height-24;
+    let min=points.length?Math.min(...points.map(p=>p[1])):0, max=points.length?Math.max(...points.map(p=>p[1])):1;
+    if(min===max){min-=1;max+=1;}
+    const pad=(max-min)*.12;min-=pad;max+=pad;
+    const x=ts=>left+(ts-start)/(hours*3600)*(right-left), y=v=>bottom-(v-min)/(max-min)*(bottom-top);
+    let html='';
+    for(let i=0;i<3;i++){const v=min+(max-min)*i/2,Y=y(v);html+=`<line class="chart-grid" x1="${left}" x2="${right}" y1="${Y}" y2="${Y}"/><text class="chart-text" x="36" y="${Y+4}" text-anchor="end">${format(chartKey,v)}</text>`;}
+    const ticks=width<500?2:4;
+    for(let i=0;i<=ticks;i++){const ts=start+i*hours*3600/ticks, label=new Intl.DateTimeFormat(lang==='zh'?'zh-CN':'en-GB',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(ts*1000));html+=`<text class="chart-text" x="${x(ts)}" y="${height-4}" text-anchor="${i===0?'start':i===ticks?'end':'middle'}">${label}</text>`;}
+    for(const group of C.segments(points)) html+=`<path class="chart-line" d="${group.map((p,i)=>(i?'L':'M')+x(p[0]).toFixed(1)+' '+y(p[1]).toFixed(1)).join(' ')}"/>`;
+    for(const p of points)html+=`<circle class="chart-dot" cx="${x(p[0]).toFixed(1)}" cy="${y(p[1]).toFixed(1)}" r="2.5"><title>${esc(date(p[0]))}: ${format(chartKey,p[1])} ${m.unit}</title></circle>`;
+    $('trend-chart').innerHTML=html;
+  }
+  function openDetail(key) {
+    detailKey=key;renderDetail();if(!$('detail').open)$('detail').showModal();
+  }
+  function renderDetail() {
+    if(!detailKey)return;
+    const key=detailKey,m=metrics[key], data=meta[key]||{}, points=chartSeries(key).slice().reverse();
+    $('detail-title').textContent=t(m.name);
+    const extra = Object.entries(metrics).filter(([k])=>k.startsWith(key.split('.')[0]+'.')&&k!==key);
+    $('detail-body').innerHTML=`<p class="detail-value">${format(key,state[key])} <small>${m.unit}</small></p><p class="detail-meta">${symbols[status(data.last_received)]} ${t(status(data.last_received))} · ${t('lastReceived')}: ${date(data.last_received)} (${age(data.last_received)})<br>${t('source')}: ${esc(data.source || '—')} · ${esc(data.field || '—')}</p><details><summary>${t('inspectMore')}</summary><table class="detail-table"><tbody>${extra.map(([k,v])=>`<tr><td>${t(v.name)}</td><td>${format(k,state[k])} ${v.unit}<br><small>${t(status(meta[k]?.last_received))} · ${age(meta[k]?.last_received)}</small></td></tr>`).join('')}</tbody></table></details><h3 style="margin-top:20px">${t('raw')} · ${hours} h</h3>${points.length?`<table class="detail-table"><thead><tr><th>${t('received')} · ${t('lisbon')}</th><th>${t('value')} (${m.unit})</th></tr></thead><tbody>${points.map(p=>`<tr><td>${date(p[0])}</td><td>${format(key,p[1])}</td></tr>`).join('')}</tbody></table>`:`<p class="empty">${t('noHistory')}</p>`}`;
+  }
+  function render() {renderSystem();renderMetrics();renderAtlas();renderWindRose();renderMesh();}
   function applyLang() {
-    var t = I18N[lang];
-    document.querySelectorAll('[data-i18n]').forEach(function (el) {
-      var k = el.getAttribute('data-i18n'); if (t[k] != null) el.textContent = t[k];
-    });
-    toggle.textContent = lang === 'en' ? '中文' : 'EN';
-    document.documentElement.setAttribute('lang', lang === 'zh' ? 'zh-CN' : 'en');
+    document.documentElement.lang=lang==='zh'?'zh-CN':'en';
+    document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
+    $('langToggle').textContent=lang==='en'?'中文':'EN';$('langToggle').setAttribute('aria-label',lang==='en'?'切换到中文':'Switch to English');
+    for(const [id,key] of [['mesh-nodes','nodes'],['messages','messages'],['trend-tabs','trends']])$(id).setAttribute('aria-label',t(key));
+    renderedMessages='';render();renderChart();if($('detail').open)renderDetail();tick();
   }
-  toggle.addEventListener('click', function () { lang = lang === 'en' ? 'zh' : 'en'; localStorage.setItem('farm-lang', lang); applyLang(); });
-
-  // ---------- clock ----------
-  var c = document.getElementById('clock'), d = document.getElementById('date');
-  var ft = new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Lisbon', hour: '2-digit', minute: '2-digit', second: '2-digit' });
-  function tick() {
-    var n = new Date(); c.textContent = ft.format(n);
-    var fd = new Intl.DateTimeFormat(lang === 'zh' ? 'zh-CN' : 'en-GB', { timeZone: 'Europe/Lisbon', weekday: 'short', day: 'numeric', month: 'short' });
-    d.textContent = fd.format(n) + ' · ' + I18N[lang].lisbon;
+  async function json(path) {
+    const response=await fetch((window.FARM_API_BASE||'')+path,{cache:'no-store',signal:AbortSignal.timeout(8000)});
+    if(!response.ok)throw new Error('HTTP '+response.status);
+    return response.json();
   }
-  applyLang(); tick(); setInterval(tick, 1000);
-
-  // ---------- state ----------
-  var STATE = {};
-  var SPARKS = {};
-
-  // ---------- helpers ----------
-  function $(s) { return document.querySelector(s); }
-  function $all(s) { return document.querySelectorAll(s); }
-  function setText(key, v) {
-    $all('[data-src="' + key + '"]').forEach(function (el) {
-      var u = el.querySelector('u');
-      var s = fmt(key, v);
-      if (s == null) return;
-      if (u) el.firstChild.nodeValue = s; else el.textContent = s;
-    });
+  async function refresh() {
+    if(busy)return;busy=true;$('refresh').disabled=true;$('window').disabled=true;
+    try {
+      const results=await Promise.allSettled([json('/api/overview'),json('/api/history?hours='+hours),json('/api/sparklines'),json('/api/wind')]);
+      const overview=results[0];
+      if(overview.status==='fulfilled' && C.validOverview(overview.value)) {
+        const d=overview.value;
+        for(const key of Object.keys(meta)){if((meta[key]?.last_received||0)>d.server.generated_at){d.metrics[key]=meta[key];d.state[key]=state[key];}}
+        state=d.state;meta=d.metrics;health=d.health;mesh=d.mesh;server=d.server;
+        serverTime=server.generated_at;receivedAt=performance.now();apiError=false;
+      } else apiError=true;
+      const h=results[1];
+      if(h.status==='fulfilled' && h.value && typeof h.value==='object' && !Array.isArray(h.value)) {
+        history=h.value;historyEnd=now();historyError=false;
+      } else historyError=true;
+      const sparks=results[2];if(sparks.status==='fulfilled'&&sparks.value&&typeof sparks.value==='object'&&!Array.isArray(sparks.value))sparklines=sparks.value;
+      const wind=results[3];if(wind.status==='fulfilled'&&Array.isArray(wind.value?.wind))windHistory=wind.value.wind;
+      render();renderChart();
+    } finally {busy=false;$('refresh').disabled=false;$('window').disabled=false;}
   }
-  function fmt(key, v) {
-    if (v === null || v === undefined) return null;
-    switch (key) {
-      case 'weather.temp': return (+v).toFixed(1);
-      case 'weather.co2': return Math.round(v);
-      case 'weather.wind': return (+v).toFixed(1);
-      case 'weather.hum': return Math.round(v);
-      case 'weather.rain_24h': return (+v).toFixed(1);
-      case 'weather.pressure': return Math.round(v / 100);
-      case 'weather.light': return (v >= 1000 ? (v / 1000).toFixed(1) : Math.round(v));
-      case 'weather.pm25': case 'weather.pm10': return Math.round(v);
-      case 'soil.temp': return (+v).toFixed(1);
-      case 'soil.hum': return Math.round(v);
-      case 'soil.ec': return (+v).toFixed(1);
-      default: return String(v);
-    }
-  }
-
-  // ---------- gauge (semicircular arc) ----------
-  // draw a 240-degree arc gauge into the given svg, value in [lo,hi]
-  function drawGauge(svg, val, lo, hi, unit, colorFn) {
-    if (!svg) return;
-    var a0 = -210, a1 = 30, cx = 100, cy = 105;
-    function P(a, r) { var k = a * Math.PI / 180; return [cx + r * Math.cos(k), cy + r * Math.sin(k)]; }
-    function arc(s, e, r) { var A = P(s, r), B = P(e, r); return 'M' + A[0] + ' ' + A[1] + 'A' + r + ' ' + r + ' 0 ' + (e - s > 180 ? 1 : 0) + ' 1 ' + B[0] + ' ' + B[1]; }
-    if (val == null || isNaN(val)) { svg.innerHTML = '<text x="100" y="100" font-size="12" fill="#5b7186" text-anchor="middle">no data</text>'; return; }
-    var frac = Math.max(0, Math.min(1, (val - lo) / (hi - lo)));
-    var av = a0 + (a1 - a0) * frac;
-    var col = colorFn ? colorFn(frac, val) : '#33e0ff';
-    var ticks = '';
-    for (var i = 0; i <= 4; i++) { var a = a0 + (a1 - a0) * i / 4, A = P(a, 90), B = P(a, 95), L = P(a, 106), vv = Math.round(lo + (hi - lo) * i / 4);
-      ticks += '<line x1="' + A[0] + '" y1="' + A[1] + '" x2="' + B[0] + '" y2="' + B[1] + '" stroke="#2e455f" stroke-width="1.5"/><text x="' + L[0] + '" y="' + (L[1] + 3) + '" font-size="9" fill="#5b7186" text-anchor="middle">' + vv + '</text>'; }
-    svg.innerHTML =
-      '<path d="' + arc(a0, a1, 80) + '" fill="none" stroke="#16222f" stroke-width="13" stroke-linecap="round"/>' +
-      '<path d="' + arc(a0, av, 80) + '" fill="none" stroke="' + col + '" stroke-width="13" stroke-linecap="round" style="filter:drop-shadow(0 0 6px ' + col + ')"/>' +
-      ticks +
-      '<text x="100" y="98" text-anchor="middle" font-size="34" font-weight="700" fill="#eef4fa" font-family="Barlow Semi Condensed">' + (+val).toFixed(unit === '°' ? 1 : 0) + '<tspan font-size="14" fill="#8fa3b8">' + unit + '</tspan></text>';
-  }
-
-  // ---------- circular gauge (full ring, value inside, severity colour) ----------
-  // thresholds: array of [limit, colour] ascending; first colour whose limit >= val wins.
-  function drawCircleGauge(svg, val, max, unit, thresholds) {
-    if (!svg) return;
-    var cx = 60, cy = 60, r = 46;
-    if (val == null || isNaN(val)) { svg.innerHTML = '<text x="60" y="64" font-size="12" fill="#5b7186" text-anchor="middle">--</text>'; return; }
-    var frac = Math.max(0, Math.min(1, val / max));
-    var col = thresholds[thresholds.length - 1][1];
-    for (var i = 0; i < thresholds.length; i++) { if (val <= thresholds[i][0]) { col = thresholds[i][1]; break; } }
-    // ring from -90deg (top), clockwise
-    var a0 = -90, a1 = a0 + 360 * frac;
-    function P(a, rr) { var k = a * Math.PI / 180; return [cx + rr * Math.cos(k), cy + rr * Math.sin(k)]; }
-    function arc(s, e, rr) { var A = P(s, rr), B = P(e, rr), large = (e - s) > 180 ? 1 : 0; return 'M' + A[0] + ' ' + A[1] + 'A' + rr + ' ' + rr + ' 0 ' + large + ' 1 ' + B[0] + ' ' + B[1]; }
-    var disp = val >= 100 ? Math.round(val) : (+val).toFixed(unit ? 0 : 1);
-    svg.innerHTML =
-      '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="#16222f" stroke-width="10"/>' +
-      (frac > 0.005 ? '<path d="' + arc(a0, a1, r) + '" fill="none" stroke="' + col + '" stroke-width="10" stroke-linecap="round" style="filter:drop-shadow(0 0 5px ' + col + ')"/>' : '') +
-      '<text x="' + cx + '" y="' + (cy + 2) + '" text-anchor="middle" font-size="26" font-weight="700" fill="' + col + '" font-family="Barlow Semi Condensed">' + disp + '</text>' +
-      (unit ? '<text x="' + cx + '" y="' + (cy + 18) + '" text-anchor="middle" font-size="9" fill="#8fa3b8">' + unit + '</text>' : '');
-  }
-
-  // ---------- sparkline (smooth curve + gradient, like dashboard 1) ----------
-  // centred moving-average smoothing (window w) to reduce noise/spikes while keeping the trend
-  function _ma(vals, w) {
-    var n = vals.length, h = Math.floor(w / 2);
-    return vals.map(function (v, i) {
-      var s = 0, c = 0;
-      for (var j = Math.max(0, i - h); j <= Math.min(n - 1, i + h); j++) { s += vals[j]; c++; }
-      return s / c;
-    });
-  }
-  function _smooth(pts) {
-    if (pts.length < 3) return pts.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(' ');
-    var d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
-    for (var i = 0; i < pts.length - 1; i++) {
-      var p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
-      var c1x = p1[0] + (p2[0] - p0[0]) / 6, c1y = p1[1] + (p2[1] - p0[1]) / 6,
-          c2x = p2[0] - (p3[0] - p1[0]) / 6, c2y = p2[1] - (p3[1] - p1[1]) / 6;
-      d += 'C' + c1x.toFixed(1) + ' ' + c1y.toFixed(1) + ' ' + c2x.toFixed(1) + ' ' + c2y.toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
-    }
-    return d;
-  }
-  function drawSpark(el, series, color) {
-    if (!series || series.length < 2) { el.innerHTML = '<svg viewBox="0 0 100 44"><text x="50" y="26" font-size="9" fill="#3a4a5c" text-anchor="middle">collecting</text></svg>'; return; }
-    color = color || '#33e0ff';
-    var W = 100, H = 44, vs = _ma(series.map(function (p) { return p[1]; }), 3), n = series.length;
-    var dMin = Math.min.apply(null, vs), dMax = Math.max.apply(null, vs);
-    var min = dMin, max = dMax, rng = (max - min) || 1;
-    min -= rng * 0.1; max += rng * 0.1; rng = (max - min) || 1;
-    var pts = vs.map(function (v, i) { return [i * (W / (n - 1)), H - 5 - ((v - min) / rng) * (H - 12)]; });
-    var line = _smooth(pts), last = pts[pts.length - 1];
-    el.innerHTML = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
-      '<defs><linearGradient id="sg' + color.slice(1) + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + color + '" stop-opacity=".45"/><stop offset="1" stop-color="' + color + '" stop-opacity="0"/></linearGradient></defs>' +
-      '<path d="' + line + ' L' + W + ' ' + H + ' L0 ' + H + 'Z" fill="url(#sg' + color.slice(1) + ')"/>' +
-      '<path d="' + line + '" fill="none" stroke="' + color + '" stroke-width="1.8" vector-effect="non-scaling-stroke" stroke-linejoin="round" stroke-linecap="round"/>' +
-      '<circle cx="' + last[0] + '" cy="' + last[1] + '" r="2.4" fill="' + color + '"/></svg>';
-  }
-
-  // ---------- wind rose (professional, 16 dir, legend) ----------
-  var SECTORS = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-  var SPEED_BINS = [[0, '#a3e635'], [2, '#39ff9c'], [4, '#34d399'], [6, '#22d3ee'], [8, '#4d9fff'], [10, '#818cf8'], [12, '#b78bff']];
-  var BIN_LABELS = ['0-2', '2-4', '4-6', '6-8', '8-10', '10-12', '12+'];
-  var CURRENT_DIR = null;
-  function polar(cx, cy, r, deg) { var a = (deg - 90) * Math.PI / 180; return [cx + r * Math.cos(a), cy + r * Math.sin(a)]; }
-  function wedge(cx, cy, r0, r1, a0, a1) {
-    var p0 = polar(cx, cy, r1, a0), p1 = polar(cx, cy, r1, a1), p2 = polar(cx, cy, r0, a1), p3 = polar(cx, cy, r0, a0), large = (a1 - a0) > 180 ? 1 : 0;
-    return 'M' + p0[0].toFixed(1) + ' ' + p0[1].toFixed(1) + 'A' + r1 + ' ' + r1 + ' 0 ' + large + ' 1 ' + p1[0].toFixed(1) + ' ' + p1[1].toFixed(1) + 'L' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1) + 'A' + r0 + ' ' + r0 + ' 0 ' + large + ' 0 ' + p3[0].toFixed(1) + ' ' + p3[1].toFixed(1) + 'Z';
-  }
-  function drawRose(points) {
-    var rose = $('#windrose'); if (!rose) return;
-    var CX = 60, CY = 60, RMAX = 52, SECT = 22.5;
-    var bins = SECTORS.map(function () { return {}; }), total = 0;
-    points.forEach(function (p) { var spd = p[1], dir = p[2]; if (spd == null || dir == null) return; total++;
-      var si = Math.round(((dir % 360) + 360) % 360 / SECT) % 16, bi = 0;
-      for (var i = 0; i < SPEED_BINS.length; i++) if (spd >= SPEED_BINS[i][0]) bi = i;
-      bins[si][bi] = (bins[si][bi] || 0) + 1; });
-    var maxSector = 0; bins.forEach(function (s) { var t = 0; for (var k in s) t += s[k]; if (t > maxSector) maxSector = t; });
-    var inner = '';
-    for (var f = 1; f <= 4; f++) { var frac = f / 4, r = RMAX * frac;
-      inner += '<circle cx="' + CX + '" cy="' + CY + '" r="' + r + '" fill="none" stroke="#22344a" stroke-width="1"/>'; }
-    for (var i = 0; i < 16; i++) { var a = i * SECT, x1 = polar(CX, CY, RMAX, a - SECT / 2), lx = polar(CX, CY, RMAX + 11, a), maj = i % 4 === 0;
-      inner += '<line x1="' + CX + '" y1="' + CY + '" x2="' + x1[0].toFixed(1) + '" y2="' + x1[1].toFixed(1) + '" stroke="#22344a" stroke-width="1"/>' +
-        '<text x="' + lx[0].toFixed(1) + '" y="' + (lx[1] + 3).toFixed(1) + '" font-size="' + (maj ? 9.5 : 7) + '" font-weight="' + (maj ? 600 : 400) + '" fill="' + (maj ? '#c9d6e3' : '#5b7186') + '" text-anchor="middle">' + SECTORS[i] + '</text>'; }
-    if (maxSector > 0) for (i = 0; i < 16; i++) { var a0 = i * SECT - SECT / 2, a1 = i * SECT + SECT / 2, r0 = 0;
-      for (var b = 0; b < SPEED_BINS.length; b++) { var cnt = bins[i][b] || 0; if (!cnt) continue;
-        var r1 = r0 + (cnt / maxSector) * RMAX;
-        inner += '<path d="' + wedge(CX, CY, r0, r1, a0, a1) + '" fill="' + SPEED_BINS[b][1] + '" fill-opacity=".92" stroke="#0a0f16" stroke-width=".8"/>';
-        r0 = r1; } }
-    if (CURRENT_DIR != null) { var ax = polar(CX, CY, RMAX - 3, CURRENT_DIR), bx = polar(CX, CY, 8, CURRENT_DIR);
-      inner += '<line x1="' + bx[0] + '" y1="' + bx[1] + '" x2="' + ax[0].toFixed(1) + '" y2="' + ax[1].toFixed(1) + '" stroke="#eef4fa" stroke-width="2" stroke-linecap="round"/>' +
-        '<circle cx="' + ax[0].toFixed(1) + '" cy="' + ax[1].toFixed(1) + '" r="3.5" fill="#eef4fa"/>'; }
-    rose.innerHTML = inner + (total ? '' : '<text x="' + CX + '" y="' + CY + '" font-size="10" fill="#5b7186" text-anchor="middle">collecting</text>');
-    var lg = $('#wlegend');
-    if (lg) { var h = '<div class="cap">Wind m/s</div>';
-      for (b = SPEED_BINS.length - 1; b >= 0; b--) h += '<div class="li"><i style="background:' + SPEED_BINS[b][1] + '"></i>' + BIN_LABELS[b] + '</div>';
-      h += '<div class="note">% of time</div>'; lg.innerHTML = h; }
-  }
-
-  // ---------- helpers ----------
-  function esc(s) {
-    return String(s).replace(/[&<>"]/g, function (c) {
-      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c];
-    });
-  }
-
-  // ---------- meshtastic chat ----------
-  // Render the real mesh.msgs into the chat container, replacing the mock
-  // content. Markup matches the existing chat bubbles (.m / .m.me / .m.sys).
-  function renderMsgs(list) {
-    var box = document.querySelector('[data-src="mesh.msgs"]');
-    if (!box || !Array.isArray(list)) return;
-    if (!list.length) { box.innerHTML = '<div class="m sys"><div class="t">No messages yet</div></div>'; return; }
-    box.innerHTML = list.map(function (m) {
-      if (m.sys) return '<div class="m sys"><div class="t">' + esc(m.text || '') + '</div></div>';
-      var cls = m.me ? 'm me' : 'm';
-      return '<div class="' + cls + '"><div class="who">' +
-        esc(m.who || '?') + (m.meta ? ' <span>' + esc(m.meta) + '</span>' : '') + '</div>' +
-        '<div class="t">' + esc(m.text || '') + '</div></div>';
-    }).join('');
-    box.scrollTop = box.scrollHeight;
-  }
-
-  // ---------- event log ----------
-  var LOG = [];
-  function addLog(cls, m) {
-    var t = new Date();
-    var ts = ('0' + t.getHours()).slice(-2) + ':' + ('0' + t.getMinutes()).slice(-2) + ':' + ('0' + t.getSeconds()).slice(-2);
-    LOG.unshift({ cls: cls, ts: ts, m: m }); if (LOG.length > 40) LOG.pop();
-    var box = $('#log'); if (!box) return;
-    box.innerHTML = LOG.map(function (e) { return '<div class="li ' + e.cls + '"><span class="t">' + e.ts + '</span><span class="m">' + e.m + '</span></div>'; }).join('');
-  }
-
-  // ---------- render all ----------
-  function render() {
-    setText('weather.temp', STATE['weather.temp']);
-    setText('weather.hum', STATE['weather.hum']);
-    setText('weather.co2', STATE['weather.co2']);
-    setText('weather.wind', STATE['weather.wind']);
-    setText('weather.rain_24h', STATE['weather.rain_24h']);
-    setText('weather.pressure', STATE['weather.pressure']);
-    setText('weather.light', STATE['weather.light']);
-    setText('weather.pm25', STATE['weather.pm25']);
-    setText('weather.pm10', STATE['weather.pm10']);
-    setText('soil.hum', STATE['soil.hum']);
-    setText('soil.ec', STATE['soil.ec']);
-    // wind dir cardinal
-    var wd = STATE['weather.wind_dir'];
-    if (wd != null) { var names = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
-      setText('weather.wind_dir', names[Math.round(((wd % 360) + 360) % 360 / 22.5) % 16]); CURRENT_DIR = wd; }
-    // gauges (soil only; humidity is a mini metric with sparkline now)
-    drawGauge($('#gSoil'), STATE['soil.temp'], 0, 40, '°', function (f) { return f > 0.75 ? '#ff5d6c' : (f > 0.5 ? '#ffc24b' : '#39ff9c'); });
-    // air quality circular gauges (colour by severity: green ok -> amber -> red bad)
-    drawCircleGauge($('#gPm25'), STATE['weather.pm25'], 50, 'µg/m³', [[12, '#39ff9c'], [35, '#ffc24b'], [1e9, '#ff5d6c']]);
-    drawCircleGauge($('#gPm10'), STATE['weather.pm10'], 100, 'µg/m³', [[25, '#39ff9c'], [50, '#ffc24b'], [1e9, '#ff5d6c']]);
-    drawCircleGauge($('#gCo2'), STATE['weather.co2'], 2000, 'ppm', [[600, '#39ff9c'], [1000, '#ffc24b'], [1e9, '#ff5d6c']]);
-    // rain status
-    var rs = $('#rainStatus'), rv = STATE['weather.rain_24h'];
-    if (rs && rv != null) rs.textContent = rv > 0.05 ? (I18N[lang].raining + ' · ' + rv.toFixed(1) + ' mm/h') : I18N[lang].dry;
-    // sub-labels (text context instead of graphs)
-    subLabels();
-    // meshtastic chat (real messages replace the mock content)
-    if (Array.isArray(STATE['mesh.msgs'])) renderMsgs(STATE['mesh.msgs']);
-    // sensors count
-    var sc = $('#stSensors'); if (sc) sc.textContent = Object.keys(window.DEVICES || {}).length || '--';
-  }
-
-  // trend helper: compare latest value to the mean of earlier points -> rising/falling/steady
-  function trend(key) {
-    var s = SPARKS[key]; if (!s || s.length < 3) return null;
-    var vs = s.map(function (p) { return p[1]; }), last = vs[vs.length - 1];
-    var earlier = vs.slice(0, -1), mean = earlier.reduce(function (a, b) { return a + b; }, 0) / earlier.length;
-    var diff = last - mean, tol = (Math.abs(mean) || 1) * 0.01;
-    if (diff > tol) return 'rising'; if (diff < -tol) return 'falling'; return 'steady';
-  }
-  function subLabels() {
-    var T = { rising: (lang === 'zh' ? '上升' : 'rising'), falling: (lang === 'zh' ? '下降' : 'falling'), steady: (lang === 'zh' ? '平稳' : 'steady') };
-    // humidity delta
-    var hd = $('#humDelta'), ht = trend('weather.hum');
-    if (hd) hd.textContent = ht ? T[ht] : '--';
-    // pressure trend
-    var pt = $('#presTrend'), ptr = trend('weather.pressure');
-    if (pt) pt.textContent = ptr ? T[ptr] : '--';
-    // co2 level
-    var cl = $('#co2Level'), cv = STATE['weather.co2'];
-    if (cl && cv != null) { var lvl = cv < 600 ? (lang === 'zh' ? '良好' : 'good') : (cv < 1000 ? (lang === 'zh' ? '一般' : 'fair') : (lang === 'zh' ? '偏高' : 'elevated'));
-      cl.textContent = lvl; cl.style.color = cv < 600 ? 'var(--grn)' : (cv < 1000 ? 'var(--amb)' : 'var(--red)'); }
-  }
-  function setBar(sel, v, max) { var el = $(sel); if (!el || v == null) return; el.style.width = Math.min(100, (v / max) * 100) + '%'; }
-
-  function renderSparks() {
-    $all('[data-spark]').forEach(function (el) {
-      var key = el.getAttribute('data-spark');
-      var colors = { 'weather.temp': '#ffc24b', 'weather.co2': '#4d9fff', 'weather.rain_24h': '#33e0ff', 'weather.pressure': '#b78bff', 'weather.light': '#facc15' };
-      drawSpark(el, SPARKS[key], colors[key] || '#33e0ff');
-    });
-  }
-
-  // ---------- data loading ----------
-  function loadSparks() {
-    fetch((window.FARM_API_BASE||'') + '/api/sparklines').then(function (r) { return r.json(); }).then(function (d) { SPARKS = d; renderSparks(); }).catch(function () {});
-  }
-  function loadWind() {
-    fetch((window.FARM_API_BASE||'') + '/api/wind').then(function (r) { return r.json(); }).then(function (d) {
-      var w = d.wind || [];
-      if (w.length) CURRENT_DIR = w[w.length - 1][2];
-      drawRose(w);
-      // wind stats: current direction (deg), avg + max speed over the window
-      if (w.length) {
-        var lastDir = w[w.length - 1][2], sum = 0, mx = 0, n = 0;
-        for (var i = 0; i < w.length; i++) { var s = w[i][1]; if (s == null) continue; sum += s; if (s > mx) mx = s; n++; }
-        var dd = $('#wDirDeg'); if (dd) dd.textContent = Math.round(lastDir) + '°';
-        var av = $('#wAvg'); if (av) av.textContent = n ? (sum / n).toFixed(1) + ' m/s' : '--';
-        var mm = $('#wMax'); if (mm) mm.textContent = n ? mx.toFixed(1) + ' m/s' : '--';
-      }
-    }).catch(function () {});
-  }
-  function loadDevices() {
-    fetch((window.FARM_API_BASE||'') + '/api/raw').then(function (r) { return r.json(); }).then(function (d) {
-      window.DEVICES = {}; (d.devices || []).forEach(function (x) { window.DEVICES[x.name] = 1; });
-      var sc = $('#stSensors'); if (sc) sc.textContent = (d.devices || []).length || '--';
-    }).catch(function () {});
-  }
-
-  // ---------- mesh nodes on the map ----------
-  function loadMesh() {
-    fetch((window.FARM_API_BASE||'') + '/api/mesh').then(function (r) { return r.json(); }).then(function (d) {
-      var g = document.getElementById('meshpins'); if (!g) return;
-      var nodes = (d.nodes || []).filter(function (n) { return n.name; });
-      // node count in the chat header
-      var nc = document.querySelector('[data-src="mesh.nodes"]'); if (nc) nc.textContent = d.count || 0;
-      if (!nodes.length) { g.innerHTML = ''; return; }
-      // lay the real nodes out along the bottom-left of the map with name + battery
-      var html = '', x0 = 40, y0 = 40, dx = 90;
-      nodes.forEach(function (n, i) {
-        var x = x0 + (i % 5) * dx, y = y0 + Math.floor(i / 5) * 40;
-        var batt = n.battery != null ? Math.round(n.battery) + '%' : '';
-        var col = n.battery != null && n.battery < 20 ? '#ff5d6c' : '#7be0a8';
-        html += '<g transform="translate(' + x + ' ' + y + ')">' +
-          '<rect x="-5" y="-5" width="10" height="10" fill="' + col + '"/>' +
-          '<text x="10" y="4" fill="currentColor">' + esc(n.name) + (batt ? ' · ' + batt : '') + '</text></g>';
-      });
-      g.innerHTML = html;
-    }).catch(function () {});
-  }
-
-  // ---------- websocket ----------
-  var retry = 3000;
-  function connect() {
-    var url = (location.protocol === 'https:' ? 'wss://' + location.host + '/ws' : (window.FARM_WS_URL || ('ws://' + location.hostname + ':8765')));
-    var ws;
-    try { ws = new WebSocket(url); } catch (e) { return setTimeout(connect, retry); }
-    ws.onopen = function () { $('#stLink').textContent = 'live'; $('#stLink').style.color = 'var(--grn)'; $('#footStatus').textContent = 'telemetry link nominal'; $('#footStatus').className = 'ok'; addLog('sys', 'telemetry link established'); };
-    ws.onmessage = function (ev) {
+  let reconnectTimer, retry=1500;
+  async function connect() {
+    let ws;
+    try {ws=new WebSocket(await window.farmSocketURL());}catch(_){socketState='closed';renderSystem();reconnectTimer=setTimeout(connect,retry);return;}
+    ws.onopen=()=>{socketState='open';retry=1500;renderSystem();refresh();};
+    ws.onmessage=event=>{
       try {
-        var msg = JSON.parse(ev.data);
-        if (msg.type === 'snapshot') { STATE = msg.data; render(); }
-        else if (msg.type === 'update') {
-          for (var k in msg.data) STATE[k] = msg.data[k];
-          render();
-          for (var k2 in msg.data) addLog('', k2 + ' = ' + fmt(k2, msg.data[k2]));
-          loadSparks(); loadWind();
+        const msg=JSON.parse(event.data);
+        if((msg.type==='snapshot'||msg.type==='update') && msg.data && typeof msg.data==='object') {
+          for(const [key,value] of Object.entries(msg.data))if(C.finite(value)||value===null||key==='mesh.msgs'&&Array.isArray(value))state[key]=value;
+          if(msg.meta && typeof msg.meta==='object')Object.assign(meta,msg.meta);
+          renderMetrics();renderWindRose();renderMesh();
         }
-      } catch (e) {}
+      }catch(_){/* Ignore malformed packets without losing the reconnect loop. */}
     };
-    ws.onclose = function () { $('#stLink').textContent = 'link down'; $('#stLink').style.color = 'var(--red)'; $('#footStatus').textContent = 'telemetry link lost · retrying'; $('#footStatus').className = 'alertC'; addLog('alert', 'telemetry link lost'); setTimeout(connect, retry); };
-    ws.onerror = function () { try { ws.close(); } catch (e) {} };
+    ws.onclose=()=>{socketState='closed';renderSystem();clearTimeout(reconnectTimer);reconnectTimer=setTimeout(connect,retry);retry=Math.min(retry*2,30000);};
+    ws.onerror=()=>ws.close();
   }
-
-  // ---------- cinematic chrome: corner brackets ----------
-  document.querySelectorAll('.panel').forEach(function (p) {
-    var cb = document.createElement('span'); cb.className = 'cb'; p.appendChild(cb);
-  });
-
-  // ---------- boot ----------
-  render(); loadSparks(); loadWind(); loadDevices(); loadMesh(); connect();
-  setInterval(loadSparks, 60000); setInterval(loadWind, 60000); setInterval(loadDevices, 60000); setInterval(loadMesh, 30000);
+  function tick(){
+    $('clock').textContent=new Intl.DateTimeFormat(lang==='zh'?'zh-CN':'en-GB',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());
+    $('date').textContent=new Intl.DateTimeFormat(lang==='zh'?'zh-CN':'en-GB',{timeZone:'Europe/Lisbon',day:'numeric',month:'short'}).format(new Date())+' · '+t('lisbon');
+  }
+  $('wind-select').addEventListener('click',()=>selectTrend('weather.wind',true));
+  $('refresh').addEventListener('click',refresh);
+  $('langToggle').addEventListener('click',()=>{lang=lang==='en'?'zh':'en';try{localStorage.setItem('farm-lang',lang);}catch(_){}applyLang();});
+  $('window').addEventListener('change',()=>{hours=Number($('window').value);refresh();});
+  $('viewReadings').addEventListener('click',()=>openDetail(chartKey));
+  $('closeDetail').addEventListener('click',()=>$('detail').close());
+  function selectNode(event){const node=event.target.closest('[data-node]');if(node){selectedNode=node.dataset.node;renderAtlas();renderMesh();}}
+  $('atlas').addEventListener('click',selectNode);
+  $('atlas').addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();selectNode(event);}});
+  $('mesh-nodes').addEventListener('click',selectNode);
+  bootMetrics();historyEnd=now();applyLang();refresh();connect();
+  new ResizeObserver(()=>{renderChart();renderAtlas();renderWindRose();}).observe($('trend-chart').parentElement);
+  setInterval(refresh,30000);
+  setInterval(()=>{tick();render();},15000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh();});
 })();

@@ -1,6 +1,6 @@
 <!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Portugal · farm screen · dashboard A</title>
+<title>Algarve Fabfarm · Live dashboard</title>
 <!--
   DASHBOARD A · the clean, simple live dashboard ("Field panel": boxless, big
   numerals, bar chart, map dominant). This file (b.html) is the EDITABLE SOURCE;
@@ -158,6 +158,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
 .send input{flex:1;background:var(--bg);border:1px solid var(--line);color:var(--ink);border-radius:8px;padding:9px 12px;font:inherit;min-width:0}
 .send button{background:var(--mint);color:#0d2417;border:0;border-radius:8px;padding:0 16px;font:inherit;font-weight:600}
 .send input:focus,.send button:focus-visible{outline:2px solid var(--teal);outline-offset:1px}
+:focus-visible{outline:3px solid var(--teal);outline-offset:3px}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style></head><body>
 <div class="screen">
 <header class="top">
@@ -168,38 +169,38 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
 <section class="weather" aria-labelledby="hw">
   <h2 id="hw" data-i18n="weather">Weather station</h2>
   <div class="ro">
-    <div class="v num" data-src="weather.co2">412<u>ppm</u></div>
-    <div class="l"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="7.5" cy="12" r="3.2"/><circle cx="16.5" cy="8.5" r="2.6"/><circle cx="16.5" cy="15.5" r="2.6"/><path d="M10.5 11l3.5-1.5M10.5 13l3.5 1.5"/></svg></span><span>CO₂</span><b data-i18n="co2status">good</b></div>
+    <div class="v num" data-src="weather.co2">--<u>ppm</u></div>
+    <div class="l"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="7.5" cy="12" r="3.2"/><circle cx="16.5" cy="8.5" r="2.6"/><circle cx="16.5" cy="15.5" r="2.6"/><path d="M10.5 11l3.5-1.5M10.5 13l3.5 1.5"/></svg></span><span>CO₂</span><b data-i18n="co2status">Received value</b></div>
   </div>
   <div class="ro">
     <div class="windwrap">
       <svg class="compass" viewBox="-20 -20 160 160" id="windrose" aria-label="Wind rose, speed by direction"></svg>
       <div class="wlegend" id="wlegend" aria-label="Wind speed legend"></div>
-      <div class="windval"><div class="v num" data-src="weather.wind">3.4<u>m/s</u></div><div class="wdir num" data-src="weather.wind_dir">NW</div></div>
+      <div class="windval"><div class="v num" data-src="weather.wind">--<u>m/s</u></div><div class="wdir num" data-src="weather.wind_dir">--</div></div>
     </div>
-    <div class="l"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h15a3 3 0 1 1-3 3"/><path d="M3 16h8a2.5 2.5 0 1 1-2.5 2.5"/></svg></span><span data-i18n="wind">Wind</span><b data-src="weather.wind_gust"><span data-i18n="gusts">gusts</span> 6.1</b></div>
+    <div class="l"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M3 8h11a3 3 0 1 0-3-3"/><path d="M3 12h15a3 3 0 1 1-3 3"/><path d="M3 16h8a2.5 2.5 0 1 1-2.5 2.5"/></svg></span><span data-i18n="wind">Wind</span></div>
   </div>
   <div class="ro temp">
-    <div class="v num" data-src="weather.temp">26.4<u>°C</u></div>
+    <div class="v num" data-src="weather.temp">--<u>°C</u></div>
     <div class="tlarge"><svg id="tempGraph" viewBox="0 0 220 90" preserveAspectRatio="none" aria-label="Temperature change over time"></svg></div>
-    <div class="l"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M10 4a2 2 0 1 1 4 0v9.3a4 4 0 1 1-4 0z"/><path d="M12 9v6"/><path d="M17 6h3M17 9h2"/></svg></span><span data-i18n="temp">Temperature</span><b class="num" data-src="weather.hum">58<u>% RH</u></b></div>
+    <div class="l"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M10 4a2 2 0 1 1 4 0v9.3a4 4 0 1 1-4 0z"/><path d="M12 9v6"/><path d="M17 6h3M17 9h2"/></svg></span><span data-i18n="temp">Temperature</span><b class="num" data-src="weather.hum">--<u>% RH</u></b></div>
   </div>
 
   <div class="rain">
     <header>
-      <div class="tot"><b class="num" data-src="weather.rain_24h">4.2</b><span data-i18n="rainunit">mm last 24 h</span></div>
-      <div class="rainstat"><span class="rdot" id="rainDot"></span><span id="rainStatus" data-i18n="rainstatus">Dry</span><h3 data-i18n="rain">Rain history</h3></div>
+      <div class="tot"><b class="num" data-src="weather.rain_24h">--</b><span data-i18n="rainunit">mm/h</span></div>
+      <div class="rainstat"><span class="rdot" id="rainDot"></span><span id="rainStatus" data-i18n="rainstatus">--</span><h3 data-i18n="rain">Rain intensity</h3></div>
     </header>
-    <figure><svg id="rainB" viewBox="0 0 400 120" preserveAspectRatio="none" aria-label="Rain per hour, last 24 hours"></svg><div class="tip" id="tipB"></div></figure>
+    <figure><svg id="rainB" viewBox="0 0 400 120" preserveAspectRatio="none" aria-label="Rain intensity samples in mm/h, last 24 hours"></svg><div class="tip" id="tipB"></div></figure>
     <div class="x"><span data-i18n="ago24">24 h ago</span><span data-i18n="h12">12 h</span><span data-i18n="now">now</span></div>
   </div>
 
   <div class="metrics">
-    <div class="metric"><div class="mk"><span data-i18n="humidity">Humidity</span></div><div class="mv num" data-src="weather.hum">58<u>%</u></div><div class="spark" data-spark="weather.hum"></div></div>
-    <div class="metric"><div class="mk"><span data-i18n="pressure">Pressure</span></div><div class="mv num" data-src="weather.pressure">1003<u>hPa</u></div><div class="spark" data-spark="weather.pressure"></div></div>
-    <div class="metric"><div class="mk"><span data-i18n="light">Light</span></div><div class="mv num" data-src="weather.light">47.5<u>k lux</u></div><div class="spark" data-spark="weather.light"></div></div>
-    <div class="metric"><div class="mk"><span>PM2.5</span></div><div class="mv num" data-src="weather.pm25">7<u>µg/m³</u></div><div class="spark" data-spark="weather.pm25"></div></div>
-    <div class="metric"><div class="mk"><span>PM10</span></div><div class="mv num" data-src="weather.pm10">7<u>µg/m³</u></div><div class="spark" data-spark="weather.pm10"></div></div>
+    <div class="metric"><div class="mk"><span data-i18n="humidity">Humidity</span></div><div class="mv num" data-src="weather.hum">--<u>%</u></div><div class="spark" data-spark="weather.hum"></div></div>
+    <div class="metric"><div class="mk"><span data-i18n="pressure">Pressure</span></div><div class="mv num" data-src="weather.pressure">--<u>hPa</u></div><div class="spark" data-spark="weather.pressure"></div></div>
+    <div class="metric"><div class="mk"><span data-i18n="light">Light</span></div><div class="mv num" data-src="weather.light">--<u>k lux</u></div><div class="spark" data-spark="weather.light"></div></div>
+    <div class="metric"><div class="mk"><span>PM2.5</span></div><div class="mv num" data-src="weather.pm25">--<u>µg/m³</u></div><div class="spark" data-spark="weather.pm25"></div></div>
+    <div class="metric"><div class="mk"><span>PM10</span></div><div class="mv num" data-src="weather.pm10">--<u>µg/m³</u></div><div class="spark" data-spark="weather.pm10"></div></div>
   </div>
 </section>
 
@@ -208,8 +209,8 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
   <div class="soil">
     <h3 data-i18n="soil">Soil · garden</h3>
     <div class="g"><svg viewBox="-10 0 220 130" id="gaugeB"></svg></div>
-    <div class="legend"><span data-i18n="temperature">Temperature</span> <b class="num">19.6°</b> · <span data-i18n="moisture">Moisture</span> <b class="num">47%</b></div>
-    <div class="node">Node S1 · last seen 2 min ago · battery 3.9 V</div>
+    <div class="legend"><span data-i18n="temperature">Temperature</span> <b class="num" data-src="soil.temp">--</b> · <span data-i18n="moisture">Moisture</span> <b class="num" data-src="soil.hum">--</b></div>
+    <div class="node"><a href="/ops">Data freshness / 数据时效 ↗</a></div>
   </div>
   <div class="mapbox"><h3 data-i18n="map">Map</h3><svg class="map" viewBox="0 0 480 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Map of Algarve fabfarm with sensor node positions">
   <defs>
@@ -236,13 +237,13 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
     <g transform="translate(398 250)"><rect x="-5" y="-5" width="10" height="10" fill="#7be0a8"/><text x="-12" y="4" text-anchor="end" fill="currentColor">Mesh · gate</text></g>
   </g>
   <g transform="translate(436 32)" fill="currentColor" fill-opacity=".7" font-size="10"><path d="M0 -14 L4 0 L0 -4 L-4 0 Z"/><text y="16" text-anchor="middle">N</text></g>
-  <g transform="translate(20 278)" stroke="currentColor" stroke-opacity=".6" fill="currentColor" fill-opacity=".7" font-size="10"><path d="M0 0h60M0 -4v8M60 -4v8" fill="none"/><text x="30" y="-7" text-anchor="middle" stroke="none">200 m</text></g>
+  <g transform="translate(20 278)" stroke="currentColor" stroke-opacity=".6" fill="currentColor" fill-opacity=".7" font-size="10"><path d="M0 0h60M0 -4v8M60 -4v8" fill="none"/><text x="30" y="-7" text-anchor="middle" stroke="none">Illustration</text></g>
 </svg>
 <div class="leg"><span class="ls"><i></i><span data-i18n="sensor">Sensor</span></span><span class="lm"><i></i><span data-i18n="meshnode">Mesh node</span></span></div></div>
   <div class="chat">
-    <header><h3 data-i18n="chat">Chat · Mesh</h3><div class="on"><b data-src="mesh.nodes">5</b> <span data-i18n="nodesheard">nodes heard</span></div></header>
+    <header><h3 data-i18n="chat">Chat · Mesh</h3><div class="on"><b data-src="mesh.nodes">--</b> <span data-i18n="nodesheard">nodes heard</span></div></header>
     <div class="msgs" data-src="mesh.msgs"></div>
-    <form class="send" onsubmit="return false"><input placeholder="Message the mesh…" aria-label="Message" data-i18n-ph="msgplaceholder"><button data-i18n="send">Send</button></form>
+    <p class="node">Receive only · use a mesh radio to transmit / 仅接收；发送请使用 Mesh 电台</p>
   </div>
 </section>
 </div>
@@ -250,10 +251,10 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
 (function(){
   // ---- language toggle (English / 中文) ----
   const I18N={
-    en:{live:'Live',country:'Portugal',weather:'Weather station',wind:'Wind',temp:'Temperature',co2status:'good',gusts:'gusts',rain:'Rain history',rainunit:'mm last 24 h',rainstatus:'Dry',raining:'Raining',dry:'Dry',ago24:'24 h ago',h12:'12 h',now:'now',nodes:'Sensor nodes',soil:'Soil · garden',temperature:'Temperature',moisture:'Moisture',soiltemp:'soil temperature',humidity:'Humidity',pressure:'Pressure',light:'Light',map:'Map',sensor:'Sensor',meshnode:'Meshtastic node',chat:'Chat · Meshtastic',nodesheard:'nodes heard',send:'Send',msgplaceholder:'Message the mesh…',lisbon:'Lisbon time'},
-    zh:{live:'实时',country:'葡萄牙',weather:'气象站',wind:'风',temp:'温度',co2status:'良好',gusts:'阵风',rain:'降雨记录',rainunit:'毫米 · 过去24小时',rainstatus:'干燥',raining:'下雨中',dry:'干燥',ago24:'24小时前',h12:'12小时',now:'现在',nodes:'传感器节点',soil:'土壤 · 菜园',temperature:'温度',moisture:'湿度',soiltemp:'土壤温度',humidity:'湿度',pressure:'气压',light:'光照',map:'地图',sensor:'传感器',meshnode:'Meshtastic 节点',chat:'聊天 · Meshtastic',nodesheard:'个节点在线',send:'发送',msgplaceholder:'向 Meshtastic 发送消息…',lisbon:'里斯本时间'}
+    en:{live:'Live',country:'Portugal',weather:'Weather station',wind:'Wind',temp:'Temperature',co2status:'Received value',gusts:'gusts',rain:'Rain intensity',rainunit:'mm/h',rainstatus:'No rain',raining:'Raining',dry:'No rain',ago24:'24 h ago',h12:'12 h',now:'now',nodes:'Sensor nodes',soil:'Soil',temperature:'Temperature',moisture:'Moisture',soiltemp:'soil temperature',humidity:'Humidity',pressure:'Pressure',light:'Light',map:'Illustrative farm layout',sensor:'Sensor',meshnode:'Meshtastic node',chat:'Chat · Meshtastic',nodesheard:'nodes heard',send:'Send',msgplaceholder:'Message the mesh…',lisbon:'Lisbon time'},
+    zh:{live:'实时',country:'葡萄牙',weather:'气象站',wind:'风',temp:'温度',co2status:'接收读数',gusts:'阵风',rain:'降雨强度',rainunit:'毫米/小时',rainstatus:'无雨',raining:'下雨中',dry:'无雨',ago24:'24小时前',h12:'12小时',now:'现在',nodes:'传感器节点',soil:'土壤',temperature:'温度',moisture:'湿度',soiltemp:'土壤温度',humidity:'湿度',pressure:'气压',light:'光照',map:'农场布局示意（非实测）',sensor:'传感器',meshnode:'Meshtastic 节点',chat:'聊天 · Meshtastic',nodesheard:'个节点有数据',send:'发送',msgplaceholder:'向 Meshtastic 发送消息…',lisbon:'里斯本时间'}
   };
-  let lang=localStorage.getItem('farm-lang')||'en';
+  let lang='en';try{if(localStorage.getItem('farm-lang')==='zh')lang='zh'}catch(_){}
   const toggle=document.getElementById('langToggle');
   function applyLang(){
     const t=I18N[lang];
@@ -264,7 +265,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
     const st=document.getElementById('soilTempLbl');if(st)st.textContent=t.soiltemp;
     tick();
   }
-  toggle.addEventListener('click',()=>{lang=lang==='en'?'zh':'en';localStorage.setItem('farm-lang',lang);applyLang()});
+  toggle.addEventListener('click',()=>{lang=lang==='en'?'zh':'en';try{localStorage.setItem('farm-lang',lang)}catch(_){}applyLang()});
 
   const c=document.getElementById('clock'),d=document.getElementById('date');
   const ft=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit'});
@@ -306,7 +307,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
     for(const t of sectorTotals)if(t>maxSector)maxSector=t;
     let inner='';
     // grid rings + % labels along the north axis
-    for(let f=1;f<=4;f++){const frac=f/4,r=RMAX*frac,pct=maxSector?Math.round(frac*100):0;
+    for(let f=1;f<=4;f++){const frac=f/4,r=RMAX*frac,pct=total?Math.round(frac*maxSector/total*100):0;
       inner+=`<circle cx="${CX}" cy="${CY}" r="${r}" fill="none" stroke="#2f4157" stroke-width="1"/>`+
              (maxSector?`<text x="${CX+2}" y="${CY-r+8}" font-size="7.5" fill="#5f7389">${pct}%</text>`:'');
     }
@@ -335,7 +336,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
     const lg=document.getElementById('wlegend');
     if(lg){let h='<div class="cap">Wind speed (m/s)</div>';
       for(let b=SPEED_BINS.length-1;b>=0;b--)h+=`<div class="li"><i style="background:${SPEED_BINS[b][1]}"></i>${BIN_LABELS[b]}</div>`;
-      h+='<div class="note">Radial scale is % of time</div>';lg.innerHTML=h;}
+      h+='<div class="note">Radial scale: % of samples</div>';lg.innerHTML=h;}
   }
 
   function loadRose(){fetch('/api/wind').then(r=>r.json()).then(d=>{const w=d.wind||[];if(w.length)CURRENT_DIR=w[w.length-1][2];drawRose(w)}).catch(()=>{})}
@@ -345,7 +346,7 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
 
   // cardinal text for the current-wind readout (live feed calls this).
   window.setWindDirText=function(deg){const el=document.querySelector('[data-src="weather.wind_dir"]');if(!el||deg==null||isNaN(deg))return;
-    el.textContent=SECTORS[Math.round(((+deg)%360)/45)%8]};
+    el.textContent=SECTORS[Math.round(((+deg%360)+360)%360/22.5)%16]};
 
   // centred moving-average smoothing (window w) to reduce noise/spikes while keeping the trend
   function smoothSeries(vals,w){
@@ -415,54 +416,38 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
   loadTemp();setInterval(loadTemp,60000);
   window.refreshTemp=loadTemp;
 
-  // rain: real 24h history as gradient bars + current status.
-  const svg=document.getElementById('rainB'),tip=document.getElementById('tipB'),W=400,H=120,base=H-4,gap=3;
+  // Rain intensity: timestamps determine position; absent samples are never zero-filled.
+  const svg=document.getElementById('rainB'),tip=document.getElementById('tipB');
   const rainDot=document.getElementById('rainDot'),rainStatus=document.getElementById('rainStatus');
-  let RAIN=new Array(24).fill(0);
-
+  let RAIN=[];
   function renderRain(){
-    const n=RAIN.length,bw=(W-(n-1)*gap)/n,max=Math.max(1,...RAIN);
-    let bars='',hits='';
-    // gradient def per bar intensity: light blue (low) -> deep blue (high)
-    RAIN.forEach((v,i)=>{
-      const x=i*(bw+gap),h=(v/max)*(H-24),y=base-h,r=Math.min(3,h/2,bw/2);
-      const op=v>0?(0.45+0.55*(v/max)):0.18;
-      if(h>0.4)bars+='<path d="M'+x.toFixed(2)+' '+base+'L'+x.toFixed(2)+' '+(y+r).toFixed(2)+'Q'+x.toFixed(2)+' '+y.toFixed(2)+' '+(x+r).toFixed(2)+' '+y.toFixed(2)+'L'+(x+bw-r).toFixed(2)+' '+y.toFixed(2)+'Q'+(x+bw).toFixed(2)+' '+y.toFixed(2)+' '+(x+bw).toFixed(2)+' '+(y+r).toFixed(2)+'L'+(x+bw).toFixed(2)+' '+base+'Z" fill="#3d8ef0" fill-opacity="'+op.toFixed(2)+'"/>';
-      else bars+='<line x1="'+x.toFixed(2)+'" x2="'+(x+bw).toFixed(2)+'" y1="'+base+'" y2="'+base+'" stroke="#2f4157" stroke-width="1"/>';
-      hits+='<rect data-i="'+i+'" x="'+(x-1).toFixed(2)+'" y="0" width="'+(bw+2).toFixed(2)+'" height="'+base+'" fill="rgba(0,0,0,0)"/>';
-    });
-    svg.innerHTML='<line x1="0" x2="'+W+'" y1="'+base+'" y2="'+base+'" stroke="#2f4157" stroke-width="1"/>'+bars+hits;
-    // current status from the latest hour
-    const cur=RAIN[n-1]||0;
-    const wet=cur>0.05;
-    rainDot.className='rdot'+(wet?' wet':'');
-    rainStatus.textContent=wet?(I18N[lang].raining||'Raining')+' · '+cur.toFixed(1)+' mm/h':(I18N[lang].dry||'Dry');
+    const now=Date.now()/1000,start=now-86400,max=Math.max(1,...RAIN.map(p=>p[1]));
+    if(!RAIN.length){svg.innerHTML='<text x="200" y="60" text-anchor="middle" fill="#8fa3b8">No rain observations / 暂无降雨数据</text>';rainStatus.textContent='--';return;}
+    svg.innerHTML=RAIN.map((p,i)=>{const x=(p[0]-start)/86400*392+4,h=Math.max(0,p[1])/max*90;
+      return `<rect data-i="${i}" x="${x.toFixed(1)}" y="${116-h}" width="5" height="${Math.max(1,h)}" fill="#3d8ef0"/>`;}).join('');
+    const last=RAIN[RAIN.length-1],fresh=now-last[0]<5400;
+    rainDot.className='rdot'+(fresh&&last[1]>.05?' wet':'');
+    rainStatus.textContent=fresh?(last[1]>.05?I18N[lang].raining:I18N[lang].dry):(lang==='zh'?'读数超时':'Reading stale');
   }
   svg.addEventListener('mousemove',e=>{
-    const t=e.target.closest?e.target.closest('rect[data-i]'):null;if(!t)return;
-    const i=+t.getAttribute('data-i'),r=svg.getBoundingClientRect(),n=RAIN.length,bw=(W-(n-1)*gap)/n;
-    tip.style.display='block';
-    tip.style.left=((i*(bw+gap)+bw/2)/W*r.width)+'px';
-    tip.style.top='20px';
-    tip.innerHTML='<b>'+RAIN[i].toFixed(1)+' mm</b> · '+(n-1-i)+' h ago';
+    const hit=e.target.closest('rect[data-i]');if(!hit)return;
+    const p=RAIN[+hit.dataset.i],rect=svg.getBoundingClientRect();
+    tip.style.display='block';tip.style.left=Math.min(rect.width-40,Math.max(40,e.clientX-rect.left))+'px';tip.style.top='20px';
+    tip.textContent=p[1].toFixed(1)+' mm/h · '+new Intl.DateTimeFormat(lang==='zh'?'zh-CN':'en-GB',{timeZone:'Europe/Lisbon',hour:'2-digit',minute:'2-digit'}).format(new Date(p[0]*1000));
   });
-  svg.addEventListener('mouseleave',()=>{tip.style.display='none'});
-
-  function loadRain(){fetch('/api/sparklines').then(r=>r.json()).then(d=>{
-    const s=d['weather.rain_24h'];
-    if(s&&s.length){const vals=s.map(p=>p[1]);const n=24;RAIN=vals.slice(-n);
-      while(RAIN.length<n)RAIN.unshift(0);}
-    renderRain();
-  }).catch(()=>renderRain())}
-  loadRain();setInterval(loadRain,60000);
-  window.refreshRain=loadRain;
-  renderRain();
+  svg.addEventListener('mouseleave',()=>tip.style.display='none');
+  function loadRain(){fetch('/api/history?hours=24').then(r=>{if(!r.ok)throw Error();return r.json()}).then(d=>{
+    RAIN=(d['weather.rain_rate']||d['weather.rain_24h']||[]).filter(p=>Array.isArray(p)&&Number.isFinite(p[0])&&Number.isFinite(p[1]));renderRain();
+  }).catch(()=>{rainStatus.textContent=lang==='zh'?'降雨数据未能加载':'Rain data could not be loaded'});}
+  loadRain();setInterval(loadRain,60000);window.refreshRain=loadRain;renderRain();
 
   // soil gauge: temperature arc 0–40 °C, moisture 0–100 % as a thinner arc inside
-  const g=document.getElementById('gaugeB'),t=19.6,m=47,lo=0,hi=40,a0=-200,a1=20;
+  window.drawSoil=function(t,m){
+  const g=document.getElementById('gaugeB'),lo=0,hi=40,a0=-200,a1=20;
+  if(typeof t!=='number'||typeof m!=='number'){g.innerHTML='<text x="100" y="95" text-anchor="middle" fill="#8fa3b8">Waiting for soil data</text>';return;}
   const P=(a,r)=>{const k=a*Math.PI/180;return [100+r*Math.cos(k),105+r*Math.sin(k)]};
   const arc=(s,e,r)=>{const A=P(s,r),B=P(e,r);return 'M'+A[0]+' '+A[1]+'A'+r+' '+r+' 0 '+(e-s>180?1:0)+' 1 '+B[0]+' '+B[1]};
-  const av=a0+(a1-a0)*(t-lo)/(hi-lo),mv=a0+(a1-a0)*m/100;
+  const av=a0+(a1-a0)*Math.max(0,Math.min(1,(t-lo)/(hi-lo))),mv=a0+(a1-a0)*Math.max(0,Math.min(1,m/100));
   let ticks='';for(let v=lo;v<=hi;v+=10){const a=a0+(a1-a0)*(v-lo)/(hi-lo);const A=P(a,92),B=P(a,96),L=P(a,106);ticks+='<line x1="'+A[0]+'" y1="'+A[1]+'" x2="'+B[0]+'" y2="'+B[1]+'" stroke="#5f7389"/><text x="'+L[0]+'" y="'+(L[1]+3)+'" font-size="8" fill="#5f7389" text-anchor="middle">'+v+'</text>'}
   g.innerHTML='<path d="'+arc(a0,a1,82)+'" fill="none" stroke="#25334a" stroke-width="12" stroke-linecap="round"/>'
    +'<path d="'+arc(a0,av,82)+'" fill="none" stroke="#3ec8d2" stroke-width="12" stroke-linecap="round"/>'
@@ -471,6 +456,8 @@ section>h2{grid-column:1/-1;margin:0 0 16px;font-size:14px;font-weight:500;color
    +ticks
    +'<text x="100" y="98" text-anchor="middle" font-size="40" font-weight="600" fill="#f2f6fa" font-family="Barlow Semi Condensed,Barlow,sans-serif" data-src="soil.temp">'+t.toFixed(1)+'°</text>'
    +'<text x="100" y="118" text-anchor="middle" font-size="11" fill="#8fa3b8" id="soilTempLbl">'+I18N[lang].soiltemp+'</text>';
+};
+window.drawSoil(null,null);
 })();
 </script>
 </body></html>

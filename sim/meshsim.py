@@ -12,9 +12,9 @@ tarde e desce de noite; a conversa acontece as horas em que faria sentido; o
 tracker anda de dia e dorme de noite. Ao fim de 24 h volta ao principio.
 
 Variaveis de ambiente:
-  SIM_HOST     broker              (test.mosquitto.org)
-  SIM_PORT     porta TLS           (8886)
-  SIM_PREFIX   prefixo dos topicos (fabfarm-45jexzbx)
+  SIM_HOST     explicit test broker (127.0.0.1)
+  SIM_PORT     porta TLS           (8883)
+  SIM_PREFIX   isolated test topics (demo-farm)
   SIM_SPEED    aceleracao          (1 = tempo real; 60 = um dia em 24 min)
   SIM_FALAS    ficheiro das falas  (falas.txt, ao lado deste ficheiro)
 """
@@ -28,16 +28,16 @@ GATEWAY = "!51000001"
 
 # Os destinos. Nenhum passa pelo broker da quinta: dados falsos nunca entram
 # em casa. Cada um leva o prefixo que o relay usa para os dados verdadeiros.
-DESTINOS = [
-    dict(nome="neutro", host="test.mosquitto.org", porta=8886,
-         prefixo="fabfarm-45jexzbx", utilizador=None, palavra=None,
-         ca=None, nome_inseguro=False),
-    dict(nome="seeed", host="120.79.240.231", porta=8883,
-         prefixo="fabfarm", utilizador="bianca", palavra="seeedbianca123",
-         ca="/home/seeed/emqx-rootca.pem", nome_inseguro=True),
-]
+DESTINOS = [dict(
+    nome="configured simulator broker",
+    host=os.environ.get("SIM_HOST", "127.0.0.1"),
+    porta=int(os.environ.get("SIM_PORT", "8883")),
+    prefixo=os.environ.get("SIM_PREFIX", "demo-farm"),
+    utilizador=os.environ.get("SIM_USER"), palavra=os.environ.get("SIM_PASSWORD"),
+    ca=os.environ.get("SIM_CAFILE"), nome_inseguro=False,
+)]
 BROADCAST = 4294967295
-CENTRO = (37.1305, -8.7180)          # a quinta, Sitio das Aguilhadas
+CENTRO = (37.0, -8.0)  # synthetic test center, not a property location
 
 # ------------------------------------------------------------------- as falas
 # Os nos e o que eles dizem NAO vivem aqui: vivem em falas.txt, ao lado deste
@@ -280,6 +280,8 @@ def liga(d):
 
 
 def main():
+    if os.environ.get("SIM_ALLOW_PUBLISH") != "1":
+        raise SystemExit("Publishing disabled. Use bridge.py --demo locally; set SIM_ALLOW_PUBLISH=1 only for an isolated test broker.")
     recarrega_falas(primeira=True)
     clientes = []
     for d in DESTINOS:
