@@ -6,8 +6,8 @@
     en: {skip:'Skip to observations',eyebrow:'Portugal / Environmental monitoring',refresh:'Refresh',conditions:'Current conditions',lastValues:'Last received values · select a card to update the trend',spatial:'Spatial context',atlas:'Reported positions',atlasCaption:'Reported coordinates · north up · equal scale',freshness:'Data freshness',sources:'Observation sources',recent:'● Recent',delayed:'△ Delayed',silent:'× No data',cadence:'Recent <90 min · delayed 90 min–3 h · no data ≥3 h',mesh:'Mesh communications',offgrid:'Off-grid communications',nodes:'Mesh nodes',weatherVisuals:'Farm observations',weatherStation:'Agricultural weather',weatherSummary:'Wind, soil and environmental history',windObservation:'Wind observation',currentWind:'Current wind',receiveOnly:'Receive only',messages:'Received messages',meshCaption:'Use a mesh radio to transmit. This display receives messages.',history:'Observation history',trends:'Environmental trends',window:'Time window',viewReadings:'View readings',chartCaption:'Time in Lisbon · raw samples · gaps over 90 minutes remain visible',footer:'Readings are for monitoring. No hazard classification rules are configured.',simpleView:'Simple dashboard ↗',inspect:'Observation details',close:'Close',temp:'Air temperature',humidity:'Humidity',wind:'Wind speed',rain:'Rain intensity',soil:'Soil moisture',co2:'Carbon dioxide',pressure:'Pressure',light:'Illuminance',soilTemp:'Soil temperature',ec:'Soil conductivity',demo:'Demonstration',liveMode:'Live feed',connected:'● Browser connected',connecting:'○ Connecting',reconnecting:'△ Reconnecting',mqttOn:'● MQTT connected',mqttOff:'× MQTT disconnected',mqttDemo:'MQTT isolated',demoNotice:'Demonstration · synthetic observations and coordinates. No connection to the farm.',apiError:'Latest observations are unavailable. Previously received values remain visible.',historyError:'History did not update. Showing the latest available samples.',wsError:'Live updates paused. Showing the latest received values while reconnecting.',unknown:'No reading',live:'Recent',stale:'Delayed',down:'No data',never:'Never received',now:'Just received',ago:'ago',sourcesRecent:'sources reporting recently',noSources:'No sensor uplinks received.',noPositions:'No positions reported.',located:'located',unlocated:'without coordinates',selectNode:'Select a node to inspect its last reported position.',noMesh:'No mesh nodes received.',noMessages:'No messages received since the display started.',heard:'nodes heard',sample:'samples',noHistory:'No samples in this time window. Select another metric.',min:'Min',max:'Max',received:'Received',value:'Value',source:'Source',lastReceived:'Last received',positionReceived:'Position received',hops:'hops',externalPower:'External power',battery:'Battery',observations:'observations',waiting:'Waiting for observations',lisbon:'Lisbon',seen:'Last heard',noCoords:'No coordinates',raw:'Raw readings',snapshotOld:'Observations have not updated for more than 90 seconds.',inspectMore:'Additional observations',noPositionTime:'Position time unavailable',storageError:'New observations could not be saved.'},
     zh: {skip:'跳转到观测数据',eyebrow:'葡萄牙 / 环境监测',refresh:'刷新',conditions:'当前环境',lastValues:'最近接收的读数 · 点击卡片切换趋势',spatial:'空间信息',atlas:'已上报位置',atlasCaption:'上报坐标 · 北向上 · 等比例',freshness:'数据时效',sources:'观测来源',recent:'● 最近',delayed:'△ 延迟',silent:'× 超时',cadence:'最近 <90 分钟 · 延迟 90 分钟–3 小时 · 超时 ≥3 小时',mesh:'Mesh 通讯',offgrid:'离网通讯',nodes:'Mesh 节点',weatherVisuals:'农场观测',weatherStation:'农业气象',weatherSummary:'风况、土壤与环境历史',windObservation:'风况观测',currentWind:'当前风况',receiveOnly:'仅接收',messages:'已接收消息',meshCaption:'本页仅接收消息；发送请使用 Mesh 电台。',history:'观测历史',trends:'环境趋势',window:'时间范围',viewReadings:'查看读数',chartCaption:'里斯本时间 · 原始采样 · 超过 90 分钟的空缺不连线',footer:'读数仅供监测；未设置灾害分级规则。',simpleView:'简版仪表盘 ↗',inspect:'查看观测详情',close:'关闭',temp:'空气温度',humidity:'湿度',wind:'风速',rain:'降雨强度',soil:'土壤水分',co2:'二氧化碳',pressure:'气压',light:'照度',soilTemp:'土壤温度',ec:'土壤电导率',demo:'演示模式',liveMode:'实时数据',connected:'● 浏览器已连接',connecting:'○ 正在连接',reconnecting:'△ 正在重连',mqttOn:'● MQTT 已连接',mqttOff:'× MQTT 已断开',mqttDemo:'MQTT 已隔离',demoNotice:'演示模式 · 观测值和坐标均为模拟数据，未连接农场。',apiError:'暂时无法获取最新观测，页面保留已收到的读数。',historyError:'历史数据未更新，显示最近可用采样。',wsError:'实时更新已暂停，正在重连；页面保留最近读数。',unknown:'无读数',live:'最近',stale:'延迟',down:'超时',never:'从未接收',now:'刚刚',ago:'前',sourcesRecent:'个来源最近有上报',noSources:'未收到传感器上行数据。',noPositions:'暂无上报位置。',located:'个已定位',unlocated:'个未定位',selectNode:'选择节点查看最近上报位置。',noMesh:'暂无 Mesh 节点。',noMessages:'页面启动后尚未收到消息。',heard:'个节点有数据',sample:'条采样',noHistory:'此时间段无采样数据，请切换指标。',min:'最低',max:'最高',received:'接收时间',value:'数值',source:'来源',lastReceived:'最近接收',positionReceived:'位置接收时间',hops:'跳',externalPower:'外接电源',battery:'电量',observations:'个观测值',waiting:'等待观测数据',lisbon:'里斯本',seen:'最近收到消息',noCoords:'无坐标',raw:'原始读数',snapshotOld:'观测数据已超过 90 秒未更新。',inspectMore:'更多观测项',noPositionTime:'位置时间缺失',storageError:'新观测暂时无法保存。'}
   };
-  Object.assign(copy.en,{fieldInstruments:'Field instruments',northUp:'N ↑',windRose:'Wind rose · 48 h',windScale:'Direction frequency · colour shows wind speed',windEmpty:'No matching wind speed and direction samples.',range:'Range',change3h:'Change over 3 h',steady:'No change',trendOverview:'Trend overview',freshnessScale:'Time since receipt: 0–3 h',farmPlace:'Western Algarve · Portugal',farmNote:'Algarve Fabfarm is a Fab Lab on farmland near Lagos, Portugal. The weather, soil and mesh radios shown here are deployed at the farm; this console only displays what those devices report.',farmMeshNote:'Mesh radios at Algarve Fabfarm can send text; incoming messages from the farm appear here.',noMessages:'No messages received since the display started.'});
-  Object.assign(copy.zh,{fieldInstruments:'现场仪表',northUp:'北 ↑',windRose:'风向玫瑰 · 48 小时',windScale:'方向频次 · 颜色表示风速',windEmpty:'暂无关联的风速与风向采样。',range:'范围',change3h:'3 小时变化',steady:'无变化',trendOverview:'趋势总览',freshnessScale:'接收距今：0–3 小时',farmPlace:'葡萄牙西部 · 阿尔加维',farmNote:'Algarve Fabfarm 是葡萄牙拉各斯附近的农场创客实验室。本页气象、土壤与 Mesh 电台均部署在该农场；控制台只显示这些设备上报的观测。',farmMeshNote:'葡萄牙 Algarve Fabfarm 的 Mesh 电台可以发信；农场发来的消息会显示在这里。',noMessages:'页面启动后尚未收到消息。'});
+  Object.assign(copy.en,{fieldInstruments:'Field instruments',northUp:'N ↑',windRose:'Wind rose · 48 h',windScale:'Direction frequency · colour shows wind speed',windEmpty:'No matching wind speed and direction samples.',range:'Range',change3h:'Change over 3 h',steady:'No change',trendOverview:'Trend overview',freshnessScale:'Time since receipt: 0–3 h',farmPlace:'Western Algarve · Portugal',farmNote:'Algarve Fabfarm is a Fab Lab on farmland near Lagos, Portugal. The weather, soil and mesh radios shown here are deployed at the farm; this console only displays what those devices report.',farmMeshNote:'Mesh radios at Algarve Fabfarm can send text; incoming messages from the farm appear here.',aboutFarm:'About Algarve Fabfarm',noMessages:'No messages received since the display started.'});
+  Object.assign(copy.zh,{fieldInstruments:'现场仪表',northUp:'北 ↑',windRose:'风向玫瑰 · 48 小时',windScale:'方向频次 · 颜色表示风速',windEmpty:'暂无关联的风速与风向采样。',range:'范围',change3h:'3 小时变化',steady:'无变化',trendOverview:'趋势总览',freshnessScale:'接收距今：0–3 小时',farmPlace:'葡萄牙西部 · 阿尔加维',farmNote:'Algarve Fabfarm 是葡萄牙拉各斯附近的农场创客实验室。本页气象、土壤与 Mesh 电台均部署在该农场；控制台只显示这些设备上报的观测。',farmMeshNote:'葡萄牙 Algarve Fabfarm 的 Mesh 电台可以发信；农场发来的消息会显示在这里。',aboutFarm:'关于 Algarve Fabfarm',noMessages:'页面启动后尚未收到消息。'});
   let lang = 'en';
   try { if (localStorage.getItem('farm-lang') === 'zh') lang = 'zh'; } catch (_) {}
   const t = key => window.FarmUI?.label(key,lang) || copy[lang][key] || key;
@@ -21,6 +21,15 @@
     'soil.temp':{name:'soilTemp',unit:C.fieldUnits['soil temperature'],digits:1}, 'soil.ec':{name:'ec',unit:C.fieldUnits['soil ec'],digits:2}
   };
   const primary = ['weather.temp','weather.rain_rate','soil.hum','weather.co2'];
+  const iconPaths = {
+    'weather.temp':'<path d="M10 4a2 2 0 1 1 4 0v8.6a4 4 0 1 1-4 0Z"/><circle cx="12" cy="16.6" r="1.6" fill="currentColor" stroke="none"/>',
+    'weather.hum':'<path d="M12 3.5s5.3 6 5.3 9.8a5.3 5.3 0 1 1-10.6 0c0-3.8 5.3-9.8 5.3-9.8Z"/>',
+    'weather.wind':'<path d="M3 8h9a2.5 2.5 0 1 0-2.4-3.2M3 12h13a2.5 2.5 0 1 1-2.4 3.2M3 16h7"/>',
+    'weather.rain_rate':'<path d="M7 14a4.5 4.5 0 1 1 .8-8.9A5.5 5.5 0 0 1 18.4 7 3.6 3.6 0 0 1 18 14Z"/><path d="M9 17.5 8 20M13 17.5 12 20M17 17.5 16 20"/>',
+    'soil.hum':'<path d="M12 20v-7m0 0c0-3.3 2.6-5.7 6.5-5.7 0 3.3-2.6 5.7-6.5 5.7Zm0 0c0-3.3-2.6-5.7-6.5-5.7 0 3.3 2.6 5.7 6.5 5.7Z"/>',
+    'weather.co2':'<path d="M7 16.5a4 4 0 1 1 .7-7.9A5.5 5.5 0 0 1 18.3 9.6 3.4 3.4 0 0 1 17.5 16.5Z"/>'
+  };
+  const icon = key=>iconPaths[key]?`<svg class="m-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${iconPaths[key]}</svg>`:'';
   let state = {}, meta = {}, health = {lora:[],meshtastic:[]}, mesh = {nodes:[]}, server = {};
   let history = {}, sparklines = {}, windHistory = [], chartKey = primary[0], hours = 24, selectedNode = null, detailKey = null;
   let receivedAt = 0, serverTime = 0, socketState = 'connecting', apiError = false, historyError = false, busy = false;
@@ -48,7 +57,7 @@
     $('readouts').innerHTML=primary.map(key=>`<button type="button" class="metric" data-metric="${key}"><span class="metric-name"></span><span class="metric-main"><span class="metric-value"></span><span class="metric-delta"></span></span><span class="metric-visual" aria-hidden="true"></span><span class="metric-range"></span><span class="secondary"></span><span class="stamp"></span></button>`).join('');
     $('readouts').addEventListener('click', e=>{const button=e.target.closest('[data-metric]');if(button)selectTrend(button.dataset.metric,true);});
     $('trend-tabs').innerHTML=Object.keys(metrics).slice(0,6).map(key=>`<button type="button" data-key="${key}"></button>`).join('');
-    $('trend-tabs').addEventListener('click',e=>{if(e.target.dataset.key)selectTrend(e.target.dataset.key,false);});
+    $('trend-tabs').addEventListener('click',e=>{const chip=e.target.closest('[data-key]');if(chip)selectTrend(chip.dataset.key,false);});
   }
   function metricPoints(key) {
     const source=C.series(sparklines[key]);
@@ -85,7 +94,7 @@
       const key=button.dataset.metric, m=metrics[key], ts=meta[key]?.last_received, st=status(ts);
       button.className='metric '+st+(key===chartKey?' selected':'');
       button.setAttribute('aria-pressed',String(key===chartKey));
-      button.querySelector('.metric-name').innerHTML=`${t(m.name)} <span aria-hidden="true">↗</span>`;
+      button.querySelector('.metric-name').innerHTML=`<span class="metric-label">${icon(key)}${esc(t(m.name))}</span><span aria-hidden="true">↗</span>`;
       button.querySelector('.metric-value').innerHTML=`${format(key,state[key])}<small>${m.unit}</small>`;
       const points=metricPoints(key), ext=C.extent(points),delta=C.change(points);
       button.querySelector('.metric-visual').innerHTML=metricVisual(key,points);
@@ -153,7 +162,8 @@
     const frame={left:76,right:width-18,top:28,bottom:height-48};
     const scale=Math.min((frame.right-frame.left-70)/Math.max(spanX,1),(frame.bottom-frame.top-55)/Math.max(spanY,1),2);
     const px=x=>(frame.left+frame.right)/2+(x-300)*scale, py=y=>(frame.top+frame.bottom)/2+(y-140)*scale;
-    let svg=`<path class="map-grid" d="M${frame.left} ${frame.top}H${frame.right}V${frame.bottom}H${frame.left}Z"/>`;
+    const cl=10;
+    let svg=`<path class="map-grid" d="M${frame.left} ${frame.top}H${frame.right}V${frame.bottom}H${frame.left}Z"/><path class="map-corner" d="M${frame.left} ${frame.top+cl}V${frame.top}H${frame.left+cl}M${frame.right-cl} ${frame.top}H${frame.right}V${frame.top+cl}M${frame.right} ${frame.bottom-cl}V${frame.bottom}H${frame.right-cl}M${frame.left+cl} ${frame.bottom}H${frame.left}V${frame.bottom-cl}"/>`;
     if(positions.length){
       const lats=positions.map(n=>n.lat),lons=positions.map(n=>n.lon),minLat=Math.min(...lats),maxLat=Math.max(...lats),minLon=Math.min(...lons),maxLon=Math.max(...lons);
       const minLonX=positions.find(n=>n.lon===minLon)?.x??300,maxLonX=positions.find(n=>n.lon===maxLon)?.x??300;
@@ -161,14 +171,15 @@
       const ticks=(min,max)=>min===max?[min]:[min,(min+max)/2,max];
       const lonX=lon=>px(minLon===maxLon?300:minLonX+(lon-minLon)/(maxLon-minLon)*(maxLonX-minLonX));
       const latY=lat=>py(minLat===maxLat?140:minLatY+(lat-minLat)/(maxLat-minLat)*(maxLatY-minLatY));
-      ticks(minLon,maxLon).forEach(lon=>{const x=lonX(lon);svg+=`<line class="map-axis" x1="${x}" x2="${x}" y1="${frame.top}" y2="${frame.bottom}"/>`;});
-      ticks(minLat,maxLat).forEach(lat=>{const y=latY(lat);svg+=`<line class="map-axis" x1="${frame.left}" x2="${frame.right}" y1="${y}" y2="${y}"/><text class="map-axis-label" x="${frame.left-7}" y="${y+4}" text-anchor="end">${lat.toFixed(5)}°</text>`;});
+      ticks(minLon,maxLon).forEach(lon=>{const x=lonX(lon);svg+=`<line class="map-axis" x1="${x}" x2="${x}" y1="${frame.top}" y2="${frame.bottom}"/><line class="map-tick" x1="${x}" x2="${x}" y1="${frame.top}" y2="${frame.top+5}"/><line class="map-tick" x1="${x}" x2="${x}" y1="${frame.bottom-5}" y2="${frame.bottom}"/><text class="map-axis-label" x="${x}" y="${frame.bottom+15}" text-anchor="middle">${lon.toFixed(5)}°</text>`;});
+      ticks(minLat,maxLat).forEach(lat=>{const y=latY(lat);svg+=`<line class="map-axis" x1="${frame.left}" x2="${frame.right}" y1="${y}" y2="${y}"/><line class="map-tick" x1="${frame.left}" x2="${frame.left+5}" y1="${y}" y2="${y}"/><line class="map-tick" x1="${frame.right-5}" x2="${frame.right}" y1="${y}" y2="${y}"/><text class="map-axis-label" x="${frame.left-7}" y="${y+4}" text-anchor="end">${lat.toFixed(5)}°</text>`;});
       svg+=`<text class="map-axis-title" x="${(frame.left+frame.right)/2}" y="${height-6}" text-anchor="middle">LON</text><text class="map-axis-title" transform="translate(12 ${(frame.top+frame.bottom)/2}) rotate(-90)" text-anchor="middle">LAT</text>`;
     }
     svg+=`<path d="M${width-28} 55V33m-4 7 4-7 4 7" fill="none" stroke="var(--muted)"/><text class="map-text" x="${width-33}" y="22">N</text>`;
     positions.forEach(n=>{
       const st=status(n.position_ts), label=n.name || n.id, selected=selectedNode===n.id, align=n.x>300?'end':'start', tx=n.x>300?-13:13;
-      svg+=`<g class="map-node ${st}${selected?' selected':''}" role="button" tabindex="0" data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(label+', '+t(st))}" transform="translate(${px(n.x).toFixed(2)} ${py(n.y).toFixed(2)})"><title>${esc(label)} · ${n.lat.toFixed(5)}, ${n.lon.toFixed(5)} · ${age(n.position_ts)}</title><circle class="node-ring" r="${selected?9:6}"/><text class="node-symbol" text-anchor="middle" y="4">${symbols[st]}</text>${selected?`<text class="node-label" x="${tx}" y="-3" text-anchor="${align}">${esc(label)}</text><text class="node-age" x="${tx}" y="11" text-anchor="${align}">${esc(age(n.position_ts))}</text>`:''}</g>`;
+      const r=selected?9:7, c=r+4.5;
+      svg+=`<g class="map-node ${st}${selected?' selected':''}" role="button" tabindex="0" data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(label+', '+t(st))}" transform="translate(${px(n.x).toFixed(2)} ${py(n.y).toFixed(2)})"><title>${esc(label)} · ${n.lat.toFixed(5)}, ${n.lon.toFixed(5)} · ${age(n.position_ts)}</title><circle class="node-ring" r="${r}"/><path class="node-cross" d="M0 ${-c}V${-r-1}M0 ${r+1}V${c}M${-c} 0H${-r-1}M${r+1} 0H${c}"/><circle class="node-dot" r="1.8"/>${selected?`<text class="node-label" x="${tx}" y="-3" text-anchor="${align}">${esc(label)}</text><text class="node-age" x="${tx}" y="11" text-anchor="${align}">${esc(age(n.position_ts))}</text>`:''}</g>`;
     });
     content('atlas',svg);$('atlas-empty').hidden=positions.length>0;$('atlas-empty').textContent=t('noPositions');
     const node=mesh.nodes.find(n=>n.id===selectedNode);
@@ -197,7 +208,7 @@
     if(reveal && window.innerWidth<1100)requestAnimationFrame(()=>$('trends').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
   }
   function renderChart() {
-    [...$('trend-tabs').children].forEach(button=>{button.textContent=t(metrics[button.dataset.key].name);button.setAttribute('aria-pressed',String(button.dataset.key===chartKey));});
+    [...$('trend-tabs').children].forEach(button=>{button.innerHTML=icon(button.dataset.key)+esc(t(metrics[button.dataset.key].name));button.setAttribute('aria-pressed',String(button.dataset.key===chartKey));});
     const points=chartSeries(), m=metrics[chartKey];
     $('chart-label').textContent=`${t(m.name)} · ${m.unit}`;
     $('chart-summary').textContent=points.length?`${points.length} ${t('sample')} · ${t('min')} ${format(chartKey,Math.min(...points.map(p=>p[1])))} · ${t('max')} ${format(chartKey,Math.max(...points.map(p=>p[1])))}`:t('waiting');
@@ -234,6 +245,7 @@
     document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
     $('langToggle').textContent=lang==='en'?'中文':'EN';$('langToggle').setAttribute('aria-label',lang==='en'?'切换到中文':'Switch to English');
     for(const [id,key] of [['mesh-nodes','nodes'],['messages','messages'],['trend-tabs','trends']])$(id).setAttribute('aria-label',t(key));
+    document.querySelector('.site-note').setAttribute('aria-label',t('aboutFarm'));
     renderedMessages='';render();renderChart();if($('detail').open)renderDetail();tick();
   }
   async function json(path) {
