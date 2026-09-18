@@ -337,6 +337,9 @@ h3 {
   fill:var(--muted);
   font:14px Barlow,"Noto Sans SC",system-ui,sans-serif;
 }
+.map-axis {stroke:var(--line);stroke-width:1;stroke-dasharray:2 4;opacity:.75;}
+.map-axis-label,.map-axis-title {fill:var(--muted);font:10px "IBM Plex Mono",monospace;}
+.map-axis-title {font-size:9px;letter-spacing:.08em;}
 .map-node {
   cursor:pointer;
   outline:none;
@@ -365,6 +368,9 @@ h3 {
   stroke-width:4px;
   stroke-linejoin:round;
 }
+.map-node .node-symbol {font-size:11px;stroke-width:2px;}
+.map-node .node-label {font-size:11px;stroke-width:3px;}
+.map-node .node-age {font-size:10px;fill:var(--muted);stroke-width:3px;}
 .position-detail {
   font-size:14px;
   min-height:22px;
@@ -1281,11 +1287,11 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
   .atlas .caption {margin-top:3px;font-size:11px;}
 }
 @media(min-width:1100px) and (min-height:650px) and (max-height:900px) {
-  .conditions .metric {grid-template-rows:auto auto 38px auto auto;padding:8px 14px 7px;}
-  .metric-visual {height:38px;}
+  .conditions .metric {grid-template-rows:auto auto 34px auto auto;gap:5px;padding:10px 14px 8px;}
+  .metric-visual {height:34px;margin:2px 0;}
   .conditions .metric .secondary {display:none;}
-  .metric .metric-main .metric-value {font-size:42px;}
-  .metric-delta {font-size:14px;}
+  .metric .metric-main .metric-value {font-size:38px;}
+  .metric-delta {font-size:13px;}
   .metric-range,.conditions .metric .stamp {font-size:13px;}
   .instrument-grid {grid-template-columns:minmax(0,1.35fr) minmax(190px,.65fr);}
   #wind-rose {min-height:122px;}
@@ -1324,8 +1330,9 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
 .region-head {display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:0 2px 8px;min-height:48px;}
 .region-head h2 {font:600 24px/1 "Barlow Condensed","Noto Sans SC",sans-serif;}
 .region-head>span {font-size:14px;color:var(--muted);text-align:right;}
-.weather-grid {display:grid;grid-template-columns:minmax(270px,.68fr) minmax(0,1.65fr);gap:10px;flex:1;min-height:0;}
+.weather-grid {display:grid;grid-template-columns:clamp(220px,18vw,260px) minmax(0,1fr);gap:10px;flex:1;min-height:0;align-items:start;}
 .wind-station,.weather-grid .trends {grid-column:auto;grid-row:auto;min-height:0;}
+.wind-station {align-self:start;height:auto;}
 .wind-station .panel-head h3 {font-size:21px;}
 .wind-current {display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:14px 0 4px;padding-bottom:10px;border-bottom:1px solid var(--line);}
 .wind-current>span {display:flex;align-items:baseline;gap:5px;}
@@ -1333,28 +1340,35 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
 .wind-current b {font:500 23px/1 "IBM Plex Mono",monospace;color:var(--ink);}
 .wind-current small {font-size:13px;color:var(--muted);}
 .wind-current>span:last-child {flex-direction:column;align-items:flex-end;gap:3px;text-align:right;}
-.wind-station .windrose-wrap {grid-template-columns:minmax(170px,1fr) 64px;min-height:0;}
-.wind-station #wind-rose {min-height:210px;}
-.weather-grid .trend-dense {grid-template-columns:minmax(220px,.72fr) minmax(280px,1.28fr);}
+.wind-station .windrose-wrap {grid-template-columns:minmax(140px,1fr) 58px;height:210px;flex:none;min-height:0;}
+.wind-station #wind-rose {width:100%;height:auto;min-height:0;max-height:180px;align-self:center;}
+.weather-grid .trends {align-self:stretch;height:100%;}
+.weather-grid .trend-dense {grid-template-columns:minmax(215px,.55fr) minmax(320px,1.45fr);}
+.weather-grid .mini-trends {grid-template-columns:1fr;grid-template-rows:repeat(4,minmax(0,1fr));}
+.weather-grid .mini-trend {grid-template-rows:auto minmax(32px,1fr) auto;}
+.weather-grid .mini-trend b {min-width:0;}
 .communications {grid-column:2;grid-row:1;display:flex;min-height:0;}
 .mesh-summary-row {display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:10px 0 8px;color:var(--muted);font:12px "IBM Plex Mono",monospace;}
 .mesh-summary-row .mesh-summary {margin:0;}
-.communications .instrument-map {flex:0 0 42%;padding:8px;}
+.communications .instrument-map {flex:0 0 55%;padding:8px;}
 .communications .instrument-map .atlas-body {flex:1;min-height:170px;}
 .communications .instrument-map .micro-caption {margin-top:2px;text-align:left;}
-.offgrid-feed {display:grid;grid-template-rows:minmax(95px,.8fr) minmax(110px,1fr);gap:8px;flex:1;min-height:0;margin-top:8px;}
+.offgrid-feed {display:grid;grid-template-rows:minmax(58px,.42fr) minmax(90px,1fr);gap:6px;flex:1;min-height:0;margin-top:6px;}
 .node-feed,.message-feed {display:flex;flex-direction:column;min-height:0;border-top:1px solid var(--line);}
 .offgrid-feed .message-heading {flex:none;margin:0;padding:7px 0 5px;border:0;}
 .offgrid-feed .mesh-nodes,.offgrid-feed .messages {flex:1;max-height:none;min-height:0;}
+.offgrid-feed .mesh-node {padding:3px 0;font-size:12px;}
+.offgrid-feed .mesh-node-state {display:inline;margin-left:6px;font-size:11px;}
+.offgrid-feed .node-instruments {min-width:112px;transform:scale(.86);transform-origin:right center;}
 .mesh-node.selected {background:color-mix(in srgb,var(--accent) 10%,transparent);box-shadow:inset 3px 0 var(--accent);padding-left:7px;}
 .mesh-node.selected button {color:var(--accent);}
 .communications>.caption {margin-top:6px;}
 
 @media(min-width:1100px) and (min-height:650px) {
   .workspace {grid-template-columns:minmax(0,2.25fr) minmax(360px,.9fr);grid-template-rows:minmax(0,1fr);}
-  .weather-grid {grid-template-columns:minmax(270px,.68fr) minmax(0,1.65fr);}
+  .weather-grid {grid-template-columns:clamp(220px,18vw,260px) minmax(0,1fr);}
   .communications {grid-column:2;grid-row:1;}
-  .communications .instrument-map {flex-basis:42%;}
+  .communications .instrument-map {flex-basis:55%;}
   .communications .mesh-nodes {max-height:none;}
   .communications .messages {max-height:none;}
   .communications .message-heading {margin:0;padding-top:7px;}
@@ -1364,16 +1378,17 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
   .region-head h2 {font-size:21px;}
   .wind-current {margin-top:9px;padding-bottom:7px;}
   .wind-current strong {font-size:38px;}
-  .wind-station #wind-rose {min-height:170px;}
-  .weather-grid .trend-dense {grid-template-columns:minmax(205px,.7fr) minmax(250px,1.3fr);gap:8px;}
-  .communications .instrument-map {flex-basis:40%;}
-  .offgrid-feed {grid-template-rows:minmax(82px,.72fr) minmax(96px,1fr);margin-top:5px;}
+  .wind-station .windrose-wrap {height:190px;}
+  .wind-station #wind-rose {max-height:165px;}
+  .weather-grid .trend-dense {grid-template-columns:minmax(205px,.54fr) minmax(300px,1.46fr);gap:8px;}
+  .communications .instrument-map {flex-basis:55%;}
+  .offgrid-feed {grid-template-rows:minmax(52px,.4fr) minmax(82px,1fr);margin-top:4px;}
 }
 @media(min-width:1100px) and (max-width:1500px) {
   .workspace {grid-template-columns:minmax(0,2fr) minmax(340px,.9fr);}
-  .weather-grid {grid-template-columns:minmax(245px,.62fr) minmax(0,1.38fr);}
-  .weather-grid .trend-dense {grid-template-columns:minmax(190px,.66fr) minmax(235px,1.34fr);}
-  .wind-station .windrose-wrap {grid-template-columns:minmax(145px,1fr) 56px;}
+  .weather-grid {grid-template-columns:minmax(220px,250px) minmax(0,1fr);}
+  .weather-grid .trend-dense {grid-template-columns:minmax(205px,.54fr) minmax(300px,1.46fr);}
+  .wind-station .windrose-wrap {grid-template-columns:minmax(135px,1fr) 54px;}
 }
 @media(max-width:1099px) {
   .workspace {display:block;margin-top:14px;}
@@ -1392,7 +1407,9 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
   .wind-station {min-height:370px;}
   .weather-grid .trends {height:780px;min-height:780px;}
   .weather-grid .trend-dense {grid-template-columns:1fr;grid-template-rows:320px 330px;}
-  .wind-station .windrose-wrap {grid-template-columns:minmax(0,1fr) 58px;}
+  .weather-grid .mini-trends {grid-template-columns:1fr 1fr;grid-template-rows:none;}
+  .wind-station .windrose-wrap {grid-template-columns:minmax(0,1fr) 58px;height:230px;}
+  .wind-station #wind-rose {max-height:210px;}
   .communications {height:auto;min-height:900px;}
   .communications .instrument-map {flex-basis:340px;}
   .offgrid-feed {grid-template-rows:minmax(180px,.8fr) minmax(240px,1fr);}

@@ -142,18 +142,31 @@
     plot.setAttribute('viewBox',`0 0 ${width} ${height}`);
     const xs=positions.map(n=>n.x), ys=positions.map(n=>n.y);
     const spanX=positions.length?Math.max(...xs)-Math.min(...xs):0, spanY=positions.length?Math.max(...ys)-Math.min(...ys):0;
-    const scale=Math.min((width-170)/Math.max(spanX,1),(height-90)/Math.max(spanY,1),2);
-    const px=x=>width/2+(x-300)*scale, py=y=>height/2+(y-140)*scale;
-    let svg=`<path class="map-grid" d="M20 26H${width-20}V${height-22}H20Z"/>`;
+    const frame={left:76,right:width-18,top:28,bottom:height-48};
+    const scale=Math.min((frame.right-frame.left-70)/Math.max(spanX,1),(frame.bottom-frame.top-55)/Math.max(spanY,1),2);
+    const px=x=>(frame.left+frame.right)/2+(x-300)*scale, py=y=>(frame.top+frame.bottom)/2+(y-140)*scale;
+    let svg=`<path class="map-grid" d="M${frame.left} ${frame.top}H${frame.right}V${frame.bottom}H${frame.left}Z"/>`;
+    if(positions.length){
+      const lats=positions.map(n=>n.lat),lons=positions.map(n=>n.lon),minLat=Math.min(...lats),maxLat=Math.max(...lats),minLon=Math.min(...lons),maxLon=Math.max(...lons);
+      const minLonX=positions.find(n=>n.lon===minLon)?.x??300,maxLonX=positions.find(n=>n.lon===maxLon)?.x??300;
+      const minLatY=positions.find(n=>n.lat===minLat)?.y??140,maxLatY=positions.find(n=>n.lat===maxLat)?.y??140;
+      const ticks=(min,max)=>min===max?[min]:[min,(min+max)/2,max];
+      const lonX=lon=>px(minLon===maxLon?300:minLonX+(lon-minLon)/(maxLon-minLon)*(maxLonX-minLonX));
+      const latY=lat=>py(minLat===maxLat?140:minLatY+(lat-minLat)/(maxLat-minLat)*(maxLatY-minLatY));
+      ticks(minLon,maxLon).forEach((lon,i)=>{const x=lonX(lon);svg+=`<line class="map-axis" x1="${x}" x2="${x}" y1="${frame.top}" y2="${frame.bottom}"/>${i===1&&minLon!==maxLon?'':`<text class="map-axis-label" x="${x}" y="${height-25}" text-anchor="${i===0?'start':'end'}">${lon.toFixed(5)}°</text>`}`;});
+      ticks(minLat,maxLat).forEach(lat=>{const y=latY(lat);svg+=`<line class="map-axis" x1="${frame.left}" x2="${frame.right}" y1="${y}" y2="${y}"/><text class="map-axis-label" x="${frame.left-7}" y="${y+4}" text-anchor="end">${lat.toFixed(5)}°</text>`;});
+      svg+=`<text class="map-axis-title" x="${(frame.left+frame.right)/2}" y="${height-6}" text-anchor="middle">LON</text><text class="map-axis-title" transform="translate(12 ${(frame.top+frame.bottom)/2}) rotate(-90)" text-anchor="middle">LAT</text>`;
+    }
     svg+=`<path d="M${width-28} 55V33m-4 7 4-7 4 7" fill="none" stroke="var(--muted)"/><text class="map-text" x="${width-33}" y="22">N</text>`;
     positions.forEach(n=>{
-      const st=status(n.position_ts), label=n.name || n.id, align=n.x>300?'end':'start', tx=n.x>300?-18:18;
-      svg+=`<g class="map-node ${st}${selectedNode===n.id?' selected':''}" role="button" tabindex="0" data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(label+', '+t(st))}" transform="translate(${px(n.x).toFixed(2)} ${py(n.y).toFixed(2)})"><title>${esc(label)} · ${n.lat.toFixed(5)}, ${n.lon.toFixed(5)} · ${age(n.position_ts)}</title><circle class="node-ring" r="11"/><text text-anchor="middle" y="5">${symbols[st]}</text><text x="${tx}" y="-4" text-anchor="${align}">${esc(label.length>22?label.slice(0,21)+'…':label)}</text><text x="${tx}" y="15" text-anchor="${align}">${esc(age(n.position_ts))}</text></g>`;
+      const st=status(n.position_ts), label=n.name || n.id, selected=selectedNode===n.id, display=selected||label.length<=11?label:label.slice(0,10)+'…', align=n.x>300?'end':'start', tx=n.x>300?-13:13;
+      svg+=`<g class="map-node ${st}${selected?' selected':''}" role="button" tabindex="0" data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(label+', '+t(st))}" transform="translate(${px(n.x).toFixed(2)} ${py(n.y).toFixed(2)})"><title>${esc(label)} · ${n.lat.toFixed(5)}, ${n.lon.toFixed(5)} · ${age(n.position_ts)}</title><circle class="node-ring" r="8"/><text class="node-symbol" text-anchor="middle" y="4">${symbols[st]}</text><text class="node-label" x="${tx}" y="${selected?-3:4}" text-anchor="${align}">${esc(display)}</text>${selected?`<text class="node-age" x="${tx}" y="11" text-anchor="${align}">${esc(age(n.position_ts))}</text>`:''}</g>`;
     });
     content('atlas',svg);$('atlas-empty').hidden=positions.length>0;$('atlas-empty').textContent=t('noPositions');
     const node=mesh.nodes.find(n=>n.id===selectedNode);
     if(node) $('position-detail').innerHTML=`<b>${esc(node.name)}</b> · ${C.finite(node.lat)&&C.finite(node.lon)?`${node.lat.toFixed(5)}, ${node.lon.toFixed(5)} · ${t('positionReceived')}: ${age(node.position_ts)}`:t('noCoords')}`;
-    else $('position-detail').textContent=positions.length?t('selectNode'):'';
+    else if(positions.length){const lats=positions.map(n=>n.lat),lons=positions.map(n=>n.lon);$('position-detail').textContent=`LAT ${Math.min(...lats).toFixed(5)}–${Math.max(...lats).toFixed(5)} · LON ${Math.min(...lons).toFixed(5)}–${Math.max(...lons).toFixed(5)}`;}
+    else $('position-detail').textContent='';
   }
   function battery(n) {return n.battery===101?t('externalPower'):C.finite(n.battery)?`${Math.round(n.battery)}%`:'—';}
   function renderMesh() {
