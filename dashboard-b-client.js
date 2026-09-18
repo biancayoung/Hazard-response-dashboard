@@ -153,14 +153,14 @@
       const ticks=(min,max)=>min===max?[min]:[min,(min+max)/2,max];
       const lonX=lon=>px(minLon===maxLon?300:minLonX+(lon-minLon)/(maxLon-minLon)*(maxLonX-minLonX));
       const latY=lat=>py(minLat===maxLat?140:minLatY+(lat-minLat)/(maxLat-minLat)*(maxLatY-minLatY));
-      ticks(minLon,maxLon).forEach((lon,i)=>{const x=lonX(lon);svg+=`<line class="map-axis" x1="${x}" x2="${x}" y1="${frame.top}" y2="${frame.bottom}"/>${i===1&&minLon!==maxLon?'':`<text class="map-axis-label" x="${x}" y="${height-25}" text-anchor="${i===0?'start':'end'}">${lon.toFixed(5)}°</text>`}`;});
+      ticks(minLon,maxLon).forEach(lon=>{const x=lonX(lon);svg+=`<line class="map-axis" x1="${x}" x2="${x}" y1="${frame.top}" y2="${frame.bottom}"/>`;});
       ticks(minLat,maxLat).forEach(lat=>{const y=latY(lat);svg+=`<line class="map-axis" x1="${frame.left}" x2="${frame.right}" y1="${y}" y2="${y}"/><text class="map-axis-label" x="${frame.left-7}" y="${y+4}" text-anchor="end">${lat.toFixed(5)}°</text>`;});
       svg+=`<text class="map-axis-title" x="${(frame.left+frame.right)/2}" y="${height-6}" text-anchor="middle">LON</text><text class="map-axis-title" transform="translate(12 ${(frame.top+frame.bottom)/2}) rotate(-90)" text-anchor="middle">LAT</text>`;
     }
     svg+=`<path d="M${width-28} 55V33m-4 7 4-7 4 7" fill="none" stroke="var(--muted)"/><text class="map-text" x="${width-33}" y="22">N</text>`;
     positions.forEach(n=>{
-      const st=status(n.position_ts), label=n.name || n.id, selected=selectedNode===n.id, display=selected||label.length<=11?label:label.slice(0,10)+'…', align=n.x>300?'end':'start', tx=n.x>300?-13:13;
-      svg+=`<g class="map-node ${st}${selected?' selected':''}" role="button" tabindex="0" data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(label+', '+t(st))}" transform="translate(${px(n.x).toFixed(2)} ${py(n.y).toFixed(2)})"><title>${esc(label)} · ${n.lat.toFixed(5)}, ${n.lon.toFixed(5)} · ${age(n.position_ts)}</title><circle class="node-ring" r="8"/><text class="node-symbol" text-anchor="middle" y="4">${symbols[st]}</text><text class="node-label" x="${tx}" y="${selected?-3:4}" text-anchor="${align}">${esc(display)}</text>${selected?`<text class="node-age" x="${tx}" y="11" text-anchor="${align}">${esc(age(n.position_ts))}</text>`:''}</g>`;
+      const st=status(n.position_ts), label=n.name || n.id, selected=selectedNode===n.id, align=n.x>300?'end':'start', tx=n.x>300?-13:13;
+      svg+=`<g class="map-node ${st}${selected?' selected':''}" role="button" tabindex="0" data-node="${esc(n.id)}" data-focus="${esc(n.id)}" aria-label="${esc(label+', '+t(st))}" transform="translate(${px(n.x).toFixed(2)} ${py(n.y).toFixed(2)})"><title>${esc(label)} · ${n.lat.toFixed(5)}, ${n.lon.toFixed(5)} · ${age(n.position_ts)}</title><circle class="node-ring" r="${selected?9:6}"/><text class="node-symbol" text-anchor="middle" y="4">${symbols[st]}</text>${selected?`<text class="node-label" x="${tx}" y="-3" text-anchor="${align}">${esc(label)}</text><text class="node-age" x="${tx}" y="11" text-anchor="${align}">${esc(age(n.position_ts))}</text>`:''}</g>`;
     });
     content('atlas',svg);$('atlas-empty').hidden=positions.length>0;$('atlas-empty').textContent=t('noPositions');
     const node=mesh.nodes.find(n=>n.id===selectedNode);
