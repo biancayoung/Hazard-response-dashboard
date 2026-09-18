@@ -21,6 +21,15 @@
     'soil.temp':{name:'soilTemp',unit:C.fieldUnits['soil temperature'],digits:1}, 'soil.ec':{name:'ec',unit:C.fieldUnits['soil ec'],digits:2}
   };
   const primary = ['weather.temp','weather.rain_rate','soil.hum','weather.co2'];
+  const iconPaths = {
+    'weather.temp':'<path d="M10 4a2 2 0 1 1 4 0v8.6a4 4 0 1 1-4 0Z"/><circle cx="12" cy="16.6" r="1.6" fill="currentColor" stroke="none"/>',
+    'weather.hum':'<path d="M12 3.5s5.3 6 5.3 9.8a5.3 5.3 0 1 1-10.6 0c0-3.8 5.3-9.8 5.3-9.8Z"/>',
+    'weather.wind':'<path d="M3 8h9a2.5 2.5 0 1 0-2.4-3.2M3 12h13a2.5 2.5 0 1 1-2.4 3.2M3 16h7"/>',
+    'weather.rain_rate':'<path d="M7 14a4.5 4.5 0 1 1 .8-8.9A5.5 5.5 0 0 1 18.4 7 3.6 3.6 0 0 1 18 14Z"/><path d="M9 17.5 8 20M13 17.5 12 20M17 17.5 16 20"/>',
+    'soil.hum':'<path d="M12 20v-7m0 0c0-3.3 2.6-5.7 6.5-5.7 0 3.3-2.6 5.7-6.5 5.7Zm0 0c0-3.3-2.6-5.7-6.5-5.7 0 3.3 2.6 5.7 6.5 5.7Z"/>',
+    'weather.co2':'<path d="M7 16.5a4 4 0 1 1 .7-7.9A5.5 5.5 0 0 1 18.3 9.6 3.4 3.4 0 0 1 17.5 16.5Z"/>'
+  };
+  const icon = key=>iconPaths[key]?`<svg class="m-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">${iconPaths[key]}</svg>`:'';
   let state = {}, meta = {}, health = {lora:[],meshtastic:[]}, mesh = {nodes:[]}, server = {};
   let history = {}, sparklines = {}, windHistory = [], chartKey = primary[0], hours = 24, selectedNode = null, detailKey = null;
   let receivedAt = 0, serverTime = 0, socketState = 'connecting', apiError = false, historyError = false, busy = false;
@@ -85,7 +94,7 @@
       const key=button.dataset.metric, m=metrics[key], ts=meta[key]?.last_received, st=status(ts);
       button.className='metric '+st+(key===chartKey?' selected':'');
       button.setAttribute('aria-pressed',String(key===chartKey));
-      button.querySelector('.metric-name').innerHTML=`${t(m.name)} <span aria-hidden="true">↗</span>`;
+      button.querySelector('.metric-name').innerHTML=`<span class="metric-label">${icon(key)}${esc(t(m.name))}</span><span aria-hidden="true">↗</span>`;
       button.querySelector('.metric-value').innerHTML=`${format(key,state[key])}<small>${m.unit}</small>`;
       const points=metricPoints(key), ext=C.extent(points),delta=C.change(points);
       button.querySelector('.metric-visual').innerHTML=metricVisual(key,points);
@@ -197,7 +206,7 @@
     if(reveal && window.innerWidth<1100)requestAnimationFrame(()=>$('trends').scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}));
   }
   function renderChart() {
-    [...$('trend-tabs').children].forEach(button=>{button.textContent=t(metrics[button.dataset.key].name);button.setAttribute('aria-pressed',String(button.dataset.key===chartKey));});
+    [...$('trend-tabs').children].forEach(button=>{button.innerHTML=icon(button.dataset.key)+esc(t(metrics[button.dataset.key].name));button.setAttribute('aria-pressed',String(button.dataset.key===chartKey));});
     const points=chartSeries(), m=metrics[chartKey];
     $('chart-label').textContent=`${t(m.name)} · ${m.unit}`;
     $('chart-summary').textContent=points.length?`${points.length} ${t('sample')} · ${t('min')} ${format(chartKey,Math.min(...points.map(p=>p[1])))} · ${t('max')} ${format(chartKey,Math.max(...points.map(p=>p[1])))}`:t('waiting');

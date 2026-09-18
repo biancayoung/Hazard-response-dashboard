@@ -1507,3 +1507,9 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
 @media(max-width:760px) {
   .site-note {padding:8px 12px;margin-bottom:10px;}
 }
+
+/* Metric icons: small cyan glyphs on the sensor cards and trend chips. */
+.m-icon {width:14px;height:14px;flex:none;color:var(--green);}
+.metric-label {display:inline-flex;align-items:center;gap:7px;}
+.metric-label .m-icon {width:16px;height:16px;}
+.trend-tabs button {display:inline-flex;align-items:center;gap:5px;}
