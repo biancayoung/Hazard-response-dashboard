@@ -148,6 +148,12 @@ in the category; use the per-source list/counts to detect partial outages.
    check fails, restore the previous code/unit/config and restart that release;
    keep the same DB. Changes only add an index to the existing readings schema.
 
+To copy code onto a live device without a git checkout there, use
+[deploy/sync-mission-pack.sh](deploy/sync-mission-pack.sh) with
+[deploy/rsync-exclude](deploy/rsync-exclude). Pass `user@host:/path` yourself;
+the script does not store inventory. It never sends `.git`, `.venv`, `farm.db`
+or `.env`, and it never `--delete`. Restart the device service yourself.
+
 `wsl_service.sh` now prints the generic unit template for review; it does not
 install or restart services. `wsl_setup.sh` is an optional legacy development
 bootstrap: its anonymous broker listener is loopback-only. Never use it as a

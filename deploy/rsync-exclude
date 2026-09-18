@@ -1,0 +1,30 @@
+# Sync exclude list (rsync --exclude-from). Not a Git ignore.
+# Keeps Mission Pack from receiving a checkout, venv, database or secrets.
+
+.git/
+.gitignore
+.venv/
+.agent-local/
+.artifacts/
+.lody/
+.grok/
+
+.env
+.env.*
+*.pem
+
+*.db
+*.db-*
+*.sqlite*
+
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+tmp_*.js
+
+# Local-only helpers; the device does not need them to serve /ops.
+tests/
+sim/
+PROMPT_B.md
+PROMPT_C.md
