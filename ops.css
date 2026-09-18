@@ -1513,3 +1513,13 @@ summary:focus-visible {outline:3px solid var(--accent);outline-offset:3px;}
 .metric-label {display:inline-flex;align-items:center;gap:7px;}
 .metric-label .m-icon {width:16px;height:16px;}
 .trend-tabs button {display:inline-flex;align-items:center;gap:5px;}
+
+/* Spacing: the weather column, the communications panel and the row above share one gutter. */
+.weather-grid {gap:20px;}
+.workspace {margin-top:20px;}
+
+/* Short screens keep the trend plot readable: the chart caption yields its line. */
+@media(min-width:1100px) and (max-height:1000px) {
+  .trends .caption {display:none;}
+  .trend-toolbar {margin:6px 0 4px;}
+}
